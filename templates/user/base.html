@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}CV Generator{% endblock %}</title>
+
+  <!-- Tailwind CDN pour développement (rapide à démarrer).
+       Pour production, configure Tailwind via npm/PostCSS. -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- CSS personnalisé (optionnel) -->
+  <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body class="min-h-screen bg-gray-50">
+  <header class="bg-white shadow-sm border-b border-gray-200">
+    {% include "user/includes/navbar.html" %}
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- JS principal -->
+  <script src="{% static 'js/dashboard.js' %}" defer></script>
+</body>
+</html>

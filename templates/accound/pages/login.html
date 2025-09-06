@@ -1,0 +1,24 @@
+{% extends "accound/base.html" %}
+{% block title %}Connexion{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto mt-16 p-6 bg-white rounded shadow">
+    <h2 class="text-2xl font-bold mb-4">Connexion</h2>
+    {% if error %}
+        <p class="text-red-500 mb-4">{{ error }}</p>
+    {% endif %}
+    <p class="text-gray-500">Utilisez la barre de navigation pour vous connecter via le modal.</p>
+</div>
+<script>
+    // Afficher le message de succès via ToastManager si présent dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const successMessage = urlParams.get('success');
+    if (successMessage && window.toastManager) {
+        window.toastManager.buildToast()
+            .setMessage(decodeURIComponent(successMessage))
+            .setType('success')
+            .setPosition('top-right')
+            .setDuration(4000)
+            .show();
+    }
+</script>
+{% endblock %}

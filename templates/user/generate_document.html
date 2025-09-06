@@ -1,0 +1,169 @@
+{% extends "user/base.html" %}
+{% block title %}Détail du document - {{ document.titre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+  <!-- En-tête -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-4">
+        <div class="p-3 rounded-lg {% if document.type == 'CV' %}bg-blue-50 text-blue-600{% else %}bg-purple-50 text-purple-600{% endif %}">
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path d="M3 7h18M3 12h18M3 17h18" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">{{ document.titre }}</h1>
+          <p class="text-gray-600">{{ document.poste }}{% if document.entreprise %} • {{ document.entreprise }}{% endif %}</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if document.statut == 'completed' %}text-green-600 bg-green-100{% elif document.statut == 'processing' %}text-blue-600 bg-blue-100{% else %}text-red-600 bg-red-100{% endif %}">
+          {% if document.statut == 'completed' %}Terminé{% elif document.statut == 'processing' %}En cours{% else %}Erreur{% endif %}
+        </span>
+        <a href="{% url 'Agent:download_document' document_id=document.id %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Télécharger</a>
+      </div>
+    </div>
+
+    <!-- Métadonnées -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+      <div>
+        <span class="font-medium text-gray-500">Créé le:</span>
+        <span class="ml-2 text-gray-900">{{ document.date_creation|date:"d/m/Y H:i" }}</span>
+      </div>
+      <div>
+        <span class="font-medium text-gray-500">Score:</span>
+        <span class="ml-2 text-gray-900">{{ document.score }}%</span>
+      </div>
+      <div>
+        <span class="font-medium text-gray-500">Dernière mise à jour:</span>
+        <span class="ml-2 text-gray-900">{{ document.date_mise_a_jour|date:"d/m/Y H:i" }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image du CV (si applicable) -->
+  {% if document.type == 'CV' and cv_image %}
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Photo professionnelle</h2>
+    <div class="flex items-center gap-4">
+      <img src="{{ cv_image.image.url }}" alt="{{ cv_image.description }}" class="w-32 h-32 object-cover rounded-lg border border-gray-200">
+      <div>
+        <p class="text-gray-600">{{ cv_image.description }}</p>
+        <p class="text-sm text-gray-500 mt-1">Ajoutée le {{ cv_image.date_creation|date:"d/m/Y" }}</p>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Contenu du document -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Contenu généré</h2>
+    <div class="prose max-w-none border border-gray-200 rounded-lg p-6">
+      {{ document.contenu|linebreaks }}
+    </div>
+  </div>
+
+  <!-- Étapes de traitement -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Processus de génération</h2>
+    <div class="space-y-4">
+      {% for etape in etapes %}
+      <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center {% if etape.statut == 'completed' %}bg-green-100 text-green-600{% elif etape.statut == 'processing' %}bg-blue-100 text-blue-600{% elif etape.statut == 'error' %}bg-red-100 text-red-600{% else %}bg-gray-100 text-gray-600{% endif %}">
+            {% if etape.statut == 'completed' %}
+              ✓
+            {% elif etape.statut == 'processing' %}
+              ⏳
+            {% elif etape.statut == 'error' %}
+              ⚠️
+            {% else %}
+              …
+            {% endif %}
+          </div>
+          <div>
+            <h3 class="font-medium text-gray-900">{{ etape.nom }}</h3>
+            {% if etape.details %}
+            <p class="text-sm text-gray-500">{{ etape.details }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="text-right">
+          <span class="inline-block px-2 py-1 text-xs font-medium rounded-full {% if etape.statut == 'completed' %}text-green-600 bg-green-100{% elif etape.statut == 'processing' %}text-blue-600 bg-blue-100{% elif etape.statut == 'error' %}text-red-600 bg-red-100{% else %}text-gray-600 bg-gray-100{% endif %}">
+            {% if etape.statut == 'completed' %}Terminé{% elif etape.statut == 'processing' %}En cours{% elif etape.statut == 'error' %}Erreur{% else %}En attente{% endif %}
+          </span>
+          {% if etape.date_fin %}
+          <p class="text-xs text-gray-500 mt-1">{{ etape.date_fin|date:"H:i" }}</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="flex justify-end gap-3">
+      <a href="{% url 'Agent:dashboard' %}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Retour</a>
+      <a href="{% url 'Agent:download_document' document_id=document.id %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Télécharger</a>
+      {% if document.type == 'CV' %}
+      <button onclick="openImageUpload()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Changer la photo</button>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Modal pour upload d'image -->
+{% if document.type == 'CV' %}
+<div id="imageUploadModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 w-full max-w-md">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Changer la photo</h3>
+    <form id="imageUploadForm" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="image" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-4" required>
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeImageUpload()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg">Annuler</button>
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Uploader</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function openImageUpload() {
+  document.getElementById('imageUploadModal').classList.remove('hidden');
+}
+
+function closeImageUpload() {
+  document.getElementById('imageUploadModal').classList.add('hidden');
+}
+
+document.getElementById('imageUploadForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(this);
+  
+  fetch("{% url 'Agent:upload_cv_image' document_id=document.id %}", {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert('Photo mise à jour avec succès!');
+      location.reload();
+    } else {
+      alert('Erreur: ' + data.error);
+    }
+  })
+  .catch(error => {
+    alert('Erreur lors de l\'upload');
+  });
+});
+</script>
+{% endif %}
+{% endblock %}

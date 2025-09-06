@@ -1,0 +1,21 @@
+<nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="flex justify-between items-center h-16">
+    <div class="flex items-center gap-3">
+      <div class="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+        <!-- icône simple -->
+        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 2 L20 8 L12 14 L4 8 Z" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="text-lg font-bold text-gray-900">CV Generator AI</h1>
+        <p class="text-xs text-gray-500">Django + Tailwind</p>
+      </div>
+    </div>
+
+    <div class="flex space-x-2">
+      <a href="{% url 'comptes:dashboard' %}" class="px-4 py-2 rounded-lg font-medium {% if request.path == '/dashboard/' %}bg-blue-100 text-blue-700{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-100{% endif %}">Dashboard</a>
+      <a href="{% url 'comptes:generate' %}" class="px-4 py-2 rounded-lg font-medium {% if request.path == '/generate/' %}bg-blue-100 text-blue-700{% else %}text-gray-600 hover:text-gray-900 hover:bg-gray-100{% endif %}">Générateur</a>
+    </div>
+  </div>
+</nav>

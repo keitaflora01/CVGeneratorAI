@@ -1,0 +1,208 @@
+{% load static %}
+<nav class="fixed w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center py-4">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-robot text-white text-lg"></i>
+                </div>
+                <span class="text-2xl font-bold gradient-text">CVBot</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="{% url "home" %}" class="text-slate-300 hover:text-white transition-colors">Accueil</a>
+                <a href="#features" class="text-slate-300 hover:text-white transition-colors">Fonctionnalités</a>
+                <a href="#previews" class="text-slate-300 hover:text-white transition-colors">Modèles</a>
+                <a href="#testimonials" class="text-slate-300 hover:text-white transition-colors">Témoignages</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button data-modal-target="login-modal" class="hidden md:block px-6 py-2 btn-secondary text-slate-200 rounded-lg">
+                    <i class="fas fa-user mr-2"></i>Connexion
+                </button>
+                <button data-modal-target="signup-modal" class="hidden md:block px-6 py-2 btn-secondary text-slate-200 rounded-lg">
+                    <i class="fas fa-user mr-2"></i>Inscription
+                </button>
+                <button class="md:hidden text-white">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Connexion -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center bg-black bg-opacity-50">
+        <div class="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-xl relative">
+            <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="document.getElementById('login-modal').classList.add('hidden')">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-center text-purple-700">Connexion</h2>
+            <div id="login-error" class="text-red-500 mb-4 hidden"></div>
+            <form id="login-form" class="space-y-4" action="{% url 'comptes:login' %}" method="post">
+                {% csrf_token %}
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                    <input type="password" name="password" id="password" placeholder="Mot de passe" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white py-3 rounded-md hover:from-purple-700 hover:to-purple-900 transition">Se connecter</button>
+            </form>
+            <p class="mt-4 text-sm text-center text-gray-700">Pas encore inscrit ? <a href="#" data-modal-target="signup-modal" onclick="switchModals('login-modal', 'signup-modal')" class="text-purple-700 hover:underline">Créer un compte</a></p>
+        </div>
+    </div>
+
+    <!-- Modal Inscription -->
+    <div id="signup-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center bg-black bg-opacity-50">
+        <div class="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-xl relative">
+            <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="document.getElementById('signup-modal').classList.add('hidden')">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-center text-purple-700">Créer un compte</h2>
+            <div id="signup-error" class="text-red-500 mb-4 hidden"></div>
+            <form id="signup-form" class="space-y-4" action="{% url 'comptes:signup' %}" method="post">
+                {% csrf_token %}
+                <div>
+                    <label for="full_name" class="block text-sm font-medium text-gray-700">Nom complet</label>
+                    <input type="text" name="full_name" id="full_name" placeholder="Nom complet" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                    <input type="password" name="password" id="password" placeholder="Mot de passe" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <div>
+                    <label for="password2" class="block text-sm font-medium text-gray-700">Confirmer mot de passe</label>
+                    <input type="password" name="password2" id="password2" placeholder="Confirmer mot de passe" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white py-3 rounded-md hover:from-purple-700 hover:to-purple-900 transition">S'inscrire</button>
+            </form>
+            <p class="mt-4 text-sm text-center text-gray-700">Déjà un compte ? <a href="#" data-modal-target="login-modal" onclick="switchModals('signup-modal', 'login-modal')" class="text-purple-700 hover:underline">Connexion</a></p>
+        </div>
+    </div>
+
+    <!-- Toast Manager (simple implémentation basée sur Tailwind) -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg transition-opacity duration-300 opacity-0">
+        <span id="toast-message"></span>
+    </div>
+
+   <script src="{% static 'js/toast_manager.js' %}"></script>
+    <script>
+        // Ouvrir modals
+        document.querySelectorAll('[data-modal-target]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-modal-target');
+                document.getElementById(target).classList.remove('hidden');
+            });
+        });
+
+        // Switch entre modals
+        function switchModals(closeId, openId) {
+            document.getElementById(closeId).classList.add('hidden');
+            document.getElementById(openId).classList.remove('hidden');
+        }
+
+        // Soumission AJAX pour login
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            // Débogage : afficher les données envoyées
+            for (let [key, value] of formData.entries()) {
+                console.log(`Champ ${key}: ${value}`);
+            }
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.toastManager.buildToast()
+                        .setMessage('Connexion réussie !')
+                        .setType('success')
+                        .setPosition('top-right')
+                        .setDuration(4000)
+                        .show();
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || '/dashboard/';
+                    }, 1000); // Attendre 1 seconde pour montrer le toast
+                } else {
+                    window.toastManager.buildToast()
+                        .setMessage(data.error || 'Une erreur est survenue.')
+                        .setType('error')
+                        .setPosition('top-right')
+                        .setDuration(4000)
+                        .show();
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la soumission:', error);
+                window.toastManager.buildToast()
+                    .setMessage('Erreur de connexion au serveur.')
+                    .setType('error')
+                    .setPosition('top-right')
+                    .setDuration(4000)
+                    .show();
+            });
+        });
+
+        // Soumission AJAX pour signup
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            // Débogage : afficher les données envoyées
+            for (let [key, value] of formData.entries()) {
+                console.log(`Champ ${key}: ${value}`);
+            }
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    window.toastManager.buildToast()
+                        .setMessage('Inscription réussie ! Veuillez vous connecter.')
+                        .setType('success')
+                        .setPosition('top-right')
+                        .setDuration(4000)
+                        .show();
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || '/login/';
+                    }, 1000); // Attendre 1 seconde pour montrer le toast
+                } else {
+                    window.toastManager.buildToast()
+                        .setMessage(data.error || 'Une erreur est survenue.')
+                        .setType('error')
+                        .setPosition('top-right')
+                        .setDuration(4000)
+                        .show();
+                }
+            })
+            .catch(error => {
+                console.error('Erreur lors de la soumission:', error);
+                window.toastManager.buildToast()
+                    .setMessage('Erreur de connexion au serveur.')
+                    .setType('error')
+                    .setPosition('top-right')
+                    .setDuration(4000)
+                    .show();
+            });
+        });
+    </script>
+</nav>

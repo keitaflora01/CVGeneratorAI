@@ -1,0 +1,68 @@
+<footer class="bg-slate-900 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid md:grid-cols-4 gap-8">
+            <!-- Logo et Description -->
+            <div class="md:col-span-2">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-robot text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold gradient-text">CVBot</span>
+                </div>
+                <p class="text-slate-300 mb-6 max-w-md">
+                    Votre partenaire IA pour créer des CV et lettres de motivation professionnels.
+                </p>
+                
+                <!-- Réseaux Sociaux -->
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-colors group">
+                        <i class="fab fa-whatsapp text-primary-400 group-hover:text-primary-300"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-colors group">
+                        <i class="fab fa-facebook text-primary-400 group-hover:text-primary-300"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-colors group">
+                        <i class="fab fa-instagram text-primary-400 group-hover:text-primary-300"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-colors group">
+                        <i class="fab fa-twitter text-primary-400 group-hover:text-primary-300"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Services -->
+            <div>
+                <h3 class="text-white font-semibold mb-4">Services</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-slate-300 hover:text-primary-400 transition-colors">Générateur CV</a></li>
+                    <li><a href="#" class="text-slate-300 hover:text-primary-400 transition-colors">Lettres de Motivation</a></li>
+                    <li><a href="#" class="text-slate-300 hover:text-primary-400 transition-colors">Optimisation ATS</a></li>
+                    <li><a href="#" class="text-slate-300 hover:text-primary-400 transition-colors">Conseils Carrière</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact & Compte -->
+            <div>
+                <h3 class="text-white font-semibold mb-4">Mon Compte</h3>
+                <ul class="space-y-2 mb-6">
+                    <li><a href="{% url 'comptes:login' %}" class="text-slate-300 hover:text-primary-400 transition-colors flex items-center"><i class="fas fa-user-circle mr-2"></i>Connexion</a></li>
+                    <li><a href="{% url 'comptes:signup' %}" class="text-slate-300 hover:text-primary-400 transition-colors flex items-center"><i class="fas fa-user-plus mr-2"></i>Inscription</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="border-t border-slate-800 mt-8 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="text-slate-400 text-sm mb-4 md:mb-0">
+                    © 2025 CVBot. Tous droits réservés. Fait avec ❤️ pour votre carrière.
+                </div>
+                <div class="flex space-x-6 text-sm">
+                    <a href="#" class="text-slate-400 hover:text-primary-400 transition-colors">Confidentialité</a>
+                    <a href="#" class="text-slate-400 hover:text-primary-400 transition-colors">Conditions</a>
+                    <a href="#" class="text-slate-400 hover:text-primary-400 transition-colors">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

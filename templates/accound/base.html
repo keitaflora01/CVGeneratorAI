@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CVBot - Générateur IA de CV{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        secondary: {
+                            50: '#faf6ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen bg-slate-900 text-slate-100">
+    {% include "accound/includes/navbar.html" %}
+    {% if messages %}
+<div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2">
+    {% for message in messages %}
+    <div class="px-4 py-3 rounded-lg shadow-lg text-white bg-green-600 animate-slide-in">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+<script>
+    setTimeout(() => {
+        document.getElementById("toast-container").style.display = "none";
+    }, 4000);
+</script>
+{% endif %}
+    
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    {% include "accound/includes/footer.html" %}
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

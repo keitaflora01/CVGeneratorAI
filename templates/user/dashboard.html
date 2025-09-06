@@ -1,0 +1,163 @@
+{% extends "user/base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <p class="text-sm font-medium text-gray-500">Documents générés</p>
+      <p class="text-3xl font-bold text-gray-900">{{ documents|length }}</p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <p class="text-sm font-medium text-gray-500">Taux de succès</p>
+      <p class="text-3xl font-bold text-green-600">
+        {% if documents_count > 0 %}
+          {{ success_rate }}%
+        {% else %}
+          0%
+        {% endif %}
+      </p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <p class="text-sm font-medium text-gray-500">Score moyen</p>
+      <p class="text-3xl font-bold text-blue-600">
+        {% if documents_count > 0 %}
+          {{ average_score }}
+        {% else %}
+          0
+        {% endif %}
+      </p>
+    </div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <p class="text-sm font-medium text-gray-500">En traitement</p>
+      <p class="text-3xl font-bold text-orange-600">{{ processing_count }}</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <form method="get" id="filterForm" class="flex flex-col lg:flex-row gap-4 mb-6">
+      <div class="flex-1 relative">
+        <input type="text" name="q" placeholder="Rechercher par titre, poste ou entreprise..." value="{{ q }}" class="w-full pl-4 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"/>
+      </div>
+
+      <div class="relative">
+        <select name="type" class="pl-3 pr-8 py-3 border border-gray-300 rounded-lg bg-white">
+          <option value="tous" {% if type_filter == 'tous' %}selected{% endif %}>Tous les types</option>
+          <option value="CV" {% if type_filter == 'CV' %}selected{% endif %}>CVs seulement</option>
+          <option value="LM" {% if type_filter == 'LM' %}selected{% endif %}>Lettres seulement</option>
+        </select>
+      </div>
+
+      <div class="flex gap-2">
+        <a href="{% url 'comptes:generate' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          Nouveau document
+        </a>
+        <button type="submit" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Rechercher</button>
+      </div>
+    </form>
+
+    <!-- Documents List -->
+    <div class="space-y-4">
+      {% if documents %}
+        {% for doc in documents %}
+          <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
+            <div class="flex items-start justify-between mb-4">
+              <div class="flex items-start gap-4">
+                <div class="p-2 rounded-lg {% if doc.type == 'CV' %}bg-blue-50 text-blue-600{% else %}bg-purple-50 text-purple-600{% endif %}">
+                  <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ doc.titre }}</h3>
+                  <p class="text-gray-600 mb-2">{{ doc.poste }}</p>
+                  <p class="text-sm text-gray-500">{{ doc.entreprise }} • {{ doc.date_creation|date:"d/m/Y H:i" }}</p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <div class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium {% if doc.statut == 'completed' %}text-green-600 bg-green-100{% elif doc.statut == 'processing' %}text-blue-600 bg-blue-100{% else %}text-red-600 bg-red-100{% endif %}">
+                    {% if doc.statut == 'completed' %}Terminé{% elif doc.statut == 'processing' %}En cours{% else %}Erreur{% endif %}
+                  </div>
+                  <div class="text-sm text-gray-500 mt-1">Score: {{ doc.score }}%</div>
+                </div>
+
+                <div class="flex gap-1">
+                  <a href="{% url 'Agent:document_detail' document_id=doc.id %}" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Voir les détails">👁️</a>
+                  <a href="#" class="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg">✏️</a>
+                  <a href="#" class="p-2 text-gray-500 hover:text-purple-600 hover:bg-purple-50 rounded-lg">📄</a>
+                  <a href="{% url 'Agent:download_document' document_id=doc.id %}" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg">⬇️</a>
+                  <button data-id="{{ doc.id }}" class="delete-btn p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">🗑️</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Steps summary -->
+            <div class="border-t pt-4">
+              <div class="grid grid-cols-4 lg:grid-cols-8 gap-2">
+                {% for step in doc.etapes %}
+                  <div class="flex flex-col items-center">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1 {% if step.statut == 'completed' %}bg-green-100{% elif step.statut == 'processing' %}bg-blue-100{% elif step.statut == 'error' %}bg-red-100{% else %}bg-gray-100{% endif %}">
+                      {% if step.statut == 'completed' %}
+                        ✅
+                      {% elif step.statut == 'processing' %}
+                        ⏳
+                      {% elif step.statut == 'error' %}
+                        ⚠️
+                      {% else %}
+                        ⌛
+                      {% endif %}
+                    </div>
+                    <span class="text-xs text-gray-500 text-center">{{ step.nom|slice:":10" }}</span>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="text-center py-12">
+          <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 7h18M3 12h18M3 17h18" stroke-width="1.5"/></svg>
+          <h3 class="text-lg font-medium text-gray-900 mb-2">Aucun document trouvé</h3>
+          <p class="text-gray-500 mb-6">{% if documents_count == 0 %}Commencez par créer votre premier document avec l'IA.{% else %}Aucun document ne correspond à vos critères de recherche.{% endif %}</p>
+          <a href="{% url 'comptes:generate' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg">➕ Créer un document</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Document detail modal container (rempli par JS) -->
+<div id="detailModalRoot"></div>
+
+<script>
+// JavaScript pour la suppression et autres interactions
+document.addEventListener('DOMContentLoaded', function() {
+  // Gestion de la suppression
+  document.querySelectorAll('.delete-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      const documentId = this.getAttribute('data-id');
+      if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) {
+        fetch(`/api/document/${documentId}/delete/`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            location.reload();
+          } else {
+            alert('Erreur lors de la suppression');
+          }
+        });
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

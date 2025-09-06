@@ -1,0 +1,114 @@
+{% extends "user/base.html" %}
+{% block title %}Générateur IA{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="p-2 bg-blue-50 rounded-lg">✨</div>
+      <h2 class="text-2xl font-bold text-gray-900">Générateur IA - Processus MVP</h2>
+    </div>
+
+    <!-- Affichage des messages d'erreur -->
+    {% if error %}
+      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+        {{ error }}
+      </div>
+    {% endif %}
+
+    <!-- CORRECTION : Retirer l'attribut action ou utiliser le bon nom d'URL -->
+    <form method="post" action="{% url 'Agent:generate_document' %}" id="generatorForm" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Type de document</label>
+            <select name="documentType" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white" onchange="toggleImageField()">
+              <option value="CV">Curriculum Vitae (CV)</option>
+              <option value="LM">Lettre de Motivation</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Poste ciblé</label>
+            <input type="text" name="targetRole" placeholder="Ex: Développeur Full Stack Senior" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Entreprise cible</label>
+            <input type="text" name="company" placeholder="Ex: TechCorp Solutions" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Mots-clés importants</label>
+            <input type="text" name="keywords" placeholder="React, Node.js, Agile..." class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Ton du document</label>
+            <select name="tone" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
+              <option value="professionnel">Professionnel</option>
+              <option value="dynamique">Dynamique</option>
+              <option value="corporate">Corporate</option>
+              <option value="startup">Startup</option>
+            </select>
+          </div>
+          <div id="imageField" style="display: none;">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Photo professionnelle (CV seulement)</label>
+            <input type="file" name="cv_image" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+            <p class="text-xs text-gray-500 mt-1">Format recommandé: JPEG ou PNG, max 2MB</p>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Offre d'emploi / Description</label>
+          <textarea name="jobDescription" rows="10" placeholder="Collez ici l'offre d'emploi..." class="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none" required></textarea>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end gap-3">
+        <!-- CORRECTION : Utiliser le bon namespace -->
+        <a href="{% url 'comptes:dashboard' %}" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg">Annuler</a>
+        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg" id="generateButton">Générer le document</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Section: Processus en cours (si 'generating' en session) -->
+  {% if generating %}
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-6">Processus MVP en cours</h3>
+      <p class="text-gray-600">Génération en cours — simulation côté serveur (1-2s)</p>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+function toggleImageField() {
+  const documentType = document.querySelector('select[name="documentType"]').value;
+  const imageField = document.getElementById('imageField');
+  
+  if (documentType === 'CV') {
+    imageField.style.display = 'block';
+  } else {
+    imageField.style.display = 'none';
+  }
+}
+
+// Validation côté client avant soumission
+document.getElementById('generatorForm').addEventListener('submit', function(event) {
+  const targetRole = document.querySelector('input[name="targetRole"]').value;
+  const jobDescription = document.querySelector('textarea[name="jobDescription"]').value;
+  const button = document.getElementById('generateButton');
+  
+  if (!targetRole || !jobDescription) {
+    event.preventDefault();
+    alert('Le poste ciblé et la description sont obligatoires');
+    return;
+  }
+  
+  // Indicateur de chargement
+  button.disabled = true;
+  button.innerText = 'Génération en cours...';
+});
+
+// Initialiser l'état du champ image
+document.addEventListener('DOMContentLoaded', toggleImageField);
+</script>
+{% endblock %}
