@@ -1,0 +1,67 @@
+# ---- Python / Django ----
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+*.manifest
+*.spec
+*.log
+*.pot
+*.pyc
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+
+# Django stuff
+*.sqlite3
+db.sqlite3
+media/
+staticfiles/  # Django's collectstatic output
+*.mo
+
+# IDE / Editor configs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# ---- Node / NPM ----
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+.pnp/
+.pnp.js
+
+# Build outputs
+dist/
+build/
+.cache/
+.next/
+out/
+coverage/
+
+# Environment files (don’t push secrets)
+.env
+.env.local
+.env.*.local
+
+# ---- Logs ----
+*.log
+logs/
+*.out
+*.err
+
+# ---- Other ----
+*.bak
+*.tmp
