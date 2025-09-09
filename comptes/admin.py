@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from comptes.models import CustomUser
+from comptes.models import User
 
 # Register your models here.
 class CustomUserAdmin(UserAdmin):
-    model = CustomUser
+    model = User
     list_display = ['email', 'full_name', 'is_active', 'is_staff']
     list_filter = ['is_active', 'is_staff']
     fieldsets = (
@@ -22,4 +22,4 @@ class CustomUserAdmin(UserAdmin):
     ordering = ['email']
     filter_horizontal = ('groups', 'user_permissions',)
 
-admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(User, CustomUserAdmin)

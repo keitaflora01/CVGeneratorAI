@@ -32,6 +32,7 @@ except UndefinedValueError as e:
     logger.error(f"Missing environment variable: {str(e)}")
     raise Exception(f"Missing environment variable: {str(e)}")
 
+
 @csrf_exempt
 def generate_document(request):
     """Generate CV or Letter of Motivation using Gemini and Tavily APIs"""
@@ -42,12 +43,18 @@ def generate_document(request):
             logger.debug(f"POST Data: {request.POST.dict()}")
             logger.debug(f"Files: {request.FILES}")
 
+            # Extract form data, including new fields
             target_role = request.POST.get('targetRole', '').strip()
             company = request.POST.get('company', '').strip()
             keywords = request.POST.get('keywords', '').strip()
             tone = request.POST.get('tone', 'professionnel')
             job_description = request.POST.get('jobDescription', '').strip()
             document_type = request.POST.get('documentType', 'CV')
+            linkedin_url = request.POST.get('linkedin_url', '').strip()
+            github_url = request.POST.get('github_url', '').strip()
+            telephone = request.POST.get('telephone', '').strip()
+            langue = request.POST.get('langue', 'fr')
+            template_utilise = request.POST.get('template_utilise', 'default')
             skills = [skill.strip() for skill in request.POST.get('skills', '').split(',') if skill.strip()]
             try:
                 experiences = json.loads(request.POST.get('experiences', '[]'))
@@ -64,23 +71,57 @@ def generate_document(request):
                     'error': 'Target role and job description are required'
                 })
 
-            # Create document record
+            # Create or update document record
             user = request.user if request.user.is_authenticated else None
             logger.info(f"Creating document for user: {user.email if user else 'Anonymous'}")
-            document = Document.objects.create(
-                user=user,
-                type=document_type,
-                titre=f"{document_type} for {target_role}",
-                poste=target_role,
-                entreprise=company,
-                statut='processing',
-                metadata={
+            doc_id = request.POST.get('doc_id')
+            if doc_id:
+                document = get_object_or_404(Document, id=doc_id, user=user)
+                document.type = document_type
+                document.titre = f"{document_type} for {target_role}"
+                document.poste = target_role
+                document.entreprise = company
+                document.linkedin_url = linkedin_url
+                document.github_url = github_url
+                document.telephone = telephone
+                document.langue = langue
+                document.template_utilise = template_utilise
+                document.statut = 'processing'
+                document.metadata = {
                     'keywords': keywords,
                     'tone': tone,
-                    'job_description_preview': job_description[:100] + '...' if job_description else ''
+                    'job_description_preview': job_description[:100] + '...' if job_description else '',
+                    'linkedin_url': linkedin_url,
+                    'github_url': github_url,
+                    'telephone': telephone,
+                    'langue': langue,
+                    'template_utilise': template_utilise
                 }
-            )
-            logger.info(f"Document created with ID: {document.id}")
+            else:
+                document = Document.objects.create(
+                    user=user,
+                    type=document_type,
+                    titre=f"{document_type} for {target_role}",
+                    poste=target_role,
+                    entreprise=company,
+                    linkedin_url=linkedin_url,
+                    github_url=github_url,
+                    telephone=telephone,
+                    langue=langue,
+                    template_utilise=template_utilise,
+                    statut='processing',
+                    metadata={
+                        'keywords': keywords,
+                        'tone': tone,
+                        'job_description_preview': job_description[:100] + '...' if job_description else '',
+                        'linkedin_url': linkedin_url,
+                        'github_url': github_url,
+                        'telephone': telephone,
+                        'langue': langue,
+                        'template_utilise': template_utilise
+                    }
+                )
+            logger.info(f"Document {'updated' if doc_id else 'created'} with ID: {document.id}")
 
             # Handle CV image
             if 'cv_image' in request.FILES and document_type == 'CV':
@@ -100,6 +141,7 @@ def generate_document(request):
                 logger.info("CV image saved successfully")
 
             # Create processing steps
+            EtapeTraitement.objects.filter(document=document).delete()
             etapes_data = [
                 {"nom": "Job offer analysis", "ordre": 1},
                 {"nom": "Profile adaptation", "ordre": 2},
@@ -127,14 +169,17 @@ def generate_document(request):
 
             # Prepare prompt based on document type
             user_data = {
-                'name': user.full_name if user and user.is_authenticated and hasattr(user, 'full_name') and user.full_name else user.email if user and user.is_authenticated else 'Anonymous',
+                'name': user.full_name if user and user.is_authenticated and hasattr(user, 'full_name') and user.full_name else user.full_name if user and user.is_authenticated else 'Anonymous',
                 'email': user.email if user and user.is_authenticated else 'N/A',
+                'linkedin_url': linkedin_url,
+                'github_url': github_url,
+                'telephone': telephone,
                 'skills': skills,
                 'experiences': experiences,
                 'education': education
             }
             logger.debug(f"User data for prompt: {user_data}")
-            prompt = _get_prompt(document_type, target_role, company, keywords, tone, job_description, user_data, context)
+            prompt = _get_prompt(document_type, target_role, company, keywords, tone, job_description, user_data, context, langue, template_utilise)
             logger.debug(f"Generated prompt: {prompt[:200]}...")
 
             # Generate content using Gemini API
@@ -174,12 +219,50 @@ def generate_document(request):
             })
 
     elif request.method == 'GET':
+        context = {}
+        doc_id = request.GET.get('doc_id')
+        if doc_id:
+            document = get_object_or_404(Document, id=doc_id, user=request.user)
+            context.update({
+                'document': document,
+                'targetRole': document.poste,
+                'company': document.entreprise,
+                'keywords': document.metadata.get('keywords', ''),
+                'tone': document.metadata.get('tone', 'professionnel'),
+                'jobDescription': document.metadata.get('job_description_preview', '')[:100],
+                'documentType': document.type,
+                'linkedin_url': document.linkedin_url,
+                'github_url': document.github_url,
+                'telephone': document.telephone,
+                'langue': document.langue,
+                'template_utilise': document.template_utilise,
+                'skills': ', '.join(json.loads(document.metadata.get('skills', '[]'))),
+                'experiences': json.loads(document.metadata.get('experiences', '[]')),
+                'education': json.loads(document.metadata.get('education', '[]')),
+            })
         logger.info("Rendering generate.html for GET request")
-        return render(request, 'user/generate.html')
+        return render(request, 'user/generate.html', context)
     
     else:
         logger.warning(f"Method {request.method} not allowed for /agent/generate/")
         return HttpResponse(status=405, content="Method Not Allowed")
+
+@csrf_exempt
+@login_required
+def delete_document(request, document_id):
+    """API to delete a document"""
+    logger.info(f"Deleting document {document_id} for user {request.user.email}")
+    if request.method == 'DELETE':
+        document = get_object_or_404(Document, id=document_id, user=request.user)
+        try:
+            document.delete()
+            logger.info(f"Document {document_id} deleted successfully")
+            return JsonResponse({'success': True, 'message': 'Document deleted'})
+        except Exception as e:
+            logger.error(f"Error deleting document {document_id}: {str(e)}")
+            return JsonResponse({'success': False, 'error': str(e)})
+    logger.warning(f"Method {request.method} not allowed for delete document")
+    return JsonResponse({'success': False, 'error': 'Method not allowed'})
 
 @csrf_exempt
 def test_post_endpoint(request):
@@ -195,34 +278,41 @@ def test_post_endpoint(request):
         logger.warning(f"Method {request.method} not allowed for test_post_endpoint")
         return HttpResponse(status=405, content="Method Not Allowed")
 
-def _get_prompt(document_type, target_role, company, keywords, tone, job_description, user_data, context):
+
+def _get_prompt(document_type, target_role, company, keywords, tone, job_description, user_data, context, langue, template_utilise):
     """Generate prompt for CV or LM"""
     logger.debug(f"Generating prompt for {document_type}")
     if document_type == 'CV':
         prompt = f"""
-        Generate a professional CV for a {target_role} position at {company}. 
-        Use a {tone} tone. Incorporate the following details:
-        - User: {user_data.get('name', 'Anonymous')}
+        Generate a professional CV in {langue} for a {target_role} position at {company}. 
+        Use a {tone} tone and the {template_utilise} template style. Incorporate the following details:
+        - Name: {user_data.get('name', 'Anonymous')}
         - Email: {user_data.get('email', 'N/A')}
+        - LinkedIn: {user_data.get('linkedin_url', 'N/A')}
+        - GitHub: {user_data.get('github_url', 'N/A')}
+        - Telephone: {user_data.get('telephone', 'N/A')}
         - Skills: {', '.join(user_data.get('skills', [])) + ', ' + keywords if keywords else ', '.join(user_data.get('skills', []))}
         - Experiences: {json.dumps(user_data.get('experiences', []))}
         - Education: {json.dumps(user_data.get('education', []))}
         - Job Description: {job_description}
         - Additional Context: {context}
-        Format the CV in markdown with clear sections for Personal Information, Skills, Professional Experience, and Education. Ensure the content is tailored to the job description and company.
+        Format the CV in markdown with clear sections for Personal Information (including LinkedIn, GitHub, and Telephone), Skills, Professional Experience, and Education. Ensure the content is tailored to the job description and company.
         """
     else:  # LM
         prompt = f"""
-        Generate a professional Letter of Motivation for a {target_role} position at {company}. 
-        Use a {tone} tone. Incorporate the following details:
-        - User: {user_data.get('name', 'Anonymous')}
+        Generate a professional Letter of Motivation in {langue} for a {target_role} position at {company}. 
+        Use a {tone} tone and the {template_utilise} template style. Incorporate the following details:
+        - Name: {user_data.get('name', 'Anonymous')}
         - Email: {user_data.get('email', 'N/A')}
+        - LinkedIn: {user_data.get('linkedin_url', 'N/A')}
+        - GitHub: {user_data.get('github_url', 'N/A')}
+        - Telephone: {user_data.get('telephone', 'N/A')}
         - Skills: {', '.join(user_data.get('skills', [])) + ', ' + keywords if keywords else ', '.join(user_data.get('skills', []))}
         - Experiences: {json.dumps(user_data.get('experiences', []))}
         - Education: {json.dumps(user_data.get('education', []))}
         - Job Description: {job_description}
         - Additional Context: {context}
-        Address the letter to the hiring manager at {company}. Highlight relevant skills and experiences, and explain why the candidate is a good fit for the role and company culture. Format the letter in markdown with a formal greeting, body (3-4 paragraphs), and closing.
+        Address the letter to the hiring manager at {company}. Highlight relevant skills and experiences, and explain why the candidate is a good fit for the role and company culture. Include contact information (LinkedIn, GitHub, Telephone) in the closing section. Format the letter in markdown with a formal greeting, body (3-4 paragraphs), and closing.
         """
     logger.debug(f"Prompt generated: {prompt[:200]}...")
     return prompt

@@ -1,4 +1,5 @@
 {% extends "user/base.html" %}
+{% load static %}
 {% block title %}Générateur IA{% endblock %}
 
 {% block content %}
@@ -18,64 +19,107 @@
 
     <form method="post" action="{% url 'Agent:generate_document' %}" id="generatorForm" enctype="multipart/form-data">
       {% csrf_token %}
+      {% if document %}
+        <input type="hidden" name="doc_id" value="{{ document.id }}">
+      {% endif %}
       <div class="grid lg:grid-cols-2 gap-6">
         <div class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Type de document</label>
             <select name="documentType" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white" onchange="toggleImageField()">
-              <option value="CV">Curriculum Vitae (CV)</option>
-              <option value="LM">Lettre de Motivation</option>
+              <option value="CV" {% if documentType == 'CV' %}selected{% endif %}>Curriculum Vitae (CV)</option>
+              <option value="LM" {% if documentType == 'LM' %}selected{% endif %}>Lettre de Motivation</option>
             </select>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Poste ciblé</label>
-            <input type="text" name="targetRole" placeholder="Ex: Développeur Full Stack Senior" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required/>
+            <input type="text" name="targetRole" placeholder="Ex: Développeur Full Stack Senior" value="{{ targetRole|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg" required/>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Entreprise cible</label>
-            <input type="text" name="company" placeholder="Ex: TechCorp Solutions" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+            <input type="text" name="company" placeholder="Ex: TechCorp Solutions" value="{{ company|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">LinkedIn URL</label>
+            <input type="url" name="linkedin_url" placeholder="Ex: https://linkedin.com/in/username" value="{{ linkedin_url|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">GitHub URL</label>
+            <input type="url" name="github_url" placeholder="Ex: https://github.com/username" value="{{ github_url|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Téléphone</label>
+            <input type="text" name="telephone" placeholder="Ex: +33 6 12 34 56 78" value="{{ telephone|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Langue</label>
+            <select name="langue" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
+              <option value="fr" {% if langue == 'fr' %}selected{% endif %}>Français</option>
+              <option value="en" {% if langue == 'en' %}selected{% endif %}>Anglais</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Template utilisé</label>
+            <input type="text" name="template_utilise" placeholder="Ex: default, modern, classic" value="{{ template_utilise|default:'default' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Mots-clés importants</label>
-            <input type="text" name="keywords" placeholder="React, Node.js, Agile..." class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+            <input type="text" name="keywords" placeholder="React, Node.js, Agile..." value="{{ keywords|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Compétences (séparées par des virgules)</label>
-            <input type="text" name="skills" placeholder="Python, Django, JavaScript..." class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+            <input type="text" name="skills" placeholder="Python, Django, JavaScript..." value="{{ skills|default:'' }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Expériences professionnelles</label>
             <div id="experienceFields" class="space-y-2">
-              <div class="experience-entry border border-gray-200 p-4 rounded-lg">
-                <input type="text" name="exp_title_0" placeholder="Titre du poste" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
-                <input type="text" name="exp_company_0" placeholder="Entreprise" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
-                <input type="text" name="exp_duration_0" placeholder="Durée (ex: 2020 - Présent)" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
-                <textarea name="exp_description_0" placeholder="Description des responsabilités" class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
-              </div>
+              {% for exp in experiences %}
+                <div class="experience-entry border border-gray-200 p-4 rounded-lg">
+                  <input type="text" name="exp_title_{{ forloop.counter0 }}" placeholder="Titre du poste" value="{{ exp.title }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="exp_company_{{ forloop.counter0 }}" placeholder="Entreprise" value="{{ exp.company }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="exp_duration_{{ forloop.counter0 }}" placeholder="Durée (ex: 2020 - Présent)" value="{{ exp.duration }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <textarea name="exp_description_{{ forloop.counter0 }}" placeholder="Description des responsabilités" class="w-full px-3 py-2 border border-gray-300 rounded-lg">{{ exp.description }}</textarea>
+                </div>
+              {% empty %}
+                <div class="experience-entry border border-gray-200 p-4 rounded-lg">
+                  <input type="text" name="exp_title_0" placeholder="Titre du poste" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="exp_company_0" placeholder="Entreprise" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="exp_duration_0" placeholder="Durée (ex: 2020 - Présent)" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <textarea name="exp_description_0" placeholder="Description des responsabilités" class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+                </div>
+              {% endfor %}
             </div>
             <button type="button" onclick="addExperienceField()" class="mt-2 text-blue-600 hover:underline">+ Ajouter une expérience</button>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Formation</label>
             <div id="educationFields" class="space-y-2">
-              <div class="education-entry border border-gray-200 p-4 rounded-lg">
-                <input type="text" name="edu_degree_0" placeholder="Diplôme" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
-                <input type="text" name="edu_school_0" placeholder="Établissement" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
-                <input type="text" name="edu_year_0" placeholder="Année (ex: 2020)" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
-              </div>
+              {% for edu in education %}
+                <div class="education-entry border border-gray-200 p-4 rounded-lg">
+                  <input type="text" name="edu_degree_{{ forloop.counter0 }}" placeholder="Diplôme" value="{{ edu.degree }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="edu_school_{{ forloop.counter0 }}" placeholder="Établissement" value="{{ edu.school }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="edu_year_{{ forloop.counter0 }}" placeholder="Année (ex: 2020)" value="{{ edu.year }}" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+                </div>
+              {% empty %}
+                <div class="education-entry border border-gray-200 p-4 rounded-lg">
+                  <input type="text" name="edu_degree_0" placeholder="Diplôme" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="edu_school_0" placeholder="Établissement" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                  <input type="text" name="edu_year_0" placeholder="Année (ex: 2020)" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+                </div>
+              {% endfor %}
             </div>
             <button type="button" onclick="addEducationField()" class="mt-2 text-blue-600 hover:underline">+ Ajouter une formation</button>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Ton du document</label>
             <select name="tone" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
-              <option value="professionnel">Professionnel</option>
-              <option value="dynamique">Dynamique</option>
-              <option value="corporate">Corporate</option>
-              <option value="startup">Startup</option>
+              <option value="professionnel" {% if tone == 'professionnel' %}selected{% endif %}>Professionnel</option>
+              <option value="dynamique" {% if tone == 'dynamique' %}selected{% endif %}>Dynamique</option>
+              <option value="corporate" {% if tone == 'corporate' %}selected{% endif %}>Corporate</option>
+              <option value="startup" {% if tone == 'startup' %}selected{% endif %}>Startup</option>
             </select>
           </div>
-          <div id="imageField" style="display: none;">
+          <div id="imageField" style="display: {% if documentType == 'CV' %}block{% else %}none{% endif %}">
             <label class="block text-sm font-medium text-gray-700 mb-2">Photo professionnelle (CV seulement)</label>
             <input type="file" name="cv_image" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
             <p class="text-xs text-gray-500 mt-1">Format recommandé: JPEG ou PNG, max 2MB</p>
@@ -84,13 +128,13 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">Offre d'emploi / Description</label>
-          <textarea name="jobDescription" rows="10" placeholder="Collez ici l'offre d'emploi..." class="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none" required></textarea>
+          <textarea name="jobDescription" rows="10" placeholder="Collez ici l'offre d'emploi..." class="w-full px-3 py-2 border border-gray-300 rounded-lg resize-none" required>{{ jobDescription|default:'' }}</textarea>
         </div>
       </div>
 
       <div class="mt-6 flex justify-end gap-3">
         <a href="{% url 'comptes:dashboard' %}" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg">Annuler</a>
-        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg" id="generateButton">Générer le document</button>
+        <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg" id="generateButton">{% if document %}Mettre à jour{% else %}Générer{% endif %} le document</button>
       </div>
     </form>
   </div>
@@ -104,6 +148,7 @@
   {% endif %}
 </div>
 
+<script src="{% static 'js/toast_manager.js' %}"></script>
 <script>
 function toggleImageField() {
   const documentType = document.querySelector('select[name="documentType"]').value;
@@ -112,7 +157,7 @@ function toggleImageField() {
   console.log('Document type changed:', documentType);
 }
 
-let experienceCount = 1;
+let experienceCount = {{ experiences|length|default:1 }};
 function addExperienceField() {
   const container = document.getElementById('experienceFields');
   const newEntry = document.createElement('div');
@@ -128,7 +173,7 @@ function addExperienceField() {
   console.log('Added experience field:', experienceCount);
 }
 
-let educationCount = 1;
+let educationCount = {{ education|length|default:1 }};
 function addEducationField() {
   const container = document.getElementById('educationFields');
   const newEntry = document.createElement('div');
@@ -160,7 +205,7 @@ document.getElementById('generatorForm').addEventListener('submit', function(eve
     console.error('Validation failed: Target role or job description missing');
     alert('Le poste ciblé et la description sont obligatoires');
     button.disabled = false;
-    button.innerText = 'Générer le document';
+    button.innerText = '{% if document %}Mettre à jour{% else %}Générer{% endif %} le document';
     return;
   }
 
@@ -207,7 +252,46 @@ document.getElementById('generatorForm').addEventListener('submit', function(eve
   button.disabled = true;
   button.innerText = 'Génération en cours...';
   console.log('Submitting form to:', form.action);
-  form.submit();
+
+  // Submit form via AJAX to handle success response
+  const formData = new FormData(form);
+  fetch(form.action, {
+    method: 'POST',
+    body: formData,
+    headers: {
+      'X-CSRFToken': csrfToken
+    }
+  })
+  .then(response => {
+    if (response.redirected) {
+      // Show success toast
+      toastManager.buildToast()
+        .setMessage('Document généré avec succès !')
+        .setType('success')
+        .setPosition('top-right')
+        .setDuration(4000)
+        .show();
+      // Redirect to the dashboard after a short delay to allow toast to be visible
+      setTimeout(() => {
+        window.location.href = response.url;
+      }, 2000);
+    } else {
+      return response.json().then(data => {
+        throw new Error(data.error || 'Erreur lors de la génération du document');
+      });
+    }
+  })
+  .catch(error => {
+    console.error('Form submission error:', error);
+    toastManager.buildToast()
+      .setMessage(error.message || 'Une erreur s\'est produite lors de la génération.')
+      .setType('error')
+      .setPosition('top-right')
+      .setDuration(4000)
+      .show();
+    button.disabled = false;
+    button.innerText = '{% if document %}Mettre à jour{% else %}Générer{% endif %} le document';
+  });
 });
 
 // Initialiser l'état du champ image

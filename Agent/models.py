@@ -20,11 +20,20 @@ class Document(models.Model):
         ('error', 'Erreur'),
     )
     
+    LANGUE_CHOICES = (
+        ('fr', 'Français'),
+        ('en', 'Anglais'),
+    )
+    
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     type = models.CharField(max_length=2, choices=DOCUMENT_TYPES)
     titre = models.CharField(max_length=255)
     poste = models.CharField(max_length=255)
     entreprise = models.CharField(max_length=255, blank=True)
+    linkedin_url = models.URLField(max_length=255, blank=True, null=True)
+    github_url = models.URLField(max_length=255, blank=True, null=True)
+    telephone = models.CharField(max_length=20, blank=True)
+    langue = models.CharField(max_length=2, choices=LANGUE_CHOICES, default='fr')
     date_creation = models.DateTimeField(auto_now_add=True)
     date_mise_a_jour = models.DateTimeField(auto_now=True)
     statut = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
@@ -48,6 +57,7 @@ class Document(models.Model):
         """Propriété pour accéder aux étapes dans les templates"""
         return self.etape_traitement_set.all().order_by('ordre')
 
+
 class EtapeTraitement(models.Model):
     STATUS_CHOICES = (
         ('pending', 'En attente'),
@@ -69,6 +79,7 @@ class EtapeTraitement(models.Model):
     
     def __str__(self):
         return f"{self.document.titre} - {self.nom}"
+
 
 class CVImage(models.Model):
     document = models.OneToOneField(Document, on_delete=models.CASCADE, related_name='cv_image')

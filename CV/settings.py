@@ -16,6 +16,7 @@ import os
 from pathlib import Path
 import os
 from decouple import Config
+from decouple import config
 
 
 GEMINI_API_KEY = Config('GEMINI_API_KEY')
@@ -103,8 +104,12 @@ DEFAULT_LLM_MAX_TOKENS = 2000
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST', default='localhost'),
+        'PORT': config('DB_PORT', default='5432'),
     }
 }
 
@@ -176,4 +181,4 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'comptes.CustomUser'
+AUTH_USER_MODEL = 'comptes.User'
