@@ -30,6 +30,13 @@ staticfiles/  # Django's collectstatic output
 *.swp
 *.swo
 
+# PyCharm specific
+*.iml
+*.iws
+.idea/
+out/
+__pycache__
+
 # OS generated
 .DS_Store
 Thumbs.db

@@ -16,7 +16,6 @@
       </div>
     {% endif %}
 
-    <!-- CORRECTION : Retirer l'attribut action ou utiliser le bon nom d'URL -->
     <form method="post" action="{% url 'Agent:generate_document' %}" id="generatorForm" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="grid lg:grid-cols-2 gap-6">
@@ -41,6 +40,33 @@
             <input type="text" name="keywords" placeholder="React, Node.js, Agile..." class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
           </div>
           <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Compétences (séparées par des virgules)</label>
+            <input type="text" name="skills" placeholder="Python, Django, JavaScript..." class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Expériences professionnelles</label>
+            <div id="experienceFields" class="space-y-2">
+              <div class="experience-entry border border-gray-200 p-4 rounded-lg">
+                <input type="text" name="exp_title_0" placeholder="Titre du poste" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                <input type="text" name="exp_company_0" placeholder="Entreprise" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                <input type="text" name="exp_duration_0" placeholder="Durée (ex: 2020 - Présent)" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                <textarea name="exp_description_0" placeholder="Description des responsabilités" class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+              </div>
+            </div>
+            <button type="button" onclick="addExperienceField()" class="mt-2 text-blue-600 hover:underline">+ Ajouter une expérience</button>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Formation</label>
+            <div id="educationFields" class="space-y-2">
+              <div class="education-entry border border-gray-200 p-4 rounded-lg">
+                <input type="text" name="edu_degree_0" placeholder="Diplôme" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                <input type="text" name="edu_school_0" placeholder="Établissement" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+                <input type="text" name="edu_year_0" placeholder="Année (ex: 2020)" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+              </div>
+            </div>
+            <button type="button" onclick="addEducationField()" class="mt-2 text-blue-600 hover:underline">+ Ajouter une formation</button>
+          </div>
+          <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">Ton du document</label>
             <select name="tone" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
               <option value="professionnel">Professionnel</option>
@@ -63,7 +89,6 @@
       </div>
 
       <div class="mt-6 flex justify-end gap-3">
-        <!-- CORRECTION : Utiliser le bon namespace -->
         <a href="{% url 'comptes:dashboard' %}" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg">Annuler</a>
         <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-lg" id="generateButton">Générer le document</button>
       </div>
@@ -83,32 +108,112 @@
 function toggleImageField() {
   const documentType = document.querySelector('select[name="documentType"]').value;
   const imageField = document.getElementById('imageField');
-  
-  if (documentType === 'CV') {
-    imageField.style.display = 'block';
-  } else {
-    imageField.style.display = 'none';
-  }
+  imageField.style.display = documentType === 'CV' ? 'block' : 'none';
+  console.log('Document type changed:', documentType);
 }
 
-// Validation côté client avant soumission
+let experienceCount = 1;
+function addExperienceField() {
+  const container = document.getElementById('experienceFields');
+  const newEntry = document.createElement('div');
+  newEntry.className = 'experience-entry border border-gray-200 p-4 rounded-lg';
+  newEntry.innerHTML = `
+    <input type="text" name="exp_title_${experienceCount}" placeholder="Titre du poste" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+    <input type="text" name="exp_company_${experienceCount}" placeholder="Entreprise" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+    <input type="text" name="exp_duration_${experienceCount}" placeholder="Durée (ex: 2020 - Présent)" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+    <textarea name="exp_description_${experienceCount}" placeholder="Description des responsabilités" class="w-full px-3 py-2 border border-gray-300 rounded-lg"></textarea>
+  `;
+  container.appendChild(newEntry);
+  experienceCount++;
+  console.log('Added experience field:', experienceCount);
+}
+
+let educationCount = 1;
+function addEducationField() {
+  const container = document.getElementById('educationFields');
+  const newEntry = document.createElement('div');
+  newEntry.className = 'education-entry border border-gray-200 p-4 rounded-lg';
+  newEntry.innerHTML = `
+    <input type="text" name="edu_degree_${educationCount}" placeholder="Diplôme" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+    <input type="text" name="edu_school_${educationCount}" placeholder="Établissement" class="w-full px-3 py-2 border border-gray-300 rounded-lg mb-2"/>
+    <input type="text" name="edu_year_${educationCount}" placeholder="Année (ex: 2020)" class="w-full px-3 py-2 border border-gray-300 rounded-lg"/>
+  `;
+  container.appendChild(newEntry);
+  educationCount++;
+  console.log('Added education field:', educationCount);
+}
+
 document.getElementById('generatorForm').addEventListener('submit', function(event) {
+  event.preventDefault();
   const targetRole = document.querySelector('input[name="targetRole"]').value;
   const jobDescription = document.querySelector('textarea[name="jobDescription"]').value;
   const button = document.getElementById('generateButton');
+  const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
   
+  console.log('Form submission started');
+  console.log('Target Role:', targetRole);
+  console.log('Job Description:', jobDescription);
+  console.log('CSRF Token:', csrfToken);
+  console.log('Form Action:', document.getElementById('generatorForm').action);
+
   if (!targetRole || !jobDescription) {
-    event.preventDefault();
+    console.error('Validation failed: Target role or job description missing');
     alert('Le poste ciblé et la description sont obligatoires');
+    button.disabled = false;
+    button.innerText = 'Générer le document';
     return;
   }
-  
+
+  // Collect experiences
+  const experiences = [];
+  document.querySelectorAll('.experience-entry').forEach((entry, index) => {
+    const title = entry.querySelector(`input[name="exp_title_${index}"]`).value;
+    const company = entry.querySelector(`input[name="exp_company_${index}"]`).value;
+    const duration = entry.querySelector(`input[name="exp_duration_${index}"]`).value;
+    const description = entry.querySelector(`textarea[name="exp_description_${index}"]`).value;
+    if (title || company || duration || description) {
+      experiences.push({ title, company, duration, description });
+    }
+  });
+  console.log('Experiences collected:', experiences);
+
+  // Collect education
+  const education = [];
+  document.querySelectorAll('.education-entry').forEach((entry, index) => {
+    const degree = entry.querySelector(`input[name="edu_degree_${index}"]`).value;
+    const school = entry.querySelector(`input[name="edu_school_${index}"]`).value;
+    const year = entry.querySelector(`input[name="edu_year_${index}"]`).value;
+    if (degree || school || year) {
+      education.push({ degree, school, year });
+    }
+  });
+  console.log('Education collected:', education);
+
+  // Add experiences and education as hidden inputs
+  const form = document.getElementById('generatorForm');
+  const expInput = document.createElement('input');
+  expInput.type = 'hidden';
+  expInput.name = 'experiences';
+  expInput.value = JSON.stringify(experiences);
+  form.appendChild(expInput);
+
+  const eduInput = document.createElement('input');
+  eduInput.type = 'hidden';
+  eduInput.name = 'education';
+  eduInput.value = JSON.stringify(education);
+  form.appendChild(eduInput);
+
   // Indicateur de chargement
   button.disabled = true;
   button.innerText = 'Génération en cours...';
+  console.log('Submitting form to:', form.action);
+  form.submit();
 });
 
 // Initialiser l'état du champ image
-document.addEventListener('DOMContentLoaded', toggleImageField);
+document.addEventListener('DOMContentLoaded', () => {
+  toggleImageField();
+  console.log('Form initialized');
+});
 </script>
 {% endblock %}

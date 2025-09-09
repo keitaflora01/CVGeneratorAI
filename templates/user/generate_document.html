@@ -105,7 +105,7 @@
   <!-- Actions -->
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
     <div class="flex justify-end gap-3">
-      <a href="{% url 'Agent:dashboard' %}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Retour</a>
+      <a href="{% url 'comptes:dashboard' %}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Retour</a>
       <a href="{% url 'Agent:download_document' document_id=document.id %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Télécharger</a>
       {% if document.type == 'CV' %}
       <button onclick="openImageUpload()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Changer la photo</button>

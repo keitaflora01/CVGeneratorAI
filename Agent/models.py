@@ -20,7 +20,6 @@ class Document(models.Model):
         ('error', 'Erreur'),
     )
     
-    # Utilisation de AUTH_USER_MODEL au lieu du modèle User direct
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     type = models.CharField(max_length=2, choices=DOCUMENT_TYPES)
     titre = models.CharField(max_length=255)
@@ -57,7 +56,7 @@ class EtapeTraitement(models.Model):
         ('error', 'Erreur'),
     )
     
-    document = models.ForeignKey(Document, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, related_name='etape_traitement_set')
     nom = models.CharField(max_length=100)
     ordre = models.IntegerField()
     statut = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
