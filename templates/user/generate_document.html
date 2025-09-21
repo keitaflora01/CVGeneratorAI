@@ -21,7 +21,14 @@
         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if document.statut == 'completed' %}text-green-600 bg-green-100{% elif document.statut == 'processing' %}text-blue-600 bg-blue-100{% else %}text-red-600 bg-red-100{% endif %}">
           {% if document.statut == 'completed' %}Terminé{% elif document.statut == 'processing' %}En cours{% else %}Erreur{% endif %}
         </span>
-        <a href="{% url 'Agent:download_document' document_id=document.id %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Télécharger</a>
+        <select id="exportFormat" class="px-4 py-2 border border-gray-300 rounded-lg">
+          <option value="pdf">PDF</option>
+          <option value="docx">Word (DOCX)</option>
+          <option value="txt">Texte (TXT)</option>
+          <option value="png">Image (PNG)</option>
+          <option value="jpg">Image (JPG)</option>
+        </select>
+        <button onclick="downloadDocument({{ document.id }})" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Télécharger</button>
       </div>
     </div>
 
@@ -106,7 +113,15 @@
   <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
     <div class="flex justify-end gap-3">
       <a href="{% url 'comptes:dashboard' %}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Retour</a>
-      <a href="{% url 'Agent:download_document' document_id=document.id %}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Télécharger</a>
+      <select id="exportFormat" class="px-4 py-2 border border-gray-300 rounded-lg">
+      <option value="pdf">PDF</option>
+      <option value="docx">Word (DOCX)</option>
+      <option value="txt">Texte (TXT)</option>
+      <option value="png">PNG</option>
+      <option value="jpg">JPG</option>
+    </select>
+      <a href="{% url 'Agent:generate_document' %}?doc_id={{ document.id }}" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Modifier</a>
+      <button onclick="openDeleteModal({{ document.id }})" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Supprimer</button>
       {% if document.type == 'CV' %}
       <button onclick="openImageUpload()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">Changer la photo</button>
       {% endif %}
@@ -129,7 +144,31 @@
     </form>
   </div>
 </div>
+{% endif %}
 
+<!-- Modal pour suppression -->
+<div id="deleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 w-full max-w-md">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirmer la suppression</h3>
+    <p class="text-gray-600 mb-6">Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.</p>
+    <form id="deleteForm">
+      {% csrf_token %}
+      <input type="hidden" name="document_id" id="deleteDocumentId">
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg">Annuler</button>
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg">Supprimer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+document.getElementById('exportFormat').addEventListener('change', function() {
+  const format = this.value;
+  const downloadLink = document.getElementById('downloadLink');
+  downloadLink.href = "{% url 'Agent:download_document' document_id=document.id %}?format=" + format;
+});
+</script>
 <script>
 function openImageUpload() {
   document.getElementById('imageUploadModal').classList.remove('hidden');
@@ -137,6 +176,20 @@ function openImageUpload() {
 
 function closeImageUpload() {
   document.getElementById('imageUploadModal').classList.add('hidden');
+}
+
+function openDeleteModal(documentId) {
+  document.getElementById('deleteDocumentId').value = documentId;
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.add('hidden');
+}
+
+function downloadDocument(documentId) {
+  const format = document.getElementById('exportFormat').value;
+  window.location.href = `/document/${documentId}/download/?format=${format}`;
 }
 
 document.getElementById('imageUploadForm').addEventListener('submit', function(e) {
@@ -154,16 +207,72 @@ document.getElementById('imageUploadForm').addEventListener('submit', function(e
   .then(response => response.json())
   .then(data => {
     if (data.success) {
-      alert('Photo mise à jour avec succès!');
-      location.reload();
+      toastManager.buildToast()
+        .setMessage('Photo mise à jour avec succès!')
+        .setType('success')
+        .setPosition('top-right')
+        .setDuration(4000)
+        .show();
+      setTimeout(() => location.reload(), 2000);
     } else {
-      alert('Erreur: ' + data.error);
+      toastManager.buildToast()
+        .setMessage('Erreur: ' + data.error)
+        .setType('error')
+        .setPosition('top-right')
+        .setDuration(4000)
+        .show();
     }
   })
   .catch(error => {
-    alert('Erreur lors de l\'upload');
+    toastManager.buildToast()
+      .setMessage('Erreur lors de l\'upload')
+      .setType('error')
+      .setPosition('top-right')
+      .setDuration(4000)
+      .show();
+  });
+});
+
+document.getElementById('deleteForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const documentId = document.getElementById('deleteDocumentId').value;
+  console.log(documentId)
+  
+  fetch(`/document/${documentId}/delete/`, {
+    method: 'DELETE',
+    headers: {
+      'X-CSRFToken': '{{ csrf_token }}',
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      toastManager.buildToast()
+        .setMessage('Document supprimé avec succès!')
+        .setType('success')
+        .setPosition('top-right')
+        .setDuration(4000)
+        .show();
+      setTimeout(() => window.location.href = "{% url 'comptes:dashboard' %}", 2000);
+    } else {
+      toastManager.buildToast()
+        .setMessage('Erreur: ' + data.error)
+        .setType('error')
+        .setPosition('top-right')
+        .setDuration(4000)
+        .show();
+    }
+  })
+  .catch(error => {
+    toastManager.buildToast()
+      .setMessage('Erreur réseau: ' + error.message)
+      .setType('error')
+      .setPosition('top-right')
+      .setDuration(4000)
+      .show();
   });
 });
 </script>
-{% endif %}
 {% endblock %}

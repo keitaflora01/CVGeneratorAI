@@ -1,7 +1,9 @@
 {% extends "user/base.html" %}
+{% load static %}
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
+{% csrf_token %}
 <div class="space-y-6">
   <!-- Stats -->
   <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -76,11 +78,18 @@
                   <div class="text-sm text-gray-500 mt-1">Score: {{ doc.score }}%</div>
                 </div>
 
-                <div class="flex gap-1">
+                <div class="flex gap-1 items-center">
                   <a href="{% url 'Agent:document_detail' document_id=doc.id %}" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Voir les détails">👁️</a>
                   <a href="{% url 'Agent:generate_document' %}?doc_id={{ doc.id }}" class="p-2 text-gray-500 hover:text-green-600 hover:bg-green-50 rounded-lg" title="Modifier">✏️</a>
-                  <a href="{% url 'Agent:download_document' document_id=doc.id %}" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg" title="Télécharger">⬇️</a>
-                  <button data-id="{{ doc.id }}" class="delete-btn p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Supprimer">🗑️</button>
+                  <select class="export-format p-2 border border-gray-300 rounded-lg" data-doc-id="{{ doc.id }}">
+                    <option value="pdf">PDF</option>
+                    <option value="docx">Word (DOCX)</option>
+                    <option value="txt">Texte (TXT)</option>
+                    <option value="png">PNG</option>
+                    <option value="jpg">JPG</option>
+                  </select>
+                  <a href="{% url 'Agent:download_document' document_id=doc.id %}?format=pdf" class="download-link p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg" title="Télécharger" data-doc-id="{{ doc.id }}">⬇️</a>
+                  <button class="delete-btn p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" data-id="{{ doc.id }}" title="Supprimer">🗑️</button>
                 </div>
               </div>
             </div>
@@ -120,39 +129,84 @@
   </div>
 </div>
 
-<!-- Document detail modal container (rempli par JS) -->
-<div id="detailModalRoot"></div>
+<!-- Modal pour suppression -->
+<div id="deleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 w-full max-w-md">
+    <h3 class="text-lg font-semibold text-gray-900 mb-4">Confirmer la suppression</h3>
+    <p class="text-gray-600 mb-6">Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible.</p>
+    <form id="deleteForm">
+      {% csrf_token %}
+      <input type="hidden" name="document_id" id="deleteDocumentId">
+      <div class="flex justify-end gap-3">
+        <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg">Annuler</button>
+        <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg">Supprimer</button>
+      </div>
+    </form>
+  </div>
+</div>
 
+<script src="{% static 'js/toast_manager.js' %}"></script>
 <script>
+function openDeleteModal(documentId) {
+  document.getElementById('deleteDocumentId').value = documentId;
+  document.getElementById('deleteModal').classList.remove('hidden');
+}
+
+function closeDeleteModal() {
+  document.getElementById('deleteModal').classList.add('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
-  // Gestion de la suppression
-  document.querySelectorAll('.delete-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      const documentId = this.getAttribute('data-id');
-      if (confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) {
-        fetch(`/api/document/${documentId}/delete/`, {
-          method: 'DELETE',
-          headers: {
-            'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
-            'Content-Type': 'application/json'
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            location.reload();
-          } else {
-            alert('Erreur lors de la suppression: ' + (data.error || 'Erreur inconnue'));
-          }
-        })
-        .catch(error => {
-          alert('Erreur réseau: ' + error.message);
-        });
-      }
+  // Listener pour tous les boutons de suppression
+  document.querySelectorAll('.delete-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const docId = this.getAttribute('data-id');
+      openDeleteModal(docId);
     });
   });
 
-  // Dynamic filtering
+  // Soumission du formulaire de suppression
+  document.getElementById('deleteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const documentId = document.getElementById('deleteDocumentId').value;
+    fetch(`/api/document/${documentId}/delete/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value,
+        'Content-Type': 'application/json'
+      },
+       body: JSON.stringify({}) 
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        toastManager.buildToast()
+          .setMessage('Document supprimé avec succès!')
+          .setType('success')
+          .setPosition('top-right')
+          .setDuration(4000)
+          .show();
+        setTimeout(() => location.reload(), 2000);
+      } else {
+        toastManager.buildToast()
+          .setMessage('Erreur: ' + data.error)
+          .setType('error')
+          .setPosition('top-right')
+          .setDuration(4000)
+          .show();
+      }
+    })
+    .catch(error => {
+      toastManager.buildToast()
+        .setMessage('Erreur réseau: ' + error.message)
+        .setType('error')
+        .setPosition('top-right')
+        .setDuration(4000)
+        .show();
+    });
+  });
+
+  // Filtres et export
   const filterForm = document.getElementById('filterForm');
   const searchInput = filterForm.querySelector('input[name="q"]');
   const typeSelect = filterForm.querySelector('select[name="type"]');
@@ -173,6 +227,16 @@ document.addEventListener('DOMContentLoaded', function() {
     updateFilterUrl();
     filterForm.submit();
   });
+
+  document.querySelectorAll('.export-format').forEach(select => {
+    select.addEventListener('change', function() {
+      const docId = this.getAttribute('data-doc-id');
+      const format = this.value;
+      const downloadLink = document.querySelector(`.download-link[data-doc-id="${docId}"]`);
+      downloadLink.href = `/api/document/${docId}/download/?format=${format}`;
+    });
+  });
 });
 </script>
+
 {% endblock %}

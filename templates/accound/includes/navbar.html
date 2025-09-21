@@ -1,111 +1,546 @@
 {% load static %}
-<nav class="fixed w-full z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700">
+
+<!-- CSS supplémentaire pour le menu mobile -->
+<style>
+    /* Animation du hamburger */
+    .hamburger {
+        position: relative;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .hamburger span {
+        display: block;
+        position: absolute;
+        height: 3px;
+        width: 100%;
+        background: var(--text-primary);
+        border-radius: 2px;
+        opacity: 1;
+        left: 0;
+        transform: rotate(0deg);
+        transition: 0.3s ease-in-out;
+    }
+    
+    .hamburger span:nth-child(1) {
+        top: 0px;
+    }
+    
+    .hamburger span:nth-child(2),
+    .hamburger span:nth-child(3) {
+        top: 10px;
+    }
+    
+    .hamburger span:nth-child(4) {
+        top: 20px;
+    }
+    
+    /* Animation quand le menu est ouvert */
+    .hamburger.open span:nth-child(1) {
+        top: 10px;
+        width: 0%;
+        left: 50%;
+    }
+    
+    .hamburger.open span:nth-child(2) {
+        transform: rotate(45deg);
+    }
+    
+    .hamburger.open span:nth-child(3) {
+        transform: rotate(-45deg);
+    }
+    
+    .hamburger.open span:nth-child(4) {
+        top: 10px;
+        width: 0%;
+        left: 50%;
+    }
+    
+    /* Menu mobile overlay */
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-menu-overlay.show {
+        opacity: 1;
+        visibility: visible;
+    }
+    
+    /* Menu mobile */
+    .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-left: 1px solid var(--glass-border);
+        z-index: 1000;
+        transition: right 0.3s ease;
+        overflow-y: auto;
+        padding: 2rem 0;
+    }
+    
+    .mobile-menu.show {
+        right: 0;
+    }
+    
+    .mobile-menu-header {
+        padding: 0 2rem 2rem 2rem;
+        border-bottom: 1px solid var(--border-primary);
+        margin-bottom: 2rem;
+    }
+    
+    .mobile-menu-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+    
+    .mobile-menu-close:hover {
+        color: var(--text-primary);
+    }
+    
+    .mobile-nav-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 2rem;
+        color: var(--text-secondary);
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        border-bottom: 1px solid transparent;
+    }
+    
+    .mobile-nav-link:hover {
+        color: var(--text-primary);
+        background: var(--glass-bg);
+        border-bottom-color: var(--border-primary);
+    }
+    
+    .mobile-nav-link i {
+        margin-right: 1rem;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .mobile-auth-section {
+        padding: 2rem;
+        border-top: 1px solid var(--border-primary);
+        margin-top: 2rem;
+    }
+    
+    .mobile-user-info {
+        display: flex;
+        align-items: center;
+        padding: 1rem 2rem;
+        background: var(--glass-bg);
+        margin: 0 1rem 1rem 1rem;
+        border-radius: 12px;
+    }
+    
+    .mobile-user-avatar {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+    
+    .mobile-user-details h4 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+    
+    .mobile-user-details p {
+        font-size: 0.875rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+    
+    /* Animation d'entrée pour les liens */
+    @keyframes slideInFromRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    .mobile-menu.show .mobile-nav-link {
+        animation: slideInFromRight 0.3s ease forwards;
+    }
+    
+    .mobile-menu.show .mobile-nav-link:nth-child(1) { animation-delay: 0.1s; }
+    .mobile-menu.show .mobile-nav-link:nth-child(2) { animation-delay: 0.2s; }
+    .mobile-menu.show .mobile-nav-link:nth-child(3) { animation-delay: 0.3s; }
+    .mobile-menu.show .mobile-nav-link:nth-child(4) { animation-delay: 0.4s; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 320px) {
+        .mobile-menu {
+            width: 100%;
+            right: -100%;
+        }
+    }
+</style>
+
+<nav class="navbar fixed w-full z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
+            <!-- Logo -->
             <div class="flex items-center space-x-2">
                 <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
                     <i class="fas fa-robot text-white text-lg"></i>
                 </div>
                 <span class="text-2xl font-bold gradient-text">CVBot</span>
             </div>
+            
+            <!-- Desktop Navigation -->
             <div class="hidden md:flex space-x-8">
-                <a href="{% url "home" %}" class="text-slate-300 hover:text-white transition-colors">Accueil</a>
-                <a href="#features" class="text-slate-300 hover:text-white transition-colors">Fonctionnalités</a>
-                <a href="#previews" class="text-slate-300 hover:text-white transition-colors">Modèles</a>
-                <a href="#testimonials" class="text-slate-300 hover:text-white transition-colors">Témoignages</a>
+                <a href="{% url "home" %}" class="nav-link transition-colors focus-ring rounded">Accueil</a>
+                <a href="#features" class="nav-link transition-colors focus-ring rounded">Fonctionnalités</a>
+                <a href="#previews" class="nav-link transition-colors focus-ring rounded">Modèles</a>
+                <a href="#testimonials" class="nav-link transition-colors focus-ring rounded">Témoignages</a>
             </div>
+            
+            <!-- Desktop Auth/User Section -->
             <div class="flex items-center space-x-4">
-    {% if request.user.is_authenticated %}
-        <!-- Show Logout button if user is authenticated -->
-        <form method="post" action="">
-            {% csrf_token %}
-            <button type="submit" class="px-6 py-2 btn-secondary text-slate-200 rounded-lg">
-                <i class="fas fa-user mr-2"></i>Déconnexion
-            </button>
-        </form>
-    {% else %}
-        <!-- Show Login / Signup buttons if user is NOT authenticated -->
-        <button data-modal-target="login-modal" class="hidden md:block px-6 py-2 btn-secondary text-slate-200 rounded-lg">
-            <i class="fas fa-user mr-2"></i>Connexion
-        </button>
-        <button data-modal-target="signup-modal" class="hidden md:block px-6 py-2 btn-secondary text-slate-200 rounded-lg">
-            <i class="fas fa-user mr-2"></i>Inscription
-        </button>
-    {% endif %}
-    
-    <!-- Mobile menu button -->
-    <button class="md:hidden text-white">
-        <i class="fas fa-bars text-xl"></i>
-    </button>
-</div>
-
+                {% if request.user.is_authenticated %}
+                    <!-- User Profile Dropdown -->
+                    <div class="relative hidden md:block">
+                        <button class="flex items-center space-x-2 px-4 py-2 btn-secondary rounded-lg hover-lift focus-ring" onclick="toggleDropdown()">
+                            <i class="fas fa-user"></i>
+                            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+                            <i class="fas fa-chevron-down text-xs transition-transform duration-300" id="dropdownChevron"></i>
+                        </button>
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-lg py-2 opacity-0 transform translate-y-2 transition-all duration-300">
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
+                                <i class="fas fa-user-circle mr-2"></i>Mon Profil
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
+                                <i class="fas fa-file-alt mr-2"></i>Mes CV
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
+                                <i class="fas fa-cog mr-2"></i>Paramètres
+                            </a>
+                            <hr class="my-2 border-opacity-20" style="border-color: var(--border-primary);">
+                            <form method="post" action="">
+                                {% csrf_token %}
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <!-- Auth Buttons -->
+                    <button data-modal-target="login-modal" class="hidden md:block px-6 py-2 btn-secondary rounded-lg hover-lift focus-ring">
+                        <i class="fas fa-user mr-2"></i>Connexion
+                    </button>
+                    <button data-modal-target="signup-modal" class="hidden md:block px-6 py-2 btn-primary text-white rounded-lg hover-lift focus-ring">
+                        <i class="fas fa-user-plus mr-2"></i>Inscription
+                    </button>
+                {% endif %}
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden focus-ring rounded p-2" onclick="toggleMobileMenu()" id="mobileMenuBtn">
+                    <div class="hamburger" id="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Connexion -->
-    <div id="login-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center bg-black bg-opacity-50">
-        <div class="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-xl relative">
-            <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="document.getElementById('login-modal').classList.add('hidden')">
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay md:hidden" id="mobileMenuOverlay" onclick="closeMobileMenu()"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu md:hidden" id="mobileMenu">
+        <!-- Close button -->
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <!-- Menu Header -->
+        <div class="mobile-menu-header">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-robot text-white text-sm"></i>
+                </div>
+                <span class="text-xl font-bold gradient-text">CVBot</span>
+            </div>
+        </div>
+
+        <!-- User Info (if authenticated) -->
+        {% if request.user.is_authenticated %}
+        <div class="mobile-user-info">
+            <div class="mobile-user-avatar">
+                <i class="fas fa-user text-white"></i>
+            </div>
+            <div class="mobile-user-details">
+                <h4>{{ request.user.get_full_name|default:request.user.username }}</h4>
+                <p>{{ request.user.email }}</p>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Navigation Links -->
+        <div class="mobile-nav-section">
+            <a href="{% url "home" %}" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-home"></i>
+                <span>Accueil</span>
+            </a>
+            <a href="#features" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-star"></i>
+                <span>Fonctionnalités</span>
+            </a>
+            <a href="#previews" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-eye"></i>
+                <span>Modèles</span>
+            </a>
+            <a href="#testimonials" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-comments"></i>
+                <span>Témoignages</span>
+            </a>
+        </div>
+
+        <!-- User Actions (if authenticated) -->
+        {% if request.user.is_authenticated %}
+        <div class="mobile-nav-section" style="border-top: 1px solid var(--border-primary); margin-top: 1rem; padding-top: 1rem;">
+            <a href="#" class="mobile-nav-link">
+                <i class="fas fa-user-circle"></i>
+                <span>Mon Profil</span>
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <i class="fas fa-file-alt"></i>
+                <span>Mes CV</span>
+            </a>
+            <a href="#" class="mobile-nav-link">
+                <i class="fas fa-cog"></i>
+                <span>Paramètres</span>
+            </a>
+        </div>
+        
+        <!-- Logout Section -->
+        <div class="mobile-auth-section">
+            <form method="post" action="">
+                {% csrf_token %}
+                <button type="submit" class="w-full btn-secondary rounded-lg py-3 px-4 flex items-center justify-center">
+                    <i class="fas fa-sign-out-alt mr-2"></i>
+                    Déconnexion
+                </button>
+            </form>
+        </div>
+        {% else %}
+        <!-- Auth Section (if not authenticated) -->
+        <div class="mobile-auth-section">
+            <button data-modal-target="login-modal" onclick="closeMobileMenu()" class="w-full btn-secondary rounded-lg py-3 px-4 flex items-center justify-center mb-3">
+                <i class="fas fa-user mr-2"></i>
+                Connexion
+            </button>
+            <button data-modal-target="signup-modal" onclick="closeMobileMenu()" class="w-full btn-primary text-white rounded-lg py-3 px-4 flex items-center justify-center">
+                <i class="fas fa-user-plus mr-2"></i>
+                Inscription
+            </button>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center modal">
+        <div class="max-w-md w-full mx-auto p-6 modal-content rounded-lg shadow-xl relative">
+            <button class="absolute top-2 right-2 hover:opacity-70 focus-ring rounded p-1" style="color: var(--text-secondary);" onclick="document.getElementById('login-modal').classList.add('hidden')">
                 <i class="fas fa-times"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-center text-purple-700">Connexion</h2>
+            <h2 class="text-2xl font-bold mb-6 text-center gradient-text">Connexion</h2>
             <div id="login-error" class="text-red-500 mb-4 hidden"></div>
             <form id="login-form" class="space-y-4" action="{% url 'comptes:login' %}" method="post">
                 {% csrf_token %}
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <label for="login-email" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Email</label>
+                    <input type="email" name="email" id="login-email" placeholder="Email" 
+                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500" 
+                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
                 </div>
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
-                    <input type="password" name="password" id="password" placeholder="Mot de passe" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <label for="login-password" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Mot de passe</label>
+                    <input type="password" name="password" id="login-password" placeholder="Mot de passe" 
+                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
+                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white py-3 rounded-md hover:from-purple-700 hover:to-purple-900 transition">Se connecter</button>
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-md font-semibold hover-lift">
+                    Se connecter
+                </button>
             </form>
-            <p class="mt-4 text-sm text-center text-gray-700">Pas encore inscrit ? <a href="#" data-modal-target="signup-modal" onclick="switchModals('login-modal', 'signup-modal')" class="text-purple-700 hover:underline">Créer un compte</a></p>
+            <p class="mt-4 text-sm text-center" style="color: var(--text-secondary);">
+                Pas encore inscrit ? 
+                <a href="#" data-modal-target="signup-modal" onclick="switchModals('login-modal', 'signup-modal')" 
+                   class="text-primary-500 hover:underline focus-ring rounded">Créer un compte</a>
+            </p>
         </div>
     </div>
 
-    <!-- Modal Inscription -->
-    <div id="signup-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center bg-black bg-opacity-50">
-        <div class="max-w-md w-full mx-auto p-6 bg-white rounded-lg shadow-xl relative">
-            <button class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="document.getElementById('signup-modal').classList.add('hidden')">
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center modal">
+        <div class="max-w-md w-full mx-auto p-6 modal-content rounded-lg shadow-xl relative">
+            <button class="absolute top-2 right-2 hover:opacity-70 focus-ring rounded p-1" style="color: var(--text-secondary);" onclick="document.getElementById('signup-modal').classList.add('hidden')">
                 <i class="fas fa-times"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-center text-purple-700">Créer un compte</h2>
+            <h2 class="text-2xl font-bold mb-6 text-center gradient-text">Créer un compte</h2>
             <div id="signup-error" class="text-red-500 mb-4 hidden"></div>
             <form id="signup-form" class="space-y-4" action="{% url 'comptes:signup' %}" method="post">
                 {% csrf_token %}
                 <div>
-                    <label for="full_name" class="block text-sm font-medium text-gray-700">Nom complet</label>
-                    <input type="text" name="full_name" id="full_name" placeholder="Nom complet" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <label for="signup-name" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Nom complet</label>
+                    <input type="text" name="full_name" id="signup-name" placeholder="Nom complet" 
+                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
+                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
                 </div>
                 <div>
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                    <input type="email" name="email" id="email" placeholder="Email" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <label for="signup-email" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Email</label>
+                    <input type="email" name="email" id="signup-email" placeholder="Email" 
+                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
+                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
                 </div>
                 <div>
-                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
-                    <input type="password" name="password" id="password" placeholder="Mot de passe" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <label for="signup-password" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Mot de passe</label>
+                    <input type="password" name="password" id="signup-password" placeholder="Mot de passe" 
+                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
+                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
                 </div>
                 <div>
-                    <label for="password2" class="block text-sm font-medium text-gray-700">Confirmer mot de passe</label>
-                    <input type="password" name="password2" id="password2" placeholder="Confirmer mot de passe" class="w-full border border-gray-300 p-3 rounded-md text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition">
+                    <label for="signup-password2" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Confirmer mot de passe</label>
+                    <input type="password" name="password2" id="signup-password2" placeholder="Confirmer mot de passe" 
+                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
+                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
                 </div>
-                <button type="submit" class="w-full bg-gradient-to-r from-purple-600 to-purple-800 text-white py-3 rounded-md hover:from-purple-700 hover:to-purple-900 transition">S'inscrire</button>
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-md font-semibold hover-lift">
+                    S'inscrire
+                </button>
             </form>
-            <p class="mt-4 text-sm text-center text-gray-700">Déjà un compte ? <a href="#" data-modal-target="login-modal" onclick="switchModals('signup-modal', 'login-modal')" class="text-purple-700 hover:underline">Connexion</a></p>
+            <p class="mt-4 text-sm text-center" style="color: var(--text-secondary);">
+                Déjà un compte ? 
+                <a href="#" data-modal-target="login-modal" onclick="switchModals('signup-modal', 'login-modal')" 
+                   class="text-primary-500 hover:underline focus-ring rounded">Connexion</a>
+            </p>
         </div>
     </div>
 
-    <!-- Toast Manager (simple implémentation basée sur Tailwind) -->
-    <div id="toast" class="hidden fixed bottom-4 right-4 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg transition-opacity duration-300 opacity-0">
-        <span id="toast-message"></span>
-    </div>
-
-   <script src="{% static 'js/toast_manager.js' %}"></script>
+    <script src="{% static 'js/toast_manager.js' %}"></script>
     <script>
-        // Ouvrir modals
+        let mobileMenuOpen = false;
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            mobileMenuOpen = !mobileMenuOpen;
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            const hamburger = document.getElementById('hamburger');
+            
+            if (mobileMenuOpen) {
+                menu.classList.add('show');
+                overlay.classList.add('show');
+                hamburger.classList.add('open');
+                document.body.style.overflow = 'hidden'; // Prevent scrolling
+            } else {
+                closeMobileMenu();
+            }
+        }
+
+        function closeMobileMenu() {
+            mobileMenuOpen = false;
+            const menu = document.getElementById('mobileMenu');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            const hamburger = document.getElementById('hamburger');
+            
+            menu.classList.remove('show');
+            overlay.classList.remove('show');
+            hamburger.classList.remove('open');
+            document.body.style.overflow = ''; // Restore scrolling
+        }
+
+        // User dropdown toggle
+        function toggleDropdown() {
+            const dropdown = document.getElementById('userDropdown');
+            const chevron = document.getElementById('dropdownChevron');
+            
+            if (dropdown.classList.contains('hidden')) {
+                dropdown.classList.remove('hidden');
+                setTimeout(() => {
+                    dropdown.classList.remove('opacity-0', 'translate-y-2');
+                    dropdown.classList.add('opacity-100', 'translate-y-0');
+                }, 10);
+                chevron.style.transform = 'rotate(180deg)';
+            } else {
+                dropdown.classList.add('opacity-0', 'translate-y-2');
+                dropdown.classList.remove('opacity-100', 'translate-y-0');
+                setTimeout(() => {
+                    dropdown.classList.add('hidden');
+                }, 300);
+                chevron.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('userDropdown');
+            const button = event.target.closest('button');
+            
+            if (dropdown && !dropdown.contains(event.target) && 
+                !button?.onclick?.toString().includes('toggleDropdown')) {
+                if (!dropdown.classList.contains('hidden')) {
+                    toggleDropdown();
+                }
+            }
+        });
+
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && mobileMenuOpen) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close mobile menu on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768 && mobileMenuOpen) {
+                closeMobileMenu();
+            }
+        });
+
+        // Modal functions
         document.querySelectorAll('[data-modal-target]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const target = btn.getAttribute('data-modal-target');
@@ -113,109 +548,73 @@
             });
         });
 
-        // Switch entre modals
         function switchModals(closeId, openId) {
             document.getElementById(closeId).classList.add('hidden');
             document.getElementById(openId).classList.remove('hidden');
         }
 
-        // Soumission AJAX pour login
+        // Form submissions
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            // Débogage : afficher les données envoyées
-            for (let [key, value] of formData.entries()) {
-                console.log(`Champ ${key}: ${value}`);
-            }
+            
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.toastManager.buildToast()
-                        .setMessage('Connexion réussie !')
-                        .setType('success')
-                        .setPosition('top-right')
-                        .setDuration(4000)
-                        .show();
+                    if (window.themeManager) {
+                        window.themeManager.showToast('Connexion réussie !', 'success');
+                    }
                     setTimeout(() => {
                         window.location.href = data.redirect_url || '/dashboard/';
-                    }, 1000); // Attendre 1 seconde pour montrer le toast
+                    }, 1000);
                 } else {
-                    window.toastManager.buildToast()
-                        .setMessage(data.error || 'Une erreur est survenue.')
-                        .setType('error')
-                        .setPosition('top-right')
-                        .setDuration(4000)
-                        .show();
+                    if (window.themeManager) {
+                        window.themeManager.showToast(data.error || 'Une erreur est survenue.', 'error');
+                    }
                 }
             })
             .catch(error => {
-                console.error('Erreur lors de la soumission:', error);
-                window.toastManager.buildToast()
-                    .setMessage('Erreur de connexion au serveur.')
-                    .setType('error')
-                    .setPosition('top-right')
-                    .setDuration(4000)
-                    .show();
+                console.error('Erreur:', error);
+                if (window.themeManager) {
+                    window.themeManager.showToast('Erreur de connexion au serveur.', 'error');
+                }
             });
         });
 
-        // Soumission AJAX pour signup
         document.getElementById('signup-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
-            // Débogage : afficher les données envoyées
-            for (let [key, value] of formData.entries()) {
-                console.log(`Champ ${key}: ${value}`);
-            }
+            
             fetch(this.action, {
                 method: 'POST',
                 body: formData,
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erreur HTTP ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    window.toastManager.buildToast()
-                        .setMessage('Inscription réussie ! Veuillez vous connecter.')
-                        .setType('success')
-                        .setPosition('top-right')
-                        .setDuration(4000)
-                        .show();
+                    if (window.themeManager) {
+                        window.themeManager.showToast('Inscription réussie ! Veuillez vous connecter.', 'success');
+                    }
                     setTimeout(() => {
                         window.location.href = data.redirect_url || '/login/';
-                    }, 1000); // Attendre 1 seconde pour montrer le toast
+                    }, 1000);
                 } else {
-                    window.toastManager.buildToast()
-                        .setMessage(data.error || 'Une erreur est survenue.')
-                        .setType('error')
-                        .setPosition('top-right')
-                        .setDuration(4000)
-                        .show();
+                    if (window.themeManager) {
+                        window.themeManager.showToast(data.error || 'Une erreur est survenue.', 'error');
+                    }
                 }
             })
             .catch(error => {
-                console.error('Erreur lors de la soumission:', error);
-                window.toastManager.buildToast()
-                    .setMessage('Erreur de connexion au serveur.')
-                    .setType('error')
-                    .setPosition('top-right')
-                    .setDuration(4000)
-                    .show();
+                console.error('Erreur:', error);
+                if (window.themeManager) {
+                    window.themeManager.showToast('Erreur de connexion au serveur.', 'error');
+                }
             });
         });
     </script>

@@ -1,0 +1,39 @@
+{% extends "user/base.html" %}
+{% load static %}
+{% block title %}Sélectionner un modèle{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-2xl font-bold text-gray-900">Choisir un modèle de {{ document_type }}</h1>
+      <select id="documentTypeFilter" class="px-4 py-2 border border-gray-300 rounded-lg">
+        <option value="CV" {% if document_type == 'CV' %}selected{% endif %}>CV</option>
+        <option value="LM" {% if document_type == 'LM' %}selected{% endif %}>Lettre de Motivation</option>
+      </select>
+    </div>
+      <div class="max-w-4xl mx-auto space-y-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Sélectionnez un modèle pour {{ document_type }}</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {% for template in templates %}
+            <a href="{% url 'Agent:generate_document' %}?template_id={{ template.id }}&document_type={{ document_type }}" class="block p-4 border border-gray-300 rounded-lg hover:bg-gray-50">
+              <h3 class="text-lg font-semibold text-gray-900">{{ template.name }}</h3>
+              <p class="text-gray-600">Type: {{ template.type }}</p>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="mt-6 flex justify-end">
+      <a href="{% url 'comptes:dashboard' %}" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Retour</a>
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('documentTypeFilter').addEventListener('change', function() {
+  window.location.href = "{% url 'Agent:template_selection' %}?document_type=" + this.value;
+});
+</script>
+{% endblock %}

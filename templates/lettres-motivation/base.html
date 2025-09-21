@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Lettre de Motivation{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primaryBlue: '#3498db',
+            primaryDark: '#2c3e50',
+            primaryGray: '#7f8c8d',
+            primaryLightGray: '#ecf0f1',
+            primaryPurple: '#764ba2',
+            primaryPink: '#ff6b6b',
+            primaryTeal: '#4ecdc4',
+            primaryNavy: '#34495e',
+            primaryLightBlue: '#667eea'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 p-5 font-serif">
+  {% block content %}{% endblock %}
+</body>
+</html>

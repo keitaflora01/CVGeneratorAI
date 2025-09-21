@@ -5,16 +5,56 @@
 
 {% block extra_css %}
 <style>
+    :root {
+        --primary-500: #0ea5e9;
+        --primary-400: #38bdf8;
+        --primary-300: #7dd3fc;
+        --secondary-500: #7e22ce;
+        --secondary-400: #9333ea;
+    }
+    
+    [data-theme="light"] {
+        --bg-primary: #ffffff;
+        --bg-secondary: #f8fafc;
+        --bg-tertiary: #f1f5f9;
+        --text-primary: #1e293b;
+        --text-secondary: #475569;
+        --text-tertiary: #64748b;
+        --border-primary: #e2e8f0;
+        --border-secondary: #cbd5e1;
+        --glass-bg: rgba(255, 255, 255, 0.8);
+        --glass-border: rgba(0, 0, 0, 0.1);
+        --modal-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+    
+    [data-theme="dark"] {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --bg-tertiary: #334155;
+        --text-primary: #e2e8f0;
+        --text-secondary: #94a3b8;
+        --text-tertiary: #64748b;
+        --border-primary: #334155;
+        --border-secondary: #475569;
+        --glass-bg: rgba(255, 255, 255, 0.05);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --modal-bg: #1e293b;
+        --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+
     body {
         font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: #e2e8f0;
+        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        color: var(--text-primary);
+        transition: all 0.3s ease;
     }
     
     .glass-card {
-        background: rgba(255, 255, 255, 0.05);
+        background: var(--glass-bg);
         backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        border: 1px solid var(--glass-border);
+        transition: all 0.3s ease;
     }
     
     .gradient-text {
@@ -27,6 +67,7 @@
     .btn-primary {
         background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
         transition: all 0.3s ease;
+        border: none;
     }
     
     .btn-primary:hover {
@@ -36,43 +77,249 @@
     }
     
     .btn-secondary {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
         transition: all 0.3s ease;
+        color: var(--text-primary);
     }
     
     .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: var(--glass-bg);
+        border: 1px solid var(--border-secondary);
+        transform: translateY(-1px);
     }
     
-    .feature-icon {
-        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
+    .navbar {
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--glass-border);
         transition: all 0.3s ease;
     }
     
-    .feature-card:hover .feature-icon {
-        transform: scale(1.1) rotate(5deg);
+    .nav-link {
+        color: var(--text-secondary);
     }
     
-    .stat-card {
-        background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(126, 34, 206, 0.1) 100%);
-        border: 1px solid rgba(255, 255, 255, 0.05);
+    .nav-link:hover {
+        color: var(--text-primary);
     }
     
-    .counter {
-        display: inline-block;
+    .modal {
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
     }
     
-    @keyframes fade-in-up {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .modal-content {
+        background: var(--modal-bg);
+        color: var(--text-primary);
+        border: 1px solid var(--glass-border);
+    }
+    
+    .footer {
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border-primary);
+    }
+    
+    .theme-toggle {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 25px;
+        padding: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .theme-toggle:hover {
+        background: var(--glass-bg);
+        transform: translateY(-1px);
+    }
+    
+    .theme-option {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    
+    .theme-option.active {
+        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
+    }
+    
+    .icon-box {
+        transition: all 0.3s ease;
+    }
+    
+    .icon-box:hover {
+        transform: translateY(-10px);
+    }
+    
+    .icon-box i {
+        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+    
+    .stats-item {
+        background: var(--glass-bg);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .stats-item:hover {
+        background: var(--glass-bg);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px var(--shadow-color);
+    }
+    
+    .color-blue { color: #38bdf8; }
+    .color-orange { color: #fb923c; }
+    .color-green { color: #34d399; }
+    .color-pink { color: #f472b6; }
+    
+    .carousel {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    .carousel-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        animation: slide 15s infinite;
+    }
+
+    .carousel-image:nth-child(1) { animation-delay: 0s; }
+    .carousel-image:nth-child(2) { animation-delay: 5s; }
+    .carousel-image:nth-child(3) { animation-delay: 10s; }
+
+    @keyframes slide {
+        0% { opacity: 0; }
+        6.67% { opacity: 1; }
+        33.33% { opacity: 1; }
+        40% { opacity: 0; }
+        100% { opacity: 0; }
+    }
+    
+    .section {
+        padding: 80px 0;
+    }
+    
+    .hero.section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+    }
+    
+    .section-title h2 {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+    
+    .section-title p {
+        font-size: 1.125rem;
+        color: var(--text-secondary);
+    }
+
+    .faq-container .faq-item {
+        background: var(--glass-bg);
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .faq-item h3 {
+        background: var(--glass-bg);
+        padding: 1.5rem;
+        margin: 0;
+        cursor: pointer;
+        position: relative;
+        color: var(--text-primary);
+        font-weight: 600;
+    }
+
+    .faq-content {
+        padding: 0 1.5rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        color: var(--text-secondary);
+    }
+
+    .faq-item.faq-active .faq-content {
+        max-height: 200px;
+        padding: 1.5rem;
+    }
+
+    .faq-toggle {
+        position: absolute;
+        right: 1.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        transition: transform 0.3s ease;
+    }
+
+    .faq-item.faq-active .faq-toggle {
+        transform: translateY(-50%) rotate(90deg);
+    }
+
+    .testimonial-item {
+        background: var(--glass-bg);
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .stars {
+        color: #fbbf24;
+        margin-bottom: 1rem;
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px var(--shadow-color);
+    }
+    
+    .focus-ring:focus {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+    }
+    
+    .theme-switching {
+        pointer-events: none;
+        opacity: 0.7;
     }
     
     @keyframes float {
@@ -80,79 +327,33 @@
         50% { transform: translateY(-20px) rotate(5deg); }
     }
     
-    .animate-fade-in-up {
-        animation: fade-in-up 0.8s ease-out forwards;
-    }
-    
     .animate-float {
         animation: float 6s ease-in-out infinite;
     }
-   .carousel {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
 
-.carousel-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    opacity: 0;
-    animation: slide 15s infinite;
-}
-
-.carousel-image:nth-child(1) { animation-delay: 0s; }
-.carousel-image:nth-child(2) { animation-delay: 5s; }
-.carousel-image:nth-child(3) { animation-delay: 10s; }
-
-@keyframes slide {
-    0% {
-        opacity: 0;
+    html {
+        scroll-behavior: smooth;
     }
-    6.67% {
-        opacity: 1; /* Start fading in */
-    }
-    33.33% {
-        opacity: 1; /* Stay visible */
-    }
-    40% {
-        opacity: 0; /* Start fading out */
-    }
-    100% {
-        opacity: 0; /* Stay hidden */
-    }
-}
 </style>
 {% endblock %}
 
 {% block content %}
     <!-- Hero Section -->
-    <section id="home" class="relative min-h-screen flex items-center overflow-hidden pt-20">
-        <!-- Background -->
-       <div class="absolute inset-0 z-0">
-            <img src="{% static 'images/img1.jpg' %}" class="carousel-image" alt="Background Image 1">
-            <img src="{% static 'images/img2.jpg' %}" class="carousel-image" alt="Background Image 2">
-            <img src="{% static 'images/img3.jpg' %}" class="carousel-image" alt="Background Image 3">
+    <section id="hero" class="hero section">
+        <!-- Background Carousel -->
+        <div class="absolute inset-0 z-0">
+            <div class="carousel">
+                <img src="{% static 'images/img1.jpg' %}" class="carousel-image" alt="Background Image 1">
+                <img src="{% static 'images/img2.jpg' %}" class="carousel-image" alt="Background Image 2">
+                <img src="{% static 'images/img3.jpg' %}" class="carousel-image" alt="Background Image 3">
+            </div>
             <!-- Overlay for text readability -->
             <div class="absolute inset-0 bg-black/60"></div>
         </div>
-        
-        <!-- Floating Elements -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-20 left-10 w-20 h-20 bg-primary-500/10 rounded-full animate-float"></div>
-            <div class="absolute top-40 right-20 w-32 h-32 bg-secondary-500/10 rounded-full animate-float" style="animation-delay: 2s;"></div>
-            <div class="absolute bottom-20 left-20 w-16 h-16 bg-primary-500/10 rounded-full animate-float" style="animation-delay: 4s;"></div>
-        </div>
 
-        <!-- Main Content -->
-        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="container mx-auto px-4 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Content -->
-                <div class="text-center lg:text-left animate-fade-in-up">
+                <div class="lg:order-1 order-2 flex flex-col justify-center" data-aos="fade-up">
                     <div class="mb-6">
                         <span class="inline-flex items-center px-4 py-2 glass-card text-primary-200 rounded-full text-sm">
                             <i class="fas fa-sparkles mr-2"></i>
@@ -160,50 +361,29 @@
                         </span>
                     </div>
                     
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight" data-aos="fade-up" data-aos-delay="100">
                         <span class="gradient-text">Créez des CV</span>
                         <span class="text-white block">qui font la</span>
                         <span class="gradient-text">différence</span>
                     </h1>
                     
-                    <p class="text-lg text-slate-300 mb-8 leading-relaxed">
+                    <p class="text-lg text-slate-300 mb-8 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
                         Boostez votre carrière avec notre IA de pointe. Créez des CV et lettres de motivation 
                         professionnels en quelques clics, optimisés pour passer tous les filtres ATS.
                     </p>
 
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start mb-8">
-                        <button class="btn-primary px-8 py-4 text-white font-semibold rounded-xl">
-                            <i class="fas fa-rocket mr-2"></i>
-                            Créer Mon CV Maintenant
+                    <div class="flex flex-col sm:flex-row gap-4" data-aos="fade-up" data-aos-delay="300">
+                        <button class="btn btn-primary px-8 py-4 rounded-xl text-center text-white font-semibold hover-lift focus-ring">
+                            <i class="fas fa-rocket mr-2"></i>Créer Mon CV Maintenant
                         </button>
-                        
-                        <button class="btn-secondary px-8 py-4 text-white font-semibold rounded-xl">
-                            <i class="fas fa-play mr-2"></i>
-                            Voir un Exemple
-                        </button>
-                    </div>
-
-                    <!-- Stats -->
-                    <div class="grid grid-cols-3 gap-6 pt-8 border-t border-slate-700">
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-white mb-1 counter" data-target="50000">0</div>
-                            <div class="text-sm text-slate-400">CV Créés</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-white mb-1 counter" data-target="97">0</div>
-                            <div class="text-sm text-slate-400">% Réussite</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-2xl font-bold text-white mb-1">24h</div>
-                            <div class="text-sm text-slate-400">Support</div>
-                        </div>
+                        <a href="#previews" class="btn btn-secondary px-8 py-4 rounded-xl text-center font-semibold hover-lift focus-ring">
+                            <i class="fas fa-play mr-2"></i>Voir un Exemple
+                        </a>
                     </div>
                 </div>
-
-                <!-- Visual Element -->
-                <div class="relative animate-fade-in-up" style="animation-delay: 0.3s;">
-                    <div class="glass-card rounded-2xl p-8 shadow-xl">
+                
+                <div class="lg:order-2 order-1" data-aos="zoom-out">
+                    <div class="glass-card rounded-2xl p-8 shadow-xl hover-lift">
                         <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-3 rounded-full mb-6"></div>
                         
                         <!-- Header section -->
@@ -234,273 +414,300 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section><!-- /Hero Section -->
 
-    <!-- Features Section -->
-    <section id="features" class="py-20 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 glass-card text-primary-300 rounded-full text-sm mb-4">
-                    <i class="fas fa-gem mr-2"></i>Fonctionnalités Premium
-                </span>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-                    Pourquoi choisir <span class="gradient-text">CVBot</span> ?
-                </h2>
-                <p class="text-lg text-slate-300 max-w-3xl mx-auto">
-                    Des outils puissants et intelligents pour transformer votre recherche d'emploi
-                </p>
+    <!-- Alt Features Section -->
+    <section id="alt-features" class="section" style="background: var(--bg-secondary);">
+        <div class="container mx-auto px-4">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Pourquoi choisir <span class="gradient-text">CVBot</span> ?</h2>
+                <p>Notre IA révolutionne la création de CV professionnels</p>
             </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Feature 1 -->
-                <div class="feature-card glass-card rounded-xl p-6 border border-slate-700 transition-all duration-300 group">
-                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                        <i class="fas fa-brain text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">IA Intelligente GPT-4</h3>
-                    <p class="text-slate-300 mb-4">Notre IA analyse votre profil et génère des CV personnalisés qui correspondent parfaitement aux offres d'emploi.</p>
-                </div>
-
-                <!-- Feature 2 -->
-                <div class="feature-card glass-card rounded-xl p-6 border border-slate-700 transition-all duration-300 group">
-                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                        <i class="fas fa-search text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">99% ATS Compatible</h3>
-                    <p class="text-slate-300 mb-4">Tous nos CV sont testés et optimisés pour passer les filtres des systèmes de suivi des candidatures.</p>
-                </div>
-
-                <!-- Feature 3 -->
-                <div class="feature-card glass-card rounded-xl p-6 border border-slate-700 transition-all duration-300 group">
-                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                        <i class="fas fa-palette text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Modèles Premium</h3>
-                    <p class="text-slate-300 mb-4">Une bibliothèque complète de modèles élégants et modernes, adaptés à tous les secteurs d'activité.</p>
-                </div>
-
-                <!-- Feature 4 -->
-                <div class="feature-card glass-card rounded-xl p-6 border border-slate-700 transition-all duration-300 group">
-                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                        <i class="fas fa-rocket text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Génération Rapide</h3>
-                    <p class="text-slate-300 mb-4">Créez un CV professionnel complet en moins de 30 secondes. Plus besoin de passer des heures à formater.</p>
-                </div>
-
-                <!-- Feature 5 -->
-                <div class="feature-card glass-card rounded-xl p-6 border border-slate-700 transition-all duration-300 group">
-                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                        <i class="fas fa-file-alt text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Lettres de Motivation</h3>
-                    <p class="text-slate-300 mb-4">Générez automatiquement des lettres de motivation personnalisées qui complètent parfaitement votre CV.</p>
-                </div>
-
-                <!-- Feature 6 -->
-                <div class="feature-card glass-card rounded-xl p-6 border border-slate-700 transition-all duration-300 group">
-                    <div class="feature-icon w-14 h-14 rounded-xl flex items-center justify-center mb-6">
-                        <i class="fas fa-shield-alt text-white text-xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-4">Sécurité & Confidentialité</h3>
-                    <p class="text-slate-300 mb-4">Vos données personnelles sont protégées par un chiffrement de niveau bancaire. Confidentialité garantie.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Previews Section -->
-    <section id="previews" class="py-20 bg-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-                    Aperçu de nos <span class="gradient-text">modèles</span>
-                </h2>
-                <p class="text-lg text-slate-300 max-w-3xl mx-auto">
-                    Découvrez la qualité professionnelle de nos CV générés par IA
-                </p>
-            </div>
-
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- CV Preview 1 -->
-                <div class="glass-card rounded-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
-                    <div class="h-64 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
-                        <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full mb-4"></div>
-                        <div class="flex items-center mb-6">
-                            <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-4"></div>
-                            <div>
-                                <div class="bg-slate-600 h-3 rounded w-24 mb-1"></div>
-                                <div class="bg-slate-700 h-2 rounded w-20"></div>
-                            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="lg:order-2 order-1" data-aos="fade-up" data-aos-delay="100">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="icon-box text-center hover-lift">
+                            <i class="fas fa-brain"></i>
+                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">IA Intelligente GPT-4</h4>
+                            <p style="color: var(--text-secondary);">Notre IA analyse votre profil et génère des CV personnalisés qui correspondent parfaitement aux offres d'emploi.</p>
                         </div>
-                        <div class="space-y-2">
-                            <div class="bg-slate-700 h-2 rounded w-full"></div>
-                            <div class="bg-slate-700 h-2 rounded w-5/6"></div>
-                            <div class="bg-slate-700 h-2 rounded w-4/5"></div>
+
+                        <div class="icon-box text-center hover-lift">
+                            <i class="fas fa-search"></i>
+                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">99% ATS Compatible</h4>
+                            <p style="color: var(--text-secondary);">Tous nos CV sont testés et optimisés pour passer les filtres des systèmes de suivi des candidatures.</p>
+                        </div>
+
+                        <div class="icon-box text-center hover-lift">
+                            <i class="fas fa-palette"></i>
+                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Modèles Premium</h4>
+                            <p style="color: var(--text-secondary);">Une bibliothèque complète de modèles élégants et modernes, adaptés à tous les secteurs d'activité.</p>
+                        </div>
+
+                        <div class="icon-box text-center hover-lift">
+                            <i class="fas fa-rocket"></i>
+                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Génération Rapide</h4>
+                            <p style="color: var(--text-secondary);">Créez un CV professionnel complet en moins de 30 secondes. Plus besoin de passer des heures à formater.</p>
+                        </div>
+
+                        <div class="icon-box text-center hover-lift">
+                            <i class="fas fa-file-alt"></i>
+                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Lettres de Motivation</h4>
+                            <p style="color: var(--text-secondary);">Générez automatiquement des lettres de motivation personnalisées qui complètent parfaitement votre CV.</p>
+                        </div>
+
+                        <div class="icon-box text-center hover-lift">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Sécurité & Confidentialité</h4>
+                            <p style="color: var(--text-secondary);">Vos données personnelles sont protégées par un chiffrement de niveau bancaire. Confidentialité garantie.</p>
                         </div>
                     </div>
-                    <div class="p-4 bg-slate-700/30 text-center">
-                        <p class="text-sm font-semibold text-white">Modèle Développeur</p>
-                    </div>
                 </div>
 
-                <!-- CV Preview 2 -->
-                <div class="glass-card rounded-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
-                    <div class="h-64 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
-                        <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full mb-4"></div>
-                        <div class="text-center mb-6">
-                            <div class="w-14 h-14 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mx-auto mb-3"></div>
-                            <div class="bg-slate-600 h-3 rounded w-32 mx-auto mb-1"></div>
-                            <div class="bg-slate-700 h-2 rounded w-24 mx-auto"></div>
-                        </div>
-                        <div class="space-y-3">
-                            <div>
-                                <div class="bg-primary-500/30 h-2 rounded w-20 mb-1"></div>
-                                <div class="bg-slate-700 h-1 rounded w-full"></div>
-                                <div class="bg-slate-700 h-1 rounded w-4/5"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-slate-700/30 text-center">
-                        <p class="text-sm font-semibold text-white">Modèle Marketing</p>
-                    </div>
-                </div>
-
-                <!-- CV Preview 3 -->
-                <div class="glass-card rounded-xl overflow-hidden transform hover:scale-105 transition-all duration-300">
-                    <div class="h-64 bg-gradient-to-br from-slate-800 to-slate-900 p-6">
-                        <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full mb-4"></div>
-                        <div class="grid grid-cols-3 gap-4 mb-6">
-                            <div class="col-span-1">
-                                <div class="w-full h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded mb-2"></div>
-                            </div>
-                            <div class="col-span-2">
-                                <div class="bg-slate-600 h-2 rounded w-full mb-1"></div>
-                                <div class="bg-slate-700 h-2 rounded w-3/4"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="bg-primary-500/30 h-2 rounded w-16 mb-1"></div>
-                            <div class="bg-slate-700 h-1 rounded w-full"></div>
-                            <div class="bg-slate-700 h-1 rounded w-5/6"></div>
-                        </div>
-                    </div>
-                    <div class="p-4 bg-slate-700/30 text-center">
-                        <p class="text-sm font-semibold text-white">Modèle Finance</p>
+                <div class="lg:order-1 order-2 flex items-center" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-8 rounded-2xl hover-lift">
+                        <img src="{% static 'images/hooyia1-features.webp' %}" class="w-full h-80 object-cover rounded-lg" alt="CVBot Features">
                     </div>
                 </div>
             </div>
         </div>
-    </section>
+    </section><!-- /Alt Features Section -->
+
+    <!-- Stats Section -->
+    <section id="stats" class="section" style="background: var(--bg-tertiary);">
+        <div class="container mx-auto px-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="stats-item hover-lift">
+                    <i class="fas fa-smile color-blue text-4xl mb-4"></i>
+                    <div>
+                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="50000" data-purecounter-duration="1">0</span>
+                        <p style="color: var(--text-secondary);" class="mt-2">CV Créés</p>
+                    </div>
+                </div>
+
+                <div class="stats-item hover-lift">
+                    <i class="fas fa-file-alt color-orange text-4xl mb-4"></i>
+                    <div>
+                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="2847" data-purecounter-duration="1">0</span>
+                        <p style="color: var(--text-secondary);" class="mt-2">Lettres Générées</p>
+                    </div>
+                </div>
+
+                <div class="stats-item hover-lift">
+                    <i class="fas fa-headset color-green text-4xl mb-4"></i>
+                    <div>
+                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="97" data-purecounter-duration="1">0</span>
+                        <p style="color: var(--text-secondary);" class="mt-2">% Taux de Réussite</p>
+                    </div>
+                </div>
+
+                <div class="stats-item hover-lift">
+                    <i class="fas fa-users color-pink text-4xl mb-4"></i>
+                    <div>
+                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="24" data-purecounter-duration="1">0</span>
+                        <p style="color: var(--text-secondary);" class="mt-2">Support 24/7</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- /Stats Section -->
+
+    <!-- Portfolio Section - Aperçu des modèles -->
+    <section id="portfolio" class="section" style="background: var(--bg-secondary);">
+        <div class="container mx-auto px-4">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Aperçu de nos <span class="gradient-text">modèles</span></h2>
+                <p>Découvrez la qualité professionnelle de nos CV générés par IA</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="100">
+                <!-- CV Template 1 -->
+                <div class="glass-card rounded-xl overflow-hidden hover-lift">
+                    <div class="h-64 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
+                        <img src="{% static 'images/tamplate_img/cv1.png' %}" class="w-full h-full object-cover rounded" alt="Modèle CV 1">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Modèle Professionnel</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">CV moderne pour tous secteurs</p>
+                    </div>
+                </div>
+
+                <!-- CV Template 2 -->
+                <div class="glass-card rounded-xl overflow-hidden hover-lift">
+                    <div class="h-64 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
+                        <img src="{% static 'images/tamplate_img/cv2.png' %}" class="w-full h-full object-cover rounded" alt="Modèle CV 2">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Modèle Créatif</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">Design innovant pour se démarquer</p>
+                    </div>
+                </div>
+
+                <!-- CV Template 3 -->
+                <div class="glass-card rounded-xl overflow-hidden hover-lift">
+                    <div class="h-64 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
+                        <img src="{% static 'images/tamplate_img/cv4.png' %}" class="w-full h-full object-cover rounded" alt="Modèle CV 4">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Modèle Minimaliste</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">Élégance et simplicité</p>
+                    </div>
+                </div>
+
+                <!-- LM Template 1 -->
+                <div class="glass-card rounded-xl overflow-hidden hover-lift">
+                    <div class="h-64 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
+                        <img src="{% static 'images/tamplate_img/LM3.png' %}" class="w-full h-full object-cover rounded" alt="Lettre de Motivation 3">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Lettre Classique</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">Format traditionnel efficace</p>
+                    </div>
+                </div>
+
+                <!-- LM Template 2 -->
+                <div class="glass-card rounded-xl overflow-hidden hover-lift">
+                    <div class="h-64 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
+                        <img src="{% static 'images/tamplate_img/LM4.png' %}" class="w-full h-full object-cover rounded" alt="Lettre de Motivation 4">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Lettre Moderne</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">Design contemporain percutant</p>
+                    </div>
+                </div>
+
+                <!-- LM Template 3 -->
+                <div class="glass-card rounded-xl overflow-hidden hover-lift">
+                    <div class="h-64 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
+                        <img src="{% static 'images/tamplate_img/LM5.png' %}" class="w-full h-full object-cover rounded" alt="Lettre de Motivation 5">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="font-semibold" style="color: var(--text-primary);">Lettre Premium</h4>
+                        <p class="text-sm" style="color: var(--text-secondary);">Excellence et personnalisation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- /Portfolio Section -->
+
+    <!-- FAQ Section -->
+    <section id="faq" class="section" style="background: var(--bg-tertiary);">
+        <div class="container mx-auto px-4">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Questions Fréquentes</h2>
+                <p>Tout ce que vous devez savoir sur CVBot</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="faq-container" data-aos="fade-up" data-aos-delay="100">
+                    <div class="faq-item faq-active">
+                        <h3>Comment fonctionne la génération de CV par IA ?</h3>
+                        <div class="faq-content">
+                            <p>Notre IA analyse vos informations personnelles et professionnelles, puis génère automatiquement un CV optimisé en sélectionnant le meilleur format et en organisant vos données de manière percutante.</p>
+                        </div>
+                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Les CV sont-ils vraiment compatibles ATS ?</h3>
+                        <div class="faq-content">
+                            <p>Oui, absolument ! Tous nos modèles sont testés et validés pour passer les filtres des systèmes ATS les plus populaires avec un taux de réussite de 99%.</p>
+                        </div>
+                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Puis-je personnaliser les modèles générés ?</h3>
+                        <div class="faq-content">
+                            <p>Bien sûr ! Une fois votre CV généré, vous pouvez le modifier, ajouter ou supprimer des sections, changer les couleurs et adapter le contenu selon vos besoins.</p>
+                        </div>
+                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+                </div>
+
+                <div class="faq-container" data-aos="fade-up" data-aos-delay="200">
+                    <div class="faq-item">
+                        <h3>Combien de temps faut-il pour créer un CV ?</h3>
+                        <div class="faq-content">
+                            <p>En moyenne, il faut moins de 30 secondes pour générer un CV complet et professionnel. Le temps de saisie de vos informations peut varier selon leur complexité.</p>
+                        </div>
+                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Mes données personnelles sont-elles sécurisées ?</h3>
+                        <div class="faq-content">
+                            <p>Absolument ! Nous utilisons un chiffrement de niveau bancaire pour protéger toutes vos données. Vos informations ne sont jamais partagées avec des tiers.</p>
+                        </div>
+                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+
+                    <div class="faq-item">
+                        <h3>Y a-t-il une limite au nombre de CV créés ?</h3>
+                        <div class="faq-content">
+                            <p>Pendant notre période de lancement, vous pouvez créer autant de CV et lettres de motivation que vous le souhaitez, gratuitement et sans limitation.</p>
+                        </div>
+                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section><!-- /FAQ Section -->
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="py-20 bg-slate-900">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <span class="inline-block px-4 py-2 glass-card text-primary-300 rounded-full text-sm mb-4">
-                    <i class="fas fa-star mr-2"></i>Témoignages
-                </span>
-                <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">
-                    Ils ont transformé leur <span class="gradient-text">carrière</span>
-                </h2>
-                <p class="text-lg text-slate-300 max-w-3xl mx-auto">
-                    Découvrez les témoignages de nos utilisateurs qui ont décroché leur emploi de rêve
-                </p>
+    <section id="testimonials" class="section" style="background: var(--bg-secondary);">
+        <div class="container mx-auto px-4">
+            <div class="section-title" data-aos="fade-up">
+                <h2>Témoignages</h2>
+                <p>Ce que disent nos utilisateurs de CVBot</p>
             </div>
 
-            <!-- Testimonials Grid -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- Testimonial 1 -->
-                <div class="glass-card rounded-xl p-6 border border-slate-700">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-4 flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-semibold">Sarah Martin</h4>
-                            <p class="text-primary-400 text-sm">Développeuse Frontend</p>
-                        </div>
-                    </div>
-                    <div class="flex text-yellow-400 mb-4">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="testimonial-item hover-lift">
+                    <div class="stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="text-slate-300 mb-4">
-                        "Incroyable ! J'ai généré mon CV en 30 secondes et décroché 3 entretiens la première semaine."
+                    <p class="mb-4" style="color: var(--text-secondary);">
+                        "Incroyable ! J'ai généré mon CV en 30 secondes et décroché 3 entretiens la première semaine. L'IA a su mettre en valeur mes compétences parfaitement."
                     </p>
+                    <h4 class="font-semibold" style="color: var(--text-primary);">Sarah Martin</h4>
+                    <p class="text-primary-400 text-sm">Développeuse Frontend</p>
                 </div>
 
-                <!-- Testimonial 2 -->
-                <div class="glass-card rounded-xl p-6 border border-slate-700">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-4 flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-semibold">Thomas Dubois</h4>
-                            <p class="text-primary-400 text-sm">Chef de Projet Digital</p>
-                        </div>
-                    </div>
-                    <div class="flex text-yellow-400 mb-4">
+                <div class="testimonial-item hover-lift">
+                    <div class="stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="text-slate-300 mb-4">
-                        "Après 6 mois de recherche infructueuse, CVBot m'a aidé à créer un CV qui sort du lot."
+                    <p class="mb-4" style="color: var(--text-secondary);">
+                        "Après 6 mois de recherche infructueuse, CVBot m'a aidé à créer un CV qui sort du lot. J'ai trouvé un emploi en 3 semaines !"
                     </p>
+                    <h4 class="font-semibold" style="color: var(--text-primary);">Thomas Dubois</h4>
+                    <p class="text-primary-400 text-sm">Chef de Projet Digital</p>
                 </div>
 
-                <!-- Testimonial 3 -->
-                <div class="glass-card rounded-xl p-6 border border-slate-700">
-                    <div class="flex items-center mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full mr-4 flex items-center justify-center">
-                            <i class="fas fa-user text-white"></i>
-                        </div>
-                        <div>
-                            <h4 class="text-white font-semibold">Marie Leroy</h4>
-                            <p class="text-primary-400 text-sm">Responsable Marketing</p>
-                        </div>
-                    </div>
-                    <div class="flex text-yellow-400 mb-4">
+                <div class="testimonial-item hover-lift">
+                    <div class="stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="text-slate-300 mb-4">
-                        "L'IA de CVBot a su mettre en valeur mes compétences de façon que je n'aurais jamais imaginée."
+                    <p class="mb-4" style="color: var(--text-secondary);">
+                        "L'IA de CVBot a su mettre en valeur mes compétences de façon que je n'aurais jamais imaginée. Un outil révolutionnaire !"
                     </p>
-                </div>
-            </div>
-
-            <!-- Trust Metrics -->
-            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div class="stat-card rounded-xl p-6">
-                    <div class="text-2xl font-bold text-white mb-2 counter" data-target="4.9">0</div>
-                    <div class="text-yellow-400 mb-1">
-                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                    </div>
-                    <div class="text-sm text-slate-400">Note moyenne</div>
-                </div>
-                <div class="stat-card rounded-xl p-6">
-                    <div class="text-2xl font-bold text-white mb-2 counter" data-target="2847">0</div>
-                    <div class="text-sm text-slate-400">Avis vérifiés</div>
-                </div>
-                <div class="stat-card rounded-xl p-6">
-                    <div class="text-2xl font-bold text-white mb-2 counter" data-target="97">0</div>
-                    <div class="text-sm text-slate-400">% Recommandent</div>
-                </div>
-                <div class="stat-card rounded-xl p-6">
-                    <div class="text-2xl font-bold text-white mb-2 counter" data-target="50000">0</div>
-                    <div class="text-sm text-slate-400">Utilisateurs</div>
+                    <h4 class="font-semibold" style="color: var(--text-primary);">Marie Leroy</h4>
+                    <p class="text-primary-400 text-sm">Responsable Marketing</p>
                 </div>
             </div>
         </div>
-    </section>
+    </section><!-- /Testimonials Section -->
 
     <!-- Final CTA Section -->
-    <section id="final-cta" class="py-20 bg-gradient-to-br from-slate-900 to-slate-800 relative overflow-hidden">
+    <section id="final-cta" class="section bg-gradient-to-br relative overflow-hidden" style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);">
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
             <div class="absolute top-20 left-10 w-40 h-40 bg-primary-500/10 rounded-full animate-float"></div>
             <div class="absolute bottom-20 right-10 w-60 h-60 bg-secondary-500/10 rounded-full animate-float" style="animation-delay: 2s;"></div>
         </div>
 
-        <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="relative container mx-auto px-4 text-center">
             <div class="mb-8">
                 <span class="inline-flex items-center px-6 py-3 glass-card text-primary-200 rounded-full text-sm">
                     <i class="fas fa-gift mr-3"></i>
@@ -508,19 +715,19 @@
                 </span>
             </div>
 
-            <h2 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+            <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight" style="color: var(--text-primary);">
                 Prêt à décrocher votre
                 <span class="gradient-text">emploi de rêve</span> ?
             </h2>
 
-            <p class="text-lg text-slate-300 mb-8 leading-relaxed max-w-2xl mx-auto">
+            <p class="text-lg mb-8 leading-relaxed max-w-2xl mx-auto" style="color: var(--text-secondary);">
                 Rejoignez les 50,000+ professionnels qui ont transformé leur carrière avec CVBot. 
                 Votre futur vous attend, il ne vous manque qu'un CV exceptionnel.
             </p>
 
             <!-- Main CTA Button -->
             <div class="mb-8">
-                <button class="btn-primary px-12 py-4 text-white text-lg font-bold rounded-xl">
+                <button class="btn btn-primary px-12 py-4 text-white text-lg font-bold rounded-xl hover-lift focus-ring">
                     <i class="fas fa-magic mr-3"></i>
                     Créer Mon CV Gratuitement
                 </button>
@@ -532,134 +739,31 @@
                     <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-3">
                         <i class="fas fa-star text-white"></i>
                     </div>
-                    <div class="text-white font-semibold mb-1">Qualité Garantie</div>
-                    <div class="text-slate-400 text-sm">Design professionnel</div>
+                    <div class="font-semibold mb-1" style="color: var(--text-primary);">Qualité Garantie</div>
+                    <div class="text-sm" style="color: var(--text-secondary);">Design professionnel</div>
                 </div>
                 <div class="flex flex-col items-center">
                     <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-3">
                         <i class="fas fa-lock text-white"></i>
                     </div>
-                    <div class="text-white font-semibold mb-1">Sécurisé</div>
-                    <div class="text-slate-400 text-sm">Données protégées</div>
+                    <div class="font-semibold mb-1" style="color: var(--text-primary);">Sécurisé</div>
+                    <div class="text-sm" style="color: var(--text-secondary);">Données protégées</div>
                 </div>
                 <div class="flex flex-col items-center">
                     <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-3">
                         <i class="fas fa-clock text-white"></i>
                     </div>
-                    <div class="text-white font-semibold mb-1">Rapide</div>
-                    <div class="text-slate-400 text-sm">30 secondes</div>
+                    <div class="font-semibold mb-1" style="color: var(--text-primary);">Rapide</div>
+                    <div class="text-sm" style="color: var(--text-secondary);">30 secondes</div>
                 </div>
             </div>
         </div>
-    </section>
+    </section><!-- /Final CTA Section -->
+
 {% endblock %}
 
 {% block extra_js %}
-<script>
-    // Counter Animation
-    function animateCounters() {
-        const counters = document.querySelectorAll('.counter');
-        counters.forEach(counter => {
-            const target = parseFloat(counter.getAttribute('data-target'));
-            const increment = target / 100;
-            let current = 0;
-            
-            const updateCounter = () => {
-                if (current < target) {
-                    current += increment;
-                    if (target > 1000) {
-                        counter.textContent = Math.floor(current).toLocaleString();
-                    } else if (target % 1 !== 0) {
-                        counter.textContent = current.toFixed(1);
-                    } else {
-                        counter.textContent = Math.floor(current);
-                    }
-                    requestAnimationFrame(updateCounter);
-                } else {
-                    if (target > 1000) {
-                        counter.textContent = target.toLocaleString();
-                    } else if (target % 1 !== 0) {
-                        counter.textContent = target.toFixed(1);
-                    } else {
-                        counter.textContent = target;
-                    }
-                }
-            };
-            updateCounter();
-        });
-    }
 
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        // Animate counters when they come into view
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
-                    entry.target.classList.add('animated');
-                    if (entry.target.classList.contains('counter')) {
-                        const target = parseFloat(entry.target.getAttribute('data-target'));
-                        const increment = target / 100;
-                        let current = 0;
-                        
-                        const updateCounter = () => {
-                            if (current < target) {
-                                current += increment;
-                                if (target > 1000) {
-                                    entry.target.textContent = Math.floor(current).toLocaleString();
-                                } else if (target % 1 !== 0) {
-                                    entry.target.textContent = current.toFixed(1);
-                                } else {
-                                    entry.target.textContent = Math.floor(current);
-                                }
-                                requestAnimationFrame(updateCounter);
-                            } else {
-                                if (target > 1000) {
-                                    entry.target.textContent = target.toLocaleString();
-                                } else if (target % 1 !== 0) {
-                                    entry.target.textContent = target.toFixed(1);
-                                } else {
-                                    entry.target.textContent = target;
-                                }
-                            }
-                        };
-                        updateCounter();
-                    }
-                }
-            });
-        }, observerOptions);
-
-        // Observe all counters
-        document.querySelectorAll('.counter').forEach(counter => {
-            observer.observe(counter);
-        });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    });
-</script>
-<script>
-function openModal(id) {
-    document.getElementById(id).classList.remove("hidden");
-}
-function closeModal(id) {
-    document.getElementById(id).classList.add("hidden");
-}
-</script>
+<script src="{% static 'js/home.js' %}"></script>
 
 {% endblock %}

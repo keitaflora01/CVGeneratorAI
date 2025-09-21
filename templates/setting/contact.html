@@ -1,0 +1,99 @@
+{% extends 'accound/base.html' %}
+{% load static %}
+{% load i18n %}
+
+{% block content %}
+<main class="flex-grow p-6 sm:p-8 lg:p-12 max-w-6xl mx-auto bg-white rounded-xl shadow-xl my-10">
+    <header class="text-center mb-12">
+        <h1 class="font-lato font-extrabold text-5xl text-gray-900 mb-4">{% trans "Contact Us" %}</h1>
+        <p class="font-montserrat text-lg text-gray-600 max-w-2xl mx-auto">{% trans "We're here to assist you with any questions about our courses, pricing, or platform. Reach out to our team today!" %}</p>
+    </header>
+
+    <section class="mb-12">
+        <h2 class="font-lato font-semibold text-3xl text-gray-800 mb-6 border-b-2 border-blue-700 pb-3">{% trans "Get in Touch" %}</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Contact Form -->
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl shadow-lg">
+                <h3 class="font-lato font-semibold text-2xl text-gray-800 mb-4">{% trans "Send Us a Message" %}</h3>
+                <form id="contact-form" action="{% url 'course:contact_us' %}" method="post" class="space-y-6">
+                    {% csrf_token %}
+                    <div>
+                        <label for="name" class="font-montserrat text-gray-600 text-lg">{% trans "Name" %}</label>
+                        <input type="text" id="name" name="name" required class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="{% trans 'Your Name' %}">
+                    </div>
+                    <div>
+                        <label for="email" class="font-montserrat text-gray-600 text-lg">{% trans "Email" %}</label>
+                        <input type="email" id="email" name="email" required class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="{% trans 'Your Email' %}">
+                    </div>
+                    <div>
+                        <label for="subject" class="font-montserrat text-gray-600 text-lg">{% trans "Subject" %}</label>
+                        <input type="text" id="subject" name="subject" required class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" placeholder="{% trans 'Subject' %}">
+                    </div>
+                    <div>
+                        <label for="message" class="font-montserrat text-gray-600 text-lg">{% trans "Message" %}</label>
+                        <textarea id="message" name="message" required class="w-full mt-2 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" rows="5" placeholder="{% trans 'Your Message' %}"></textarea>
+                    </div>
+                    <div id="form-message" class="hidden mt-4 p-4 rounded-lg"></div>
+                <button type="submit" style="background-color: #000080; color: white; font-family: montserrat; font-weight: medium; padding: 12px 24px; border-radius: 8px; transition: background-color 0.3s ease;">Send Message</button>                </form>
+            </div>
+            <!-- Contact Information -->
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-8 rounded-xl shadow-lg">
+                <h3 class="font-lato font-semibold text-2xl text-gray-800 mb-4">{% trans "Contact Information" %}</h3>
+                <ul class="font-montserrat text-gray-600 space-y-4">
+                    <li>
+                        <strong>{% trans "Email" %}:</strong>
+                        <a href="mailto:contact@e-hooyia.com" class="text-blue-600 hover:underline">contact@e-hooyia.com</a>
+                    </li> 
+                    <li>
+                        <strong>{% trans "Address" %}:</strong>
+                        {% trans "E-learning Hooyia, Tech Education, Bafoussam, Ouest, Cameroun" %}
+                    </li>
+                    <li>
+                        <strong>{% trans "Phone" %}:</strong>
+                        {% trans "+ (237) 687238009" %}
+                    </li>
+                    <li>
+                        <strong>{% trans "Business Hours" %}:</strong>
+                        {% trans "Monday–Friday, 8:00 AM–5:00 PM" %}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const form = this;
+            const formMessage = document.getElementById('form-message');
+            formMessage.classList.add('hidden');
+
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                formMessage.classList.remove('hidden');
+                if (data.success) {
+                    formMessage.classList.add('bg-green-100', 'text-green-700');
+                    formMessage.textContent = data.message;
+                    form.reset();
+                } else {
+                    formMessage.classList.add('bg-red-100', 'text-red-700');
+                    formMessage.textContent = data.errors.general || Object.values(data.errors).join(' ');
+                }
+            })
+            .catch(error => {
+                formMessage.classList.remove('hidden');
+                formMessage.classList.add('bg-red-100', 'text-red-700');
+                formMessage.textContent = '{% trans "An error occurred. Please try again later." %}';
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</main>
+{% endblock %}

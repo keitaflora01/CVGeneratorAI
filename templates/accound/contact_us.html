@@ -1,0 +1,195 @@
+{% comment %} {% extends "accound/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block css %}
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 128, 0.4), rgba(0, 0, 128, 0.8)), url('{% static "assets/img/contact/1.jpg" %}');
+            background-size: cover;
+            background-position: center;
+            object-fit: cover;
+            object-position: top;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <section class="bg-white">
+        <div class="hero-section flex items-center justify-center">
+            <div class="m-auto text-center px-6 pt-18 pb-80 max-w-xl">
+                <h1 class="text-3xl md:text-5xl font-bold text-white mb-6">
+                    {% translate 'Contact Us' as contact_us_label %}
+                    <span class="font-bold">{{ contact_us_label|lower|capfirst }}</span>
+                </h1>
+                <p class="text-base md:text-xl font-bold text-gray-200 mb-8 leading-relaxed">
+                    {% trans "Get help with your CV and cover letter creation." %}
+                </p>
+            </div>
+        </div>
+        <div class="bg-transparent -mt-80 py-12 mx-auto px-4 ms:px-8">
+            <div class="p-6 mx-auto max-w-screen-md shadow-sm rounded-xl bg-white border-gray-200">
+                <!-- Non-field Errors -->
+                {% if form.non_field_errors %}
+                    <div class="flex p-4 mb-4 text-xs md:text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                        <svg class="shrink-0 inline w-4 h-4 me-3 mt-[2px]" aria-hidden="true"
+                             xmlns="http://www.w3.org/2000/svg"
+                             fill="currentColor" viewBox="0 0 20 20">
+                            <path
+                                    d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"></path>
+                        </svg>
+                        <span class="sr-only">Danger</span>
+                        <div>
+                            <span class="font-medium">{% trans "Please correct the following errors:" %}</span>
+                            <ul class="mt-1.5 list-disc list-inside">
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error | safe }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                {% endif %}
+
+                <!-- Form -->
+                <form method="post" class="space-y-2 grid ms:grid-cols-2 md:grid-cols-2 gap-4 space-x-2"
+                      id="contactform">
+                    {% csrf_token %}
+                    <input type="hidden" name="recaptcha" id="recaptcha">
+                    {% with is_required=request.user.is_authenticated|no %}
+                        {% include 'hooyia/common/input_field.html' with field=form.full_name required=is_required %}
+                        {% include 'hooyia/common/input_field.html' with field=form.email required=is_required %}
+                    {% endwith %}
+                    {% include 'hooyia/common/input_field.html' with field=form.subject required=True custom_classes="ms:col-span-2" %}
+                    {% include 'hooyia/common/input_field.html' with field=form.message is_textarea=True required=True custom_classes="ms:col-span-2" %}
+
+                    <div class="ms:col-span-2 m-0">
+                        <p class="text-xs md:text-sm text-gray-600 mb-3">
+                            {% trans "By submitting this form you agree to our" %}
+                            <a href="#"
+                               class="text-primary hover:underline">{% trans "terms and conditions" %}</a>
+                            {% trans "and our" %}
+                            <a href="#"
+                               class="text-primary hover:underline">{% trans "privacy policy" %}</a>
+                            {% trans "which explains how we may collect, use and disclose your personal information including to third parties." %}
+                        </p>
+                    </div>
+                    <button type="submit" id="send-contact-button"
+                            class="text-xs md:text-sm btn btn-lg btn-primary flex items-center justify-center ms:w-fit">
+                        <svg aria-hidden="true" role="status"
+                             class="w-4 h-4 me-3 text-gray-200 animate-spin loader hidden" viewBox="0 0 100 101"
+                             fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                    d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                    fill="currentColor"></path>
+                            <path
+                                    d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                    fill="#e776ff"></path>
+                        </svg>
+                        {% trans "Send Message" as send_message %}
+                        <span class="button-text">{{ send_message|lower|capfirst }}</span>
+                    </button>
+                </form>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mt-20">
+                <div class="text-center">
+                    <div class="flex justify-center mb-4">
+                        <div class="h-16 w-16 bg-primary/20 flex items-center justify-center rounded-lg">
+                            <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-lg font-bold text-gray-900">{% trans "Email us:" %}</p>
+                    <p class="text-xs md:text-sm text-gray-600 mt-2">
+                        {% trans "Reach out for CV or cover letter assistance." %}
+                    </p>
+                    <a href="mailto:support@cvbuilder.com"
+                       class="text-primary hover:underline mt-2 block">
+                        support@cvbuilder.com
+                    </a>
+                </div>
+                <div class="text-center">
+                    <div class="flex justify-center mb-4">
+                        <div class="h-16 w-16 bg-primary/20 flex items-center justify-center rounded-lg">
+                            <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                        d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-lg font-bold text-gray-900">{% trans "Call us:" %}</p>
+                    <p class="text-xs md:text-sm text-gray-600 mt-2">
+                        {% trans "Contact us for support or inquiries." %}
+                    </p>
+                    <span class="text-primary mt-2 block">+237 58 81 92 53</span>
+                </div>
+                <div class="text-center">
+                    <div class="flex justify-center mb-4">
+                        <div class="h-16 w-16 bg-primary/20 flex items-center justify-center rounded-lg">
+                            <svg class="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 20 20"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-2 0c0 .993-.241 1.929-.668 2.754l-1.524-1.525a3.997 3.997 0 00.078-2.183l1.562-1.562C15.802 8.249 16 9.1 16 10zm-5.165 3.913l1.58 1.58A5.98 5.98 0 0110 16a5.976 5.976 0 01-2.516-.552l1.562-1.562a4.006 4.006 0 001.789.027zm-4.677-2.796a4.002 4.002 0 01-.041-2.08l-.08.08-1.53-1.533A5.98 5.98 0 004 10c0 .954.223 1.856.619 2.657l1.54-1.54zm1.088-6.45A5.974 5.974 0 0110 4c.954 0 1.856.223 2.657.619l-1.54 1.54a4.002 4.002 0 00-2.346.033L7.246 4.668zM12 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                      clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-lg font-bold text-gray-900">{% trans "Support" %}</p>
+                    <p class="text-xs md:text-sm text-gray-600 mt-2">
+                        {% trans "Explore our guides for CV and cover letter tips." %}
+                    </p>
+                    <a href="#"
+                       class="text-xs md:text-sm btn btn-sm btn-outline-primary inline-block mt-2">{% trans "Support center" %}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block js %}
+    <script src="https://www.google.com/recaptcha/api.js?render={{ RECAPTCHA_SITE_KEY }}"></script>
+    <script>
+        grecaptcha.ready(function () {
+            document.getElementById("contactform").addEventListener("submit", async function (e) {
+                e.preventDefault();
+                setLoading(true);
+                const form = this;
+
+                try {
+                    // Execute reCAPTCHA
+                    document.getElementById("recaptcha").value = await grecaptcha.execute('{{ RECAPTCHA_SITE_KEY }}', {action: 'contact'});
+
+                    // Submit the form
+                    form.submit();
+                } catch (error) {
+                    window.toastManager.buildToast()
+                        .setMessage(gettext("An unexpected error occurred, please try again later."))
+                        .setType("danger")
+                        .setPosition('top-right')
+                        .setDuration(4000)
+                        .show();
+                    setLoading(false);
+                }
+            });
+        });
+
+        function capitalizeFirstLetter(str) {
+            if (!str) return str;
+            return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+        }
+
+        function setLoading(isLoading) {
+            const button = document.getElementById('send-contact-button');
+            const loader = button.querySelector('.loader');
+            const buttonText = button.querySelector('.button-text');
+
+            loader.classList.toggle('hidden', !isLoading);
+            loader.classList.toggle('inline', isLoading);
+            button.disabled = isLoading;
+            buttonText.textContent = isLoading ? capitalizeFirstLetter(`{% trans "Sending Message" %}`) : capitalizeFirstLetter(`{% trans "Send Message" %}`);
+        }
+    </script>
+{% endblock %} {% endcomment %}

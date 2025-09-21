@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Mon CV{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primaryBlue: '#667eea',
+            primaryPurple: '#764ba2',
+            primaryGreen: '#11998e',
+            primaryGreenLight: '#38ef7d',
+            primaryRed: '#ff6b6b',
+            primaryDark: '#2c3e50',
+            primaryGray: '#7f8c8d',
+            primaryLightGray: '#ecf0f1',
+            primaryPink: '#fa709a',
+            primaryYellow: '#fee140',
+            primaryCorporate: '#34495e'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 p-5">
+  {% block content %}{% endblock %}
+</body>
+</html>
