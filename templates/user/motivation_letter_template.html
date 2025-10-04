@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="{{ document.langue|default:'fr' }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lettre de Motivation - {{ document.titre }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 20px;
+            font-size: 12pt;
+        }
+        .header {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .header p {
+            font-size: 10pt;
+            margin: 5px 0;
+        }
+        .recipient {
+            margin-bottom: 20px;
+        }
+        .subject {
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .content {
+            text-align: justify;
+        }
+        .closing {
+            margin-top: 20px;
+        }
+        a {
+            color: #556ee6;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <p><strong>{{ name }}</strong></p>
+        <p>{{ email }}</p>
+        <p>{{ telephone }}</p>
+        <p><a href="{{ github_url }}">GitHub: {{ github_username }}</a></p>
+        <p><a href="{{ linkedin_url }}">LinkedIn: {{ linkedin_username }}</a></p>
+        <p>{{ today }}</p>
+    </div>
+    <div class="recipient">
+        <p>{{ company }}</p>
+        <p>À l'attention du Responsable des Ressources Humaines</p>
+        <p>{{ company_address }}</p>
+    </div>
+    <div class="subject">
+        Objet: Candidature pour le poste de {{ target_role }}
+    </div>
+    <div class="content">
+        {{ letter_content|safe }}
+    </div>
+    <div class="closing">
+        <p>Je reste à votre disposition pour un entretien afin de discuter de ma candidature.</p>
+        <p>Dans l’attente de votre réponse, je vous prie d’agréer, Madame, Monsieur, l’expression de mes salutations distinguées.</p>
+        <p>{{ name }}</p>
+    </div>
+</body>
+</html>

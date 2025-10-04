@@ -43,6 +43,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -182,3 +183,67 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'comptes.User'
+
+
+#coniguration jazzmin 
+
+JAZZMIN_SETTINGS = {
+   "site_title": "Mon Administration",
+    "site_header": "Mon Application",
+    "site_brand": "Dashboard",
+    "welcome_sign": "Bienvenue 👋",
+    
+    # Ton CSS custom
+    "custom_css": "css/admin.css",
+
+    # Logos (optionnels si tu as des images dans ton dossier static)
+    # "site_logo": "images/logo.png",
+    # "site_logo_classes": "img-circle",
+    # "site_icon": "images/favicon.ico",
+
+    # Liens du menu utilisateur (ex: docs, support)
+    "topmenu_links": [
+        {"name": "Accueil", "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"model": "auth.User"},
+        {"app": "auth"},
+    ],
+
+    # Organisation du menu latéral
+    "order_with_respect_to": ["auth", "app1", "app2"],
+
+    # Icônes (FontAwesome)
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "auth.user": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+
+    # Style du menu
+    "show_sidebar": True,
+    "navigation_expanded": True,
+
+    # Style des formulaires
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {
+        "auth.user": "collapsible",
+        "auth.group": "vertical_tabs",
+    },
+}
+
+# ======================
+# Jazzmin UI tweaks
+# ======================
+JAZZMIN_UI_TWEAKS = {
+    "theme": "cosmo",  # (cosmo, flatly, darkly, etc.)
+    "navbar": "navbar-dark navbar-primary",
+    "sidebar": "sidebar-dark-primary",
+    "brand_colour": "navbar-primary",
+    "accent": "accent-info",
+    "body_small_text": False,
+    "sidebar_nav_small_text": False,
+    "sidebar_disable_expand": False,
+    "sidebar_nav_child_indent": True,
+    "sidebar_nav_compact_style": False,
+    "sidebar_nav_legacy_style": False,
+    "sidebar_nav_flat_style": False,
+}

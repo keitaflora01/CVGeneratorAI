@@ -1,5 +1,8 @@
+from datetime import datetime
 import logging
 import os
+from django.template.loader import render_to_string
+import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
@@ -342,43 +345,43 @@ def _get_prompt(document_type, target_role, company, keywords, tone, job_descrip
     template_styles = {
         'template1-moderne-bleu': {
             'description': 'Modern design with a blue and purple gradient sidebar, white text on dark background, clean typography, and structured sections for Contact, Skills, Languages, Profile, Experience, and Education.',
-            'formatting': 'Use markdown with a left sidebar for Contact, Skills, and Languages (white text, blue/purple gradient background), and main content for Profile, Experience, and Education. Use blue headers and bullet points for clarity.'
+            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
         },
         'template2-elegant-vert': {
             'description': 'Elegant design with green accents, grid layout, rounded skill tags, and a centered header with green gradient.',
-            'formatting': 'Use markdown with a centered header (green gradient background), grid layout for Skills and Experience, and rounded skill tags in light gray. Use green headers and concise bullet points.'
+            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
         },
         'template3-minimaliste': {
             'description': 'Minimalist design with red accents, clean lines, and a focus on simplicity with a grid layout.',
-            'formatting': 'Use markdown with a minimalistic structure, red accent lines under headers, and a grid layout for Profile/Experience and Skills/Education. Keep text concise and use red for key highlights.'
+            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
         },
         'template4-corporate': {
             'description': 'Corporate design with navy blue accents, formal layout, and clear section separation with background highlights.',
-            'formatting': 'Use markdown with navy blue headers on light gray backgrounds, formal structure, and bullet points for Skills, Experience, and Education. Include Languages and Interests sections.'
+            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
         },
         'template5-creatif': {
             'description': 'Creative design with pink and yellow gradients, bold typography, and a focus on innovative projects.',
-            'formatting': 'Use markdown with pink/yellow gradient headers, bold typography, and sections for Expertise, Projects, and Experience. Use diamond-shaped bullet points and vibrant colors for highlights.'
+            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
         },
         'template5-tech-startup': {
             'description': 'Dynamic tech startup style with light blue and purple gradients, bold callouts, and a focus on metrics and vision.',
-            'formatting': 'Use markdown with a light blue/purple gradient header, bold callouts for metrics and vision, and a conversational tone. Include sections for impact metrics and vision, with inline highlights in blue and green.'
+            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
         },
         'template1-lettre-classique-elegante': {
             'description': 'Classic and elegant letter with blue borders, formal tone, and right-aligned contact details.',
-            'formatting': 'Use markdown with a formal structure, blue border under header, right-aligned contact details, and sections for greeting, body (3-4 paragraphs), and formal closing. Use a professional tone.'
+            'formatting': 'For LM: Use a single narrative block with a formal greeting (e.g., Madame, Monsieur), 3-4 paragraphs, and a formal closing (e.g., salutations distinguées).'
         },
         'template2-moderne-pro': {
             'description': 'Modern professional letter with light blue and purple gradients, concise structure, and highlighted achievements.',
-            'formatting': 'Use markdown with a light blue/purple gradient header, concise paragraphs, and bullet points for achievements. Include a centered title and formal closing with inline highlights in blue.'
+            'formatting': 'For LM: Use a single narrative block with a formal greeting, 3-4 paragraphs with bullet points for achievements, and a formal closing.'
         },
         'template3-corporate-minimaliste': {
             'description': 'Corporate minimalist letter with navy blue accents, clean layout, and focus on key achievements.',
-            'formatting': 'Use markdown with navy blue headers, a clean layout, and bullet points for key achievements. Include a centered header and formal closing.'
+            'formatting': 'For LM: Use a single narrative block with a formal greeting, 3-4 paragraphs with bullet points for achievements, and a formal closing.'
         },
         'template4-creatif-colore': {
             'description': 'Creative and colorful letter with pink and teal gradients, bold typography, and a conversational tone.',
-            'formatting': 'Use markdown with pink/teal gradient headers, bold typography, and a conversational tone. Include sections for creative highlights, with inline highlights in yellow and green.'
+            'formatting': 'For LM: Use a single narrative block with a conversational greeting, 3-4 paragraphs, and a friendly closing.'
         }
     }
 
@@ -387,7 +390,7 @@ def _get_prompt(document_type, target_role, company, keywords, tone, job_descrip
     if document_type == 'CV':
         prompt = f"""
         Generate a professional CV in {langue} for a {target_role} position at {company}. 
-        Use a {tone} tone and the '{template_style['description']}' template style. Incorporate the following details:
+        Use a {tone} tone and the '{template_style['description']}' template style. Incorporate:
         - Name: {user_data.get('name', 'Anonymous')}
         - Email: {user_data.get('email', 'N/A')}
         - LinkedIn: {user_data.get('linkedin_url', 'N/A')}
@@ -398,12 +401,18 @@ def _get_prompt(document_type, target_role, company, keywords, tone, job_descrip
         - Education: {json.dumps(user_data.get('education', []))}
         - Job Description: {job_description}
         - Additional Context: {context}
-        Format the CV in markdown following the '{template_style['formatting']}' style. Ensure the content is tailored to the job description and company, with clear sections for Personal Information, Skills, Professional Experience, and Education.
+        Format the CV as plain text with the following sections marked by headers:
+        - ## Profil: A concise summary (150-200 words) tailored to {company} and {target_role}.
+        - ## Compétences: A bulleted list of relevant skills using - for bullets.
+        - ## Expérience Professionnelle: Detailed experiences with quantifiable achievements (e.g., 'Reduced deployment time by 20%').
+        - ## Formation: Academic qualifications.
+        - ## Projets: Relevant projects with GitHub links.
+        Follow the '{template_style['formatting']}' style. Ensure content is tailored to {company}, emphasizing relevant skills and achievements.
         """
     else:  # LM
         prompt = f"""
         Generate a professional Letter of Motivation in {langue} for a {target_role} position at {company}. 
-        Use a {tone} tone and the '{template_style['description']}' template style. Incorporate the following details:
+        Use a {tone} tone and the '{template_style['description']}' template style. Incorporate:
         - Name: {user_data.get('name', 'Anonymous')}
         - Email: {user_data.get('email', 'N/A')}
         - LinkedIn: {user_data.get('linkedin_url', 'N/A')}
@@ -414,28 +423,80 @@ def _get_prompt(document_type, target_role, company, keywords, tone, job_descrip
         - Education: {json.dumps(user_data.get('education', []))}
         - Job Description: {job_description}
         - Additional Context: {context}
-        Address the letter to the hiring manager at {company}. Highlight relevant skills and experiences, and explain why the candidate is a good fit for the role and company culture. Include contact information in the closing section. Format the letter in markdown following the '{template_style['formatting']}' style, with a formal greeting, body (3-4 paragraphs), and closing.
+        Format as a single narrative block with:
+        - A formal greeting (e.g., Madame, Monsieur).
+        - 3-4 paragraphs explaining why the candidate is a good fit for {company} and {target_role}, highlighting relevant skills and quantifiable achievements.
+        - A formal closing (e.g., salutations distinguées) with contact information.
+        Follow the '{template_style['formatting']}' style.
         """
     logger.debug(f"Prompt generated: {prompt[:200]}...")
     return prompt
 
-@login_required
+
 def document_detail(request, document_id):
     """Display document details"""
     logger.info(f"Fetching document {document_id} for user {request.user.email}")
     document = get_object_or_404(Document, id=document_id, user=request.user)
+    
+    # Prepare context
     context = {
         'document': document,
         'etapes': document.etape_traitement_set.all().order_by('ordre')
     }
+    
+    # Parse content for CVs
+    if document.type == 'CV':
+        content = document.contenu
+        profile_match = re.search(r'## Profil\s*(.*?)(##|$)', content, re.DOTALL)
+        skills_match = re.search(r'## Compétences\s*(.*?)(##|$)', content, re.DOTALL)
+        experience_match = re.search(r'## Expérience Professionnelle\s*(.*?)(##|$)', content, re.DOTALL)
+        education_match = re.search(r'## Formation\s*(.*?)(##|$)', content, re.DOTALL)
+        projects_match = re.search(r'## Projets\s*(.*?)(##|$)', content, re.DOTALL)
+        
+        # Process each section's lines to identify bullet points
+        def process_lines(lines):
+            return [{'text': line.strip(), 'is_bullet': line.strip().startswith('- ')} for line in lines if line.strip()]
+        
+        context['content_sections'] = {
+            'profile': {
+                'title': 'Profil',
+                'content': process_lines(profile_match.group(1).strip().splitlines() if profile_match else ['No profile provided.'])
+            },
+            'skills': {
+                'title': 'Compétences',
+                'content': process_lines(skills_match.group(1).strip().splitlines() if skills_match else [])
+            },
+            'experience': {
+                'title': 'Expérience Professionnelle',
+                'content': process_lines(experience_match.group(1).strip().splitlines() if experience_match else [])
+            },
+            'education': {
+                'title': 'Formation',
+                'content': process_lines(education_match.group(1).strip().splitlines() if education_match else [])
+            },
+            'projects': {
+                'title': 'Projets',
+                'content': process_lines(projects_match.group(1).strip().splitlines() if projects_match else [])
+            }
+        }
+    else:
+        context['content_sections'] = {
+            'letter': {
+                'title': 'Lettre de Motivation',
+                'content': [{'text': line.strip(), 'is_bullet': False} for line in document.contenu.splitlines() if line.strip()]
+            }
+        }
+    
+    # Include CV image if applicable
     if document.type == 'CV' and hasattr(document, 'cv_image'):
         context['cv_image'] = document.cv_image
         logger.debug(f"CV image found for document {document_id}")
+    
     logger.info(f"Rendering document_detail for document {document_id}")
     return render(request, 'user/generate_document.html', context)
-
+    
 @login_required
-def download_document(request, document_id):
+def downlaod_document(request, document_id):
     """Download generated document in selected format"""
     logger.info(f"Downloading document {document_id} for user {request.user.email}")
     document = get_object_or_404(Document, id=document_id, user=request.user)
@@ -449,12 +510,66 @@ def download_document(request, document_id):
     
     filename = f"{document.type}_{document.poste.replace(' ', '_')}"
     
+    # Prepare context for templates
+    context = {
+        'name': request.user.full_name if hasattr(request.user, 'full_name') and request.user.full_name else 'Anonymous',
+        'email': request.user.email if request.user.is_authenticated else 'N/A',
+        'telephone': document.telephone,
+        'github_url': document.github_url,
+        'github_username': document.github_url.split('/')[-1] if document.github_url else '',
+        'linkedin_url': document.linkedin_url,
+        'linkedin_username': document.linkedin_url.split('/')[-1] if document.linkedin_url else '',
+        'target_role': document.poste,
+        'company': document.entreprise,
+        'company_address': document.entreprise or 'Unknown Address',
+        'today': datetime.now().strftime('%d/%m/%Y'),
+        'document': document,
+    }
+
+    # Parse AI-generated content (plain text with ## headers for CVs)
+    content = document.contenu
+    if document.type == 'CV':
+        profile_match = re.search(r'## Profil\s*(.*?)(##|$)', content, re.DOTALL)
+        skills_match = re.search(r'## Compétences\s*(.*?)(##|$)', content, re.DOTALL)
+        experience_match = re.search(r'## Expérience Professionnelle\s*(.*?)(##|$)', content, re.DOTALL)
+        education_match = re.search(r'## Formation\s*(.*?)(##|$)', content, re.DOTALL)
+        projects_match = re.search(r'## Projets\s*(.*?)(##|$)', content, re.DOTALL)
+
+        context['profile'] = profile_match.group(1).strip() if profile_match else 'No profile provided.'
+        context['skills'] = skills_match.group(1).strip() if skills_match else ''
+        context['experience'] = experience_match.group(1).strip() if experience_match else ''
+        context['education'] = education_match.group(1).strip() if education_match else ''
+        context['projects'] = projects_match.group(1).strip() if projects_match else ''
+    else:
+        context['letter_content'] = content
+
+    # Handle CV image
+    if document.type == 'CV' and hasattr(document, 'cv_image'):
+        context['cv_image'] = document.cv_image.image.url
+    else:
+        context['cv_image'] = ''
+
+    # Get template path
+    templates = get_available_templates()
+    template_id = document.metadata.get('template_id', 'template1-moderne-bleu' if document.type == 'CV' else 'template1-lettre-classique-elegante')
+    template = next((t for t in templates if t['id'] == template_id and t['type'] == ('CV' if document.type == 'CV' else 'LM')), None)
+    if not template:
+        logger.error(f"Template {template_id} not found for document {document_id}")
+        return JsonResponse({'error': 'Template not found'})
+    template_path = template['path']
+
     if export_format == 'pdf':
-        pdf_content = generate_pdf(document)
-        response = HttpResponse(pdf_content, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename="{filename}.pdf"'
-        logger.info(f"PDF generated for document {document_id}, filename: {filename}.pdf")
-        return response
+        try:
+            html_content = render_to_string(template_path, context)
+            html = HTML(string=html_content, base_url=request.build_absolute_uri('/'))
+            pdf_content = html.write_pdf()
+            response = HttpResponse(pdf_content, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="{filename}.pdf"'
+            logger.info(f"PDF generated for document {document_id}, filename: {filename}.pdf")
+            return response
+        except Exception as e:
+            logger.error(f"WeasyPrint error for document {document_id}: {str(e)}")
+            return JsonResponse({'error': f'PDF generation failed: {str(e)}'})
     elif export_format == 'docx':
         docx_content = generate_docx(document)
         response = HttpResponse(docx_content, content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
@@ -468,26 +583,9 @@ def download_document(request, document_id):
         logger.info(f"TXT document generated for document {document_id}, filename: {filename}.txt")
         return response
     elif export_format in ['png', 'jpg']:
-        html_content = f"""
-        <html>
-            <head>
-                <title>{document.titre}</title>
-                <style>
-                    body {{ font-family: Arial, sans-serif; margin: 40px; }}
-                    h1 {{ color: #333; font-size: 24px; }}
-                    p {{ font-size: 14px; line-height: 1.6; }}
-                    img {{ max-width: 100px; margin-top: 20px; }}
-                </style>
-            </head>
-            <body>
-                <h1>{document.titre}</h1>
-                {markdown.markdown(document.contenu)}
-                {f"<img src='{document.cv_image.image.path}' />" if document.type == 'CV' and hasattr(document, 'cv_image') and document.cv_image.image else ""}
-            </body>
-        </html>
-        """
+        html_content = render_to_string(template_path, context)
         buffer = BytesIO()
-        HTML(string=html_content).write_png(buffer) if export_format == 'png' else HTML(string=html_content).write_jpg(buffer)
+        HTML(string=html_content, base_url=request.build_absolute_uri('/')).write_png(buffer) if export_format == 'png' else HTML(string=html_content, base_url=request.build_absolute_uri('/')).write_jpg(buffer)
         image_content = buffer.getvalue()
         buffer.close()
         content_type = 'image/png' if export_format == 'png' else 'image/jpeg'

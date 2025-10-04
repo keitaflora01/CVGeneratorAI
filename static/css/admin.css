@@ -1,0 +1,67 @@
+/* Police et base */
+body {
+    font-family: 'Poppins', sans-serif;
+    font-size: 14px;
+}
+
+/* Barre du haut */
+.navbar {
+    background: linear-gradient(90deg, #0f3460, #16213e) !important;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #16213e !important;
+}
+.sidebar .nav-link {
+    color: #bbb !important;
+}
+.sidebar .nav-link.active {
+    background-color: #0f3460 !important;
+    color: #fff !important;
+    font-weight: 600;
+}
+
+/* Tableaux */
+.table thead th {
+    background-color: #0f3460 !important;
+    color: #fff !important;
+    text-transform: uppercase;
+}
+
+/* Boutons */
+.btn {
+    border-radius: 8px !important;
+    font-weight: 500;
+}
+.btn-primary {
+    background-color: #0f3460 !important;
+    border: none !important;
+}
+.btn-primary:hover {
+    background-color: #1a1a2e !important;
+}
+/* Fixer la sidebar gauche */
+.sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100vh !important;
+    overflow-y: auto; /* permet de scroller le menu si trop long */
+    z-index: 1000;
+}
+
+/* Ajuster le contenu principal pour qu'il ne passe pas sous la sidebar */
+.content-wrapper,
+#content,
+.main-content {
+    margin-left: 250px; /* adapte à la largeur de ta sidebar */
+    padding: 20px;
+}
+.sidebar {
+    width: 220px !important;
+}
+.content-wrapper {
+    margin-left: 220px !important;
+}
+

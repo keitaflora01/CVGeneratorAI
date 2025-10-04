@@ -4,7 +4,7 @@ from .models import Document, EtapeTraitement, CVImage
 class EtapeTraitementInline(admin.TabularInline):
     model = EtapeTraitement
     extra = 0
-    readonly_fields = ['nom', 'ordre', 'statut', 'details', 'date_debut', 'date_fin']
+    readonly_fields = ['statut', 'date_debut', 'date_fin']  # uniquement l'essentiel
 
 class CVImageInline(admin.StackedInline):
     model = CVImage
@@ -13,20 +13,24 @@ class CVImageInline(admin.StackedInline):
 
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
-    list_display = ['titre', 'type', 'user', 'poste', 'entreprise', 'statut', 'score', 'date_creation']
-    list_filter = ['type', 'statut', 'date_creation', 'template_utilise']
-    search_fields = ['titre', 'poste', 'entreprise', 'user__username']
+    # Champs essentiels visibles dans la liste
+    list_display = ['titre', 'type', 'user', 'statut', 'date_creation']
+    list_filter = ['type', 'statut', 'date_creation']
+    search_fields = ['titre', 'user__username']
+    
     inlines = [EtapeTraitementInline, CVImageInline]
+    
+    # Champs non modifiables
     readonly_fields = ['date_creation', 'date_mise_a_jour']
 
 @admin.register(EtapeTraitement)
 class EtapeTraitementAdmin(admin.ModelAdmin):
-    list_display = ['nom', 'document', 'ordre', 'statut', 'date_debut', 'date_fin']
-    list_filter = ['statut', 'nom']
+    list_display = ['nom', 'statut', 'date_debut', 'date_fin']
+    list_filter = ['statut']
     readonly_fields = ['date_debut', 'date_fin']
 
 @admin.register(CVImage)
 class CVImageAdmin(admin.ModelAdmin):
-    list_display = ['document', 'description', 'date_creation']
+    list_display = ['document', 'date_creation']
     list_filter = ['date_creation']
     readonly_fields = ['date_creation']

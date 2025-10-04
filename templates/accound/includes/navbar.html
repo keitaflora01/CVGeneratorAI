@@ -225,7 +225,7 @@
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex space-x-8">
-                <a href="{% url "home" %}" class="nav-link transition-colors focus-ring rounded">Accueil</a>
+                <a href="{% url 'home' %}" class="nav-link transition-colors focus-ring rounded">Accueil</a>
                 <a href="#features" class="nav-link transition-colors focus-ring rounded">Fonctionnalités</a>
                 <a href="#previews" class="nav-link transition-colors focus-ring rounded">Modèles</a>
                 <a href="#testimonials" class="nav-link transition-colors focus-ring rounded">Témoignages</a>
@@ -238,21 +238,19 @@
                     <div class="relative hidden md:block">
                         <button class="flex items-center space-x-2 px-4 py-2 btn-secondary rounded-lg hover-lift focus-ring" onclick="toggleDropdown()">
                             <i class="fas fa-user"></i>
-                            <span>{{ request.user.get_full_name|default:request.user.username }}</span>
+                            <span>{{ request.user.get_full_name|default:request.user.email }}</span>
                             <i class="fas fa-chevron-down text-xs transition-transform duration-300" id="dropdownChevron"></i>
                         </button>
                         <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-lg py-2 opacity-0 transform translate-y-2 transition-all duration-300">
-                            <a href="#" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
-                                <i class="fas fa-user-circle mr-2"></i>Mon Profil
-                            </a>
-                            <a href="#" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
-                                <i class="fas fa-file-alt mr-2"></i>Mes CV
-                            </a>
-                            <a href="#" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
-                                <i class="fas fa-cog mr-2"></i>Paramètres
+                        <a href="{% url 'comptes:account_settings' %}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                            <i class="fas fa-cog mr-3 w-5 text-gray-500"></i>
+                            Account Settings
+                        </a>
+                            <a href="{% url 'comptes:dashboard' %}" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
+                                <i class="fas fa-tachometer-alt mr-2"></i>Tableau de bord
                             </a>
                             <hr class="my-2 border-opacity-20" style="border-color: var(--border-primary);">
-                            <form method="post" action="">
+                            <form method="post" action="{% url 'comptes:logout' %}">
                                 {% csrf_token %}
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
                                     <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
@@ -310,7 +308,7 @@
                 <i class="fas fa-user text-white"></i>
             </div>
             <div class="mobile-user-details">
-                <h4>{{ request.user.get_full_name|default:request.user.username }}</h4>
+                <h4>{{ request.user.get_full_name|default:request.user.email }}</h4>
                 <p>{{ request.user.email }}</p>
             </div>
         </div>
@@ -318,7 +316,7 @@
 
         <!-- Navigation Links -->
         <div class="mobile-nav-section">
-            <a href="{% url "home" %}" class="mobile-nav-link" onclick="closeMobileMenu()">
+            <a href="{% url 'home' %}" class="mobile-nav-link" onclick="closeMobileMenu()">
                 <i class="fas fa-home"></i>
                 <span>Accueil</span>
             </a>
@@ -339,41 +337,28 @@
         <!-- User Actions (if authenticated) -->
         {% if request.user.is_authenticated %}
         <div class="mobile-nav-section" style="border-top: 1px solid var(--border-primary); margin-top: 1rem; padding-top: 1rem;">
-            <a href="#" class="mobile-nav-link">
-                <i class="fas fa-user-circle"></i>
-                <span>Mon Profil</span>
+            <a href="{% url 'comptes:account_settings' %}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                <i class="fas fa-cog mr-3 w-5 text-gray-500"></i>
+                Account Settings
             </a>
-            <a href="#" class="mobile-nav-link">
+            <a href="{% url 'comptes:dashboard' %}" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Tableau de bord</span>
+            </a>
+            <a href="{% url 'Agent:template_selection' %}" class="mobile-nav-link" onclick="closeMobileMenu()">
                 <i class="fas fa-file-alt"></i>
                 <span>Mes CV</span>
-            </a>
-            <a href="#" class="mobile-nav-link">
-                <i class="fas fa-cog"></i>
-                <span>Paramètres</span>
             </a>
         </div>
         
         <!-- Logout Section -->
         <div class="mobile-auth-section">
-            <form method="post" action="">
+            <form method="post" action="{% url 'comptes:logout' %}">
                 {% csrf_token %}
                 <button type="submit" class="w-full btn-secondary rounded-lg py-3 px-4 flex items-center justify-center">
-                    <i class="fas fa-sign-out-alt mr-2"></i>
-                    Déconnexion
+                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
                 </button>
             </form>
-        </div>
-        {% else %}
-        <!-- Auth Section (if not authenticated) -->
-        <div class="mobile-auth-section">
-            <button data-modal-target="login-modal" onclick="closeMobileMenu()" class="w-full btn-secondary rounded-lg py-3 px-4 flex items-center justify-center mb-3">
-                <i class="fas fa-user mr-2"></i>
-                Connexion
-            </button>
-            <button data-modal-target="signup-modal" onclick="closeMobileMenu()" class="w-full btn-primary text-white rounded-lg py-3 px-4 flex items-center justify-center">
-                <i class="fas fa-user-plus mr-2"></i>
-                Inscription
-            </button>
         </div>
         {% endif %}
     </div>

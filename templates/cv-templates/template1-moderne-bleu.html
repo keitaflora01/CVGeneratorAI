@@ -1,87 +1,100 @@
-{% extends "cv-templates/base.html" %}
-{% block title %}CV Moderne Bleu{% endblock %}
-{% block content %}
-<div class="max-w-4xl mx-auto mb-10 bg-white rounded-lg shadow-lg overflow-hidden">
-  <div class="bg-gray-800 text-white p-4 text-center">
-  <h2 class="text-xl font-bold">Template 1 - Moderne Bleu</h2>
-  </div>
-  <!-- contenu du template 1 que tu avais -->
-   <div class="flex flex-col md:flex-row min-h-[600px]">
-            <div class="bg-gradient-to-br from-primaryBlue to-primaryPurple text-white w-full md:w-2/5 p-6">
-                <div class="w-32 h-32 rounded-full bg-white mx-auto mb-5 flex items-center justify-center text-5xl text-primaryBlue">👤</div>
-                <div class="text-2xl font-bold text-center mb-2">SARAH MARTIN</div>
-                <div class="text-center opacity-90 mb-8">Développeuse Full-Stack</div>
-                
-                <div class="mb-6">
-                    <h3 class="text-white border-b border-white border-opacity-30 pb-1 mb-4 text-lg">Contact</h3>
-                    <ul class="list-none pl-0">
-                        <li class="mb-2 pl-6 relative before:content-['📧'] before:absolute before:left-0">sarah.martin@email.com</li>
-                        <li class="mb-2 pl-6 relative before:content-['📱'] before:absolute before:left-0">+237 690 123 456</li>
-                        <li class="mb-2 pl-6 relative before:content-['🔗'] before:absolute before:left-0">linkedin.com/in/sarahmartin</li>
-                        <li class="mb-2 pl-6 relative before:content-['💻'] before:absolute before:left-0">github.com/sarahdev</li>
-                    </ul>
-                </div>
-                
-                <div class="mb-6">
-                    <h3 class="text-white border-b border-white border-opacity-30 pb-1 mb-4 text-lg">Compétences</h3>
-                    <div>
-                        <p class="mb-2"><span class="font-bold">Frontend:</span> React, Vue.js, Angular</p>
-                        <p class="mb-2"><span class="font-bold">Backend:</span> Node.js, Python, PHP</p>
-                        <p class="mb-2"><span class="font-bold">Base de données:</span> MySQL, MongoDB</p>
-                        <p class="mb-2"><span class="font-bold">Outils:</span> Git, Docker, AWS</p>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="text-white border-b border-white border-opacity-30 pb-1 mb-4 text-lg">Langues</h3>
-                    <p class="mb-2"><span class="font-bold">Français:</span> Natif</p>
-                    <p class="mb-2"><span class="font-bold">Anglais:</span> Courant</p>
-                    <p class="mb-2"><span class="font-bold">Espagnol:</span> Intermédiaire</p>
-                </div>
+<!DOCTYPE html>
+<html lang="{{ document.langue|default:'fr' }}">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ document.titre }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 20px;
+            font-size: 12pt;
+            background: #fff;
+        }
+        .container {
+            display: flex;
+        }
+        .sidebar {
+            width: 200px;
+            background: linear-gradient(to bottom, #556ee6, #776adb);
+            color: white;
+            padding: 20px;
+            font-size: 10pt;
+        }
+        .sidebar h3 {
+            font-size: 14pt;
+            margin: 0 0 10px;
+        }
+        .sidebar p, .sidebar a {
+            margin: 5px 0;
+            color: white;
+            text-decoration: none;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .main-content h1 {
+            font-size: 24pt;
+            color: #556ee6;
+            margin: 0 0 10px;
+        }
+        .main-content h2 {
+            font-size: 16pt;
+            color: #556ee6;
+            margin: 20px 0 10px;
+        }
+        .main-content p, .main-content li {
+            font-size: 11pt;
+        }
+        .cv-image img {
+            max-width: 100px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        ul {
+            list-style-type: disc;
+            margin-left: 20px;
+            padding-left: 10px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        a {
+            color: #556ee6;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h3>{{ name }}</h3>
+            <p>Email: {{ email }}</p>
+            <p>Téléphone: {{ telephone }}</p>
+            <p><a href="{{ github_url }}">GitHub: {{ github_username }}</a></p>
+            <p><a href="{{ linkedin_url }}">LinkedIn: {{ linkedin_username }}</a></p>
+            {% if cv_image %}
+            <div class="cv-image">
+                <img src="{{ cv_image }}" alt="Professional Photo">
             </div>
-            
-            <div class="w-full md:w-3/5 p-6">
-                <div class="mb-6">
-                    <h3 class="text-primaryBlue border-b-2 border-primaryBlue pb-1 mb-4 text-lg">Profil Professionnel</h3>
-                    <p>Développeuse Full-Stack passionnée avec 4 ans d'expérience dans le développement d'applications web modernes. Expertise en React, Node.js et en architecture cloud. Forte capacité d'adaptation et d'apprentissage continu.</p>
-                </div>
-                
-                <div class="mb-6">
-                    <h3 class="text-primaryBlue border-b-2 border-primaryBlue pb-1 mb-4 text-lg">Expérience Professionnelle</h3>
-                    <div class="mb-5 pb-4 border-b border-gray-200">
-                        <div class="font-bold text-primaryDark mb-1">Développeuse Senior Full-Stack</div>
-                        <div class="text-primaryGray italic mb-1">TechCorp Solutions - Douala</div>
-                        <div class="text-gray-500 text-sm mb-2">Janvier 2022 - Présent</div>
-                        <p class="text-sm">• Développement d'applications e-commerce avec React et Node.js<br>
-                           • Leadership technique d'une équipe de 3 développeurs<br>
-                           • Amélioration des performances de 40%</p>
-                    </div>
-                    
-                    <div class="pb-4 border-b border-gray-200">
-                        <div class="font-bold text-primaryDark mb-1">Développeuse Frontend</div>
-                        <div class="text-primaryGray italic mb-1">WebAgency Pro - Yaoundé</div>
-                        <div class="text-gray-500 text-sm mb-2">Mars 2020 - Décembre 2021</div>
-                        <p class="text-sm">• Création d'interfaces utilisateur responsives<br>
-                           • Intégration d'APIs REST et GraphQL<br>
-                           • Optimisation SEO et accessibilité</p>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="text-primaryBlue border-b-2 border-primaryBlue pb-1 mb-4 text-lg">Formation</h3>
-                    <div class="mb-5 pb-4 border-b border-gray-200">
-                        <div class="font-bold text-primaryDark mb-1">Master en Informatique</div>
-                        <div class="text-primaryGray italic mb-1">Université de Douala</div>
-                        <div class="text-gray-500 text-sm">2018 - 2020</div>
-                    </div>
-                    
-                    <div>
-                        <div class="font-bold text-primaryDark mb-1">Licence en Génie Logiciel</div>
-                        <div class="text-primaryGray italic mb-1">IUT Fotso Victor</div>
-                        <div class="text-gray-500 text-sm">2015 - 2018</div>
-                    </div>
-                </div>
-            </div>
+            {% endif %}
+            <h3>Compétences</h3>
+            <ul>{{ skills|safe }}</ul>
+        </div>
+        <div class="main-content">
+            <h1>{{ document.titre }}</h1>
+            <h2>Profil</h2>
+            <p>{{ profile }}</p>
+            <h2>Expérience Professionnelle</h2>
+            <ul>{{ experience|safe }}</ul>
+            <h2>Formation</h2>
+            <ul>{{ education|safe }}</ul>
+            <h2>Projets</h2>
+            <ul>{{ projects|safe }}</ul>
+        </div>
     </div>
- 
-{% endblock %}
+</body>
+</html>
