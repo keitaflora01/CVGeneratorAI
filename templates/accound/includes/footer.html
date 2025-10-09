@@ -60,9 +60,8 @@
                 <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Liens Rapides</h3>
                 <ul class="space-y-2">
                     <li><a href="{% url "comptes:contact" %}" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">À Propos</a></li>
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">Politique de Confidentialité</a></li>
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">Conditions d'Utilisation</a></li>
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">FAQ</a></li>
+                    <li><a href="{% url 'comptes:privacy_policy' %}" class="transition-colors hover:text-primary-400">Politique de Confidentialité</a></li>
+                    <li><a href="{% url 'comptes:terms_of_service' %}" class="transition-colors hover:text-primary-400">Conditions d'Utilisation</a></li>                <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">FAQ</a></li>
                 </ul>
             </div>
 
@@ -108,8 +107,8 @@
                     © 2025 CVBot. Tous droits réservés. Fait avec ❤️ pour votre carrière.
                 </div>
                 <div class="flex space-x-6 text-sm">
-                    <a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Confidentialité</a>
-                    <a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Conditions</a>
+                    <a href="{% url 'comptes:privacy_policy' %}" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Confidentialité</a>
+                    <a href="{% url 'comptes:terms_of_service' %}" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Conditions</a>
                     <a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Cookies</a>
                 </div>
             </div>

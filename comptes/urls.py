@@ -3,6 +3,7 @@ from comptes.views import account_view
 from comptes.views.account_view import SignUpView , CustomLoginView, CustomLogoutView
 from comptes.views.contact_view import ContactUsView
 from comptes.views.dashboard_view import DashboardView,GenerateView
+from comptes.views.privacy_policy_view import PrivacyPolicyView, TermsOfServiceView
 
 app_name = 'comptes'
 
@@ -18,4 +19,7 @@ urlpatterns = [
     path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path('generate/', GenerateView.as_view(), name='generate'),
     path('contact/', ContactUsView.as_view(), name='contact'),
+    path("privacy-policy/", PrivacyPolicyView.as_view(), name="privacy_policy"),
+    path("terms-of-service/", TermsOfServiceView.as_view(), name="terms_of_service"),
+
 ]

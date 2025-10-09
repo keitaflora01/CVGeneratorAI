@@ -1,0 +1,98 @@
+{% extends 'accound/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mx-auto px-4 mt-10 py-12 max-w-8xl">
+    <!-- Terms of Service Section -->
+    <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+        <h1 class="text-3xl font-bold mb-6 text-primary-600">{% trans "Conditions d'Utilisation" %}</h1>
+        
+        {% if parametre.terms_of_service %}
+            <div class="prose max-w-none text-gray-700">
+                {{ parametre.terms_of_service|safe }}
+            </div>
+        {% else %}
+            <div class="prose max-w-none text-gray-700">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "1. Introduction" %}</h2>
+                <p>
+                    {% trans "Bienvenue sur la plateforme de gestion de cimetières de" %} {{ parametre.nom_mairie|default:_("la mairie") }} 
+                    "ci-après dénommée 'la Plateforme'". Ces conditions d'utilisation régissent votre accès et 
+                    votre utilisation des services proposés par la Plateforme, y compris la gestion des demandes de sépulture, 
+                    la coordination avec les entreprises partenaires, et les paiements associés. En accédant ou en utilisant la 
+                    Plateforme, vous acceptez d'être lié par ces conditions. Si vous n'acceptez pas ces conditions, veuillez ne 
+                    pas utiliser la Plateforme.
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "2. Utilisation de la Plateforme" %}</h2>
+                <p>
+                    La Plateforme est conçue pour faciliter la gestion des services funéraires et des sépultures. Vous 
+                    vous engagez à utiliser la Plateforme uniquement à des fins légales et conformément à toutes les lois et 
+                    réglementations applicables. Vous ne devez pas :
+                </p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>{% trans "Utiliser la Plateforme pour transmettre des informations fausses, trompeuses ou frauduleuses." %}</li>
+                    <li>{% trans "Tenter d'accéder sans autorisation aux systèmes ou données de la Plateforme." %}</li>
+                    <li>{% trans "Utiliser la Plateforme pour enfreindre les droits de propriété intellectuelle ou la vie privée d'autrui." %}</li>
+                </ul>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "3. Inscription et Compte" %}</h2>
+                <p>
+                    Pour accéder à certaines fonctionnalités de la Plateforme, vous devez créer un compte. Vous êtes 
+                    responsable de fournir des informations exactes et à jour lors de l'inscription. Vous devez également 
+                    maintenir la confidentialité de vos identifiants de connexion et signaler immédiatement tout usage non 
+                    autorisé de votre compte à" {{ parametre.nom_mairie|default:_("la mairie") }}.
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "4. Services et Paiements" %}</h2>
+                <p>
+                    La Plateforme permet de gérer les demandes de services funéraires, y compris la réservation de 
+                    sépultures et la coordination avec des entreprises partenaires. Tous les paiements effectués via la 
+                    Plateforme sont soumis aux conditions suivantes :"
+                </p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>{% trans "Les montants totaux et payés sont affichés en XAF et doivent être réglés selon les modes de paiement disponibles (Orange Money, MTN Mobile Money, ou paiement physique au guichet)." %}</li>
+                    <li>{% trans "Les remboursements, le cas échéant, seront traités conformément à notre politique de remboursement, disponible sur demande." %}</li>
+                    <li>{% trans "Vous êtes responsable de vérifier l'exactitude des informations de paiement avant de soumettre une demande." %}</li>
+                </ul>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "5. Responsabilité" %}</h2>
+                <p>
+                    La Plateforme agit en tant que facilitateur entre vous et les entreprises partenaires. Nous ne 
+                    sommes pas responsables des services fournis par ces entreprises, y compris la qualité, la disponibilité ou 
+                    les délais. Toute réclamation concernant les services doit être adressée directement à l'entreprise partenaire 
+                    concernée.
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "6. Propriété Intellectuelle" %}</h2>
+                <p>
+                    Tout le contenu de la Plateforme, y compris les textes, graphiques, logos et logiciels, est la 
+                    propriété de" {{ parametre.nom_mairie|default:_("la mairie") }} "ou de ses partenaires et est protégé par les 
+                    lois sur la propriété intellectuelle. Vous ne pouvez pas reproduire, distribuer ou modifier ce contenu sans 
+                    autorisation écrite préalable." 
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "7. Modification des Conditions" %}</h2>
+                <p>
+                    Nous nous réservons le droit de modifier ces conditions à tout moment. Les modifications seront 
+                    publiées sur cette page et entreront en vigueur immédiatement. Il est de votre responsabilité de consulter 
+                    régulièrement ces conditions pour rester informé des mises à jour."
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "8. Résiliation" %}</h2>
+                <p>
+                    Nous pouvons suspendre ou résilier votre accès à la Plateforme à tout moment, sans préavis, si vous 
+                    violez ces conditions ou pour toute autre raison jugée appropriée par {{ parametre.nom_mairie|default:_("la mairie") }}.
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "9. Loi Applicable" %}</h2>
+                <p>
+                    {% trans "Ces conditions sont régies par les lois en vigueur dans le pays de" %} {{ parametre.country|default:_("votre pays") }}. 
+                    {% trans "Tout litige découlant de l'utilisation de la Plateforme sera soumis à la juridiction compétente de" %} 
+                    {{ parametre.city|default:_("votre ville") }}.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

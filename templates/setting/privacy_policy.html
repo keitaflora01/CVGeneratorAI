@@ -1,0 +1,87 @@
+{% extends 'accound/base.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container mx-auto px-4 mt-10 py-12 max-w-8xl">
+    <!-- Privacy Policy Page -->
+    <div class="bg-white rounded-lg shadow-md p-8 mb-12">
+        <h1 class="text-3xl font-bold mb-6 text-primary-600">{% trans "Politique de Confidentialité" %}</h1>
+        
+        {% if parametre.privacy_policy %}
+            <div class="prose max-w-none text-gray-700">
+                {{ parametre.privacy_policy|safe }}
+            </div>
+        {% else %}
+            <div class="prose max-w-none text-gray-700">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "1. Introduction" %}</h2>
+                <p>
+                    {% trans "Chez" %} {{ parametre.nom_mairie|default:_("la mairie") }}, {% trans "nous nous engageons à protéger la confidentialité de vos données personnelles. Cette politique de confidentialité explique comment nous collectons, utilisons, partageons et protégeons vos informations dans le cadre de l'utilisation de notre plateforme de gestion de cimetières (ci-après dénommée 'la Plateforme de Service des Cimetières'). En utilisant la Plateforme, vous acceptez les pratiques décrites dans cette politique." %}
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "2. Données Collectées" %}</h2>
+                <p>
+                    {% trans "Nous collectons les types de données suivants :" %}
+                </p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>{% trans "Données personnelles : Nom, prénom, adresse email, numéro de téléphone, et autres informations fournies lors de l'inscription ou des demandes de services funéraires (inhumation, exhumation, renouvellement, entretien)." %}</li>
+                    <li>{% trans "Données liées aux sépultures : Informations sur les défunts, dates et lieux des services, et détails des concessions." %}</li>
+                    <li>{% trans "Données techniques : Adresse IP, type de navigateur, et données de navigation (si la Plateforme utilise des cookies ou des outils d'analyse)." %}</li>
+                </ul>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "3. Utilisation des Données" %}</h2>
+                <p>
+                    {% trans "Les données collectées sont utilisées pour :" %}
+                </p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>{% trans "Gérer vos demandes de services funéraires (réservations, inhumations, exhumations, entretiens)." %}</li>
+                    <li>{% trans "Faciliter la communication avec vous et les entreprises partenaires (par exemple, entreprises funéraires)." %}</li>
+                    <li>{% trans "Améliorer les fonctionnalités et la sécurité de la Plateforme." %}</li>
+                    <li>{% trans "Respecter les obligations légales et réglementaires en matière de gestion des cimetières." %}</li>
+                </ul>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "4. Partage des Données" %}</h2>
+                <p>
+                    {% trans "Nous pouvons partager vos données avec :" %}
+                </p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>{% trans "Entreprises partenaires : Les entreprises funéraires ou autres prestataires impliqués dans la fourniture des services demandés." %}</li>
+                    <li>{% trans "Autorités légales : Lorsque requis par la loi ou pour protéger les droits de" %} {{ parametre.nom_mairie|default:_("la mairie") }}.</li>
+                    <li>{% trans "Fournisseurs de services : Hébergeurs, processeurs de paiement (par exemple, Orange Money, MTN Mobile Money), ou outils d’analyse, tous tenus à des obligations de confidentialité." %}</li>
+                </ul>
+                <p>
+                    {% trans "Nous ne vendons ni ne louons vos données personnelles à des tiers à des fins commerciales." %}
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "5. Stockage et Sécurité" %}</h2>
+                <p>
+                    {% trans "Vos données sont stockées sur des serveurs sécurisés et protégées par des mesures techniques et organisationnelles appropriées. Cependant, aucun système n’est totalement infaillible, et nous ne pouvons garantir une sécurité absolue." %}
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "6. Vos Droits" %}</h2>
+                <p>
+                    {% trans "Vous disposez des droits suivants concernant vos données personnelles :" %}
+                </p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li>{% trans "Droit d’accès : Consulter les données que nous détenons sur vous." %}</li>
+                    <li>{% trans "Droit de rectification : Corriger les données inexactes ou incomplètes." %}</li>
+                    <li>{% trans "Droit de suppression : Demander la suppression de vos données, sous réserve des obligations légales." %}</li>
+                    <li>{% trans "Droit d’opposition : Vous opposer au traitement de vos données pour des raisons légitimes." %}</li>
+                </ul>
+                <p>
+                    {% trans "Pour exercer ces droits, veuillez nous contacter à" %} {{ parametre.email_contact|default:_("l’adresse email de contact") }}.
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "7. Cookies et Technologies de Suivi" %}</h2>
+                <p>
+                    {% trans "Si la Plateforme utilise des cookies ou des technologies similaires, ceux-ci servent à améliorer l’expérience utilisateur (par exemple, mémoriser vos préférences). Vous pouvez gérer les cookies via les paramètres de votre navigateur." %}
+                </p>
+
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "8. Modifications de la Politique" %}</h2>
+                <p>
+                    {% trans "Nous pouvons mettre à jour cette politique de confidentialité à tout moment. Les modifications seront publiées sur cette page et prendront effet immédiatement. Nous vous encourageons à consulter régulièrement cette page." %}
+                </p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

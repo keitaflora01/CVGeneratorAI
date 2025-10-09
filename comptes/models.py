@@ -72,3 +72,25 @@ class User(CvAgentModel, AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+class SystemSetting(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    company_name = models.CharField(max_length=255, blank=True, null=True)
+    contact_email = models.EmailField(blank=True, null=True)
+    contact_phone = models.CharField(max_length=20, blank=True, null=True)
+    contact_address = models.TextField(blank=True, null=True)
+
+    # Textes légaux
+    privacy_policy = models.TextField(blank=True, null=True)
+    terms_of_service = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "System Setting"
+        verbose_name_plural = "System Settings"
+
+    def __str__(self):
+        return self.company_name or "System Setting"    
+    
