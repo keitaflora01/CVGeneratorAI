@@ -29,6 +29,8 @@ class SignUpView(View):
             error = "Tous les champs sont requis."
         elif password != password2:
             error = "Les mots de passe ne correspondent pas."
+        elif len(password) < 8:
+            error = "Le mot de passe doit contenir au moins 8 caractères."    
         elif User.objects.filter(email=email).exists():
             error = "Cet email est déjà utilisé."
         else:

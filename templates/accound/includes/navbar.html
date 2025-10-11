@@ -16,7 +16,7 @@
         position: absolute;
         height: 3px;
         width: 100%;
-        background: var(--text-primary);
+        background: #7c3aed;
         border-radius: 2px;
         opacity: 1;
         left: 0;
@@ -85,13 +85,14 @@
         right: -100%;
         width: 280px;
         height: 100vh;
-        background: var(--glass-bg);
+        background: rgba(255, 255, 255, 0.98);
         backdrop-filter: blur(20px);
-        border-left: 1px solid var(--glass-border);
+        border-left: 1px solid rgba(124, 58, 237, 0.2);
         z-index: 1000;
         transition: right 0.3s ease;
         overflow-y: auto;
         padding: 2rem 0;
+        box-shadow: -5px 0 30px rgba(124, 58, 237, 0.1);
     }
     
     .mobile-menu.show {
@@ -100,7 +101,7 @@
     
     .mobile-menu-header {
         padding: 0 2rem 2rem 2rem;
-        border-bottom: 1px solid var(--border-primary);
+        border-bottom: 1px solid rgba(124, 58, 237, 0.2);
         margin-bottom: 2rem;
     }
     
@@ -111,20 +112,20 @@
         background: none;
         border: none;
         font-size: 1.5rem;
-        color: var(--text-secondary);
+        color: #6b7280;
         cursor: pointer;
         transition: color 0.3s ease;
     }
     
     .mobile-menu-close:hover {
-        color: var(--text-primary);
+        color: #7c3aed;
     }
     
     .mobile-nav-link {
         display: flex;
         align-items: center;
         padding: 1rem 2rem;
-        color: var(--text-secondary);
+        color: #6b7280;
         text-decoration: none;
         font-weight: 500;
         transition: all 0.3s ease;
@@ -132,9 +133,9 @@
     }
     
     .mobile-nav-link:hover {
-        color: var(--text-primary);
-        background: var(--glass-bg);
-        border-bottom-color: var(--border-primary);
+        color: #7c3aed;
+        background: rgba(124, 58, 237, 0.05);
+        border-bottom-color: rgba(124, 58, 237, 0.2);
     }
     
     .mobile-nav-link i {
@@ -145,7 +146,7 @@
     
     .mobile-auth-section {
         padding: 2rem;
-        border-top: 1px solid var(--border-primary);
+        border-top: 1px solid rgba(124, 58, 237, 0.2);
         margin-top: 2rem;
     }
     
@@ -153,15 +154,16 @@
         display: flex;
         align-items: center;
         padding: 1rem 2rem;
-        background: var(--glass-bg);
+        background: rgba(124, 58, 237, 0.05);
         margin: 0 1rem 1rem 1rem;
         border-radius: 12px;
+        border: 1px solid rgba(124, 58, 237, 0.1);
     }
     
     .mobile-user-avatar {
         width: 40px;
         height: 40px;
-        background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+        background: linear-gradient(135deg, #7c3aed, #a855f7);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -172,13 +174,13 @@
     .mobile-user-details h4 {
         font-size: 1rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: #1e1b4b;
         margin: 0;
     }
     
     .mobile-user-details p {
         font-size: 0.875rem;
-        color: var(--text-secondary);
+        color: #6b7280;
         margin: 0;
     }
     
@@ -203,6 +205,148 @@
     .mobile-menu.show .mobile-nav-link:nth-child(3) { animation-delay: 0.3s; }
     .mobile-menu.show .mobile-nav-link:nth-child(4) { animation-delay: 0.4s; }
     
+    /* Navbar Styles */
+    .navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(124, 58, 237, 0.15);
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
+    }
+    
+    .nav-link {
+        color: #6b7280;
+        font-weight: 500;
+        position: relative;
+        transition: color 0.3s ease;
+    }
+    
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #7c3aed, #a855f7);
+        transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover {
+        color: #7c3aed;
+    }
+    
+    .nav-link:hover::after {
+        width: 100%;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.4);
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: #7c3aed;
+        border: 2px solid rgba(124, 58, 237, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(124, 58, 237, 0.05);
+        border-color: #7c3aed;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(124, 58, 237, 0.2);
+    }
+    
+    /* Modal Styles */
+    .modal {
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+    }
+    
+    .modal-content {
+        background: white;
+        color: #1e1b4b;
+        border: 1px solid rgba(124, 58, 237, 0.1);
+    }
+    
+    /* Styles pour les champs password avec icône œil */
+    .password-toggle-container {
+        position: relative;
+    }
+
+    .password-toggle {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #6b7280;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        z-index: 10;
+    }
+
+    .password-toggle:hover {
+        color: #7c3aed;
+        background-color: rgba(124, 58, 237, 0.1);
+    }
+
+    .password-input {
+        padding-right: 50px !important;
+        width: 100%;
+    }
+
+    /* Ajustements pour les formulaires */
+    .form-group {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #1e1b4b;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid #e9d5ff;
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+        color: #1e1b4b;
+    }
+
+    .form-input:focus {
+        outline: none;
+        border-color: #7c3aed;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
     /* Responsive adjustments */
     @media (max-width: 320px) {
         .mobile-menu {
@@ -217,7 +361,7 @@
         <div class="flex justify-between items-center py-4">
             <!-- Logo -->
             <div class="flex items-center space-x-2">
-                <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                     <i class="fas fa-robot text-white text-lg"></i>
                 </div>
                 <span class="text-2xl font-bold gradient-text">CVBot</span>
@@ -225,10 +369,11 @@
             
             <!-- Desktop Navigation -->
             <div class="hidden md:flex space-x-8">
-                <a href="{% url 'home' %}" class="nav-link transition-colors focus-ring rounded">Accueil</a>
-                <a href="#features" class="nav-link transition-colors focus-ring rounded">Fonctionnalités</a>
-                <a href="#previews" class="nav-link transition-colors focus-ring rounded">Modèles</a>
-                <a href="#testimonials" class="nav-link transition-colors focus-ring rounded">Témoignages</a>
+                <a href="{% url 'home' %}" class="nav-link transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Accueil</a>
+                <a href="#alt-features" class="nav-link transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Fonctionnalités</a>
+                <a href="#portfolio" class="nav-link transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Modèles</a>
+                <a href="#testimonials" class="nav-link transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Témoignages</a>
+                <a href="#contact" class="nav-link transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 rounded">Contact</a>
             </div>
             
             <!-- Desktop Auth/User Section -->
@@ -236,40 +381,40 @@
                 {% if request.user.is_authenticated %}
                     <!-- User Profile Dropdown -->
                     <div class="relative hidden md:block">
-                        <button class="flex items-center space-x-2 px-4 py-2 btn-secondary rounded-lg hover-lift focus-ring" onclick="toggleDropdown()">
+                        <button class="flex items-center space-x-2 px-4 py-2 btn-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" onclick="toggleDropdown()">
                             <i class="fas fa-user"></i>
                             <span>{{ request.user.get_full_name|default:request.user.email }}</span>
                             <i class="fas fa-chevron-down text-xs transition-transform duration-300" id="dropdownChevron"></i>
                         </button>
-                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 glass-card rounded-lg shadow-lg py-2 opacity-0 transform translate-y-2 transition-all duration-300">
-                        <a href="{% url 'comptes:account_settings' %}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                            <i class="fas fa-cog mr-3 w-5 text-gray-500"></i>
-                            Account Settings
-                        </a>
-                            <a href="{% url 'comptes:dashboard' %}" class="block px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
-                                <i class="fas fa-tachometer-alt mr-2"></i>Tableau de bord
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl py-2 opacity-0 transform translate-y-2 transition-all duration-300 border border-purple-100">
+                            <a href="{% url 'comptes:account_settings' %}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 transition-colors">
+                                <i class="fas fa-cog mr-3 w-5 text-purple-500"></i>
+                                Account Settings
                             </a>
-                            <hr class="my-2 border-opacity-20" style="border-color: var(--border-primary);">
+                            <a href="{% url 'comptes:dashboard' %}" class="block px-4 py-2 text-sm hover:bg-purple-50 transition-colors rounded mx-2 text-gray-700">
+                                <i class="fas fa-tachometer-alt mr-2 text-purple-500"></i>Tableau de bord
+                            </a>
+                            <hr class="my-2 border-purple-100">
                             <form method="post" action="{% url 'comptes:logout' %}">
                                 {% csrf_token %}
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-opacity-10 hover:bg-white transition-colors rounded mx-2">
-                                    <i class="fas fa-sign-out-alt mr-2"></i>Déconnexion
+                                <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-purple-50 transition-colors rounded mx-2 text-gray-700">
+                                    <i class="fas fa-sign-out-alt mr-2 text-purple-500"></i>Déconnexion
                                 </button>
                             </form>
                         </div>
                     </div>
                 {% else %}
                     <!-- Auth Buttons -->
-                    <button data-modal-target="login-modal" class="hidden md:block px-6 py-2 btn-secondary rounded-lg hover-lift focus-ring">
+                    <button data-modal-target="login-modal" class="hidden md:block px-6 py-2 btn-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                         <i class="fas fa-user mr-2"></i>Connexion
                     </button>
-                    <button data-modal-target="signup-modal" class="hidden md:block px-6 py-2 btn-primary text-white rounded-lg hover-lift focus-ring">
+                    <button data-modal-target="signup-modal" class="hidden md:block px-6 py-2 btn-primary text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                         <i class="fas fa-user-plus mr-2"></i>Inscription
                     </button>
                 {% endif %}
                 
                 <!-- Mobile menu button -->
-                <button class="md:hidden focus-ring rounded p-2" onclick="toggleMobileMenu()" id="mobileMenuBtn">
+                <button class="md:hidden focus:outline-none focus:ring-2 focus:ring-purple-500 rounded p-2" onclick="toggleMobileMenu()" id="mobileMenuBtn">
                     <div class="hamburger" id="hamburger">
                         <span></span>
                         <span></span>
@@ -294,7 +439,7 @@
         <!-- Menu Header -->
         <div class="mobile-menu-header">
             <div class="flex items-center space-x-2">
-                <div class="w-8 h-8 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
+                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                     <i class="fas fa-robot text-white text-sm"></i>
                 </div>
                 <span class="text-xl font-bold gradient-text">CVBot</span>
@@ -336,10 +481,10 @@
 
         <!-- User Actions (if authenticated) -->
         {% if request.user.is_authenticated %}
-        <div class="mobile-nav-section" style="border-top: 1px solid var(--border-primary); margin-top: 1rem; padding-top: 1rem;">
-            <a href="{% url 'comptes:account_settings' %}" class="flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
-                <i class="fas fa-cog mr-3 w-5 text-gray-500"></i>
-                Account Settings
+        <div class="mobile-nav-section" style="border-top: 1px solid rgba(124, 58, 237, 0.2); margin-top: 1rem; padding-top: 1rem;">
+            <a href="{% url 'comptes:account_settings' %}" class="mobile-nav-link" onclick="closeMobileMenu()">
+                <i class="fas fa-cog"></i>
+                <span>Account Settings</span>
             </a>
             <a href="{% url 'comptes:dashboard' %}" class="mobile-nav-link" onclick="closeMobileMenu()">
                 <i class="fas fa-tachometer-alt"></i>
@@ -360,85 +505,99 @@
                 </button>
             </form>
         </div>
+        {% else %}
+        <!-- Auth buttons for non-authenticated users -->
+        <div class="mobile-auth-section">
+            <button data-modal-target="login-modal" class="w-full btn-secondary rounded-lg py-3 px-4 flex items-center justify-center mb-3">
+                <i class="fas fa-user mr-2"></i>Connexion
+            </button>
+            <button data-modal-target="signup-modal" class="w-full btn-primary text-white rounded-lg py-3 px-4 flex items-center justify-center">
+                <i class="fas fa-user-plus mr-2"></i>Inscription
+            </button>
+        </div>
         {% endif %}
     </div>
 
     <!-- Login Modal -->
     <div id="login-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center modal">
-        <div class="max-w-md w-full mx-auto p-6 modal-content rounded-lg shadow-xl relative">
-            <button class="absolute top-2 right-2 hover:opacity-70 focus-ring rounded p-1" style="color: var(--text-secondary);" onclick="document.getElementById('login-modal').classList.add('hidden')">
+        <div class="max-w-md w-full mx-auto p-6 modal-content rounded-2xl shadow-2xl relative">
+            <button class="absolute top-4 right-4 hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded p-1 text-gray-400" onclick="document.getElementById('login-modal').classList.add('hidden')">
                 <i class="fas fa-times"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-center gradient-text">Connexion</h2>
+            <h2 class="text-3xl font-bold mb-6 text-center gradient-text">Connexion</h2>
             <div id="login-error" class="text-red-500 mb-4 hidden"></div>
             <form id="login-form" class="space-y-4" action="{% url 'comptes:login' %}" method="post">
                 {% csrf_token %}
-                <div>
-                    <label for="login-email" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Email</label>
-                    <input type="email" name="email" id="login-email" placeholder="Email" 
-                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500" 
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
+                <div class="form-group">
+                    <label for="login-email" class="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+                    <input type="email" name="email" id="login-email" placeholder="Email" class="form-input">
                 </div>
-                <div>
-                    <label for="login-password" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Mot de passe</label>
-                    <input type="password" name="password" id="login-password" placeholder="Mot de passe" 
-                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
+                <div class="form-group">
+                    <label for="login-password" class="block text-sm font-semibold mb-2 text-gray-700">Mot de passe</label>
+                    <div class="password-toggle-container">
+                        <input type="password" name="password" id="login-password" placeholder="Mot de passe" class="form-input password-input">
+                        <button type="button" class="password-toggle" onclick="togglePassword('login-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-md font-semibold hover-lift">
-                    Se connecter
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                    <i class="fas fa-sign-in-alt mr-2"></i>Se connecter
                 </button>
             </form>
-            <p class="mt-4 text-sm text-center" style="color: var(--text-secondary);">
+            <p class="mt-4 text-sm text-center text-gray-600">
                 Pas encore inscrit ? 
                 <a href="#" data-modal-target="signup-modal" onclick="switchModals('login-modal', 'signup-modal')" 
-                   class="text-primary-500 hover:underline focus-ring rounded">Créer un compte</a>
+                   class="text-purple-600 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 rounded font-semibold">Créer un compte</a>
             </p>
         </div>
     </div>
 
     <!-- Signup Modal -->
     <div id="signup-modal" class="hidden fixed inset-0 z-50 min-h-screen flex items-center justify-center modal">
-        <div class="max-w-md w-full mx-auto p-6 modal-content rounded-lg shadow-xl relative">
-            <button class="absolute top-2 right-2 hover:opacity-70 focus-ring rounded p-1" style="color: var(--text-secondary);" onclick="document.getElementById('signup-modal').classList.add('hidden')">
+        <div class="max-w-md w-full mx-auto p-6 modal-content rounded-2xl shadow-2xl relative">
+            <button class="absolute top-4 right-4 hover:opacity-70 focus:outline-none focus:ring-2 focus:ring-purple-500 rounded p-1 text-gray-400" onclick="document.getElementById('signup-modal').classList.add('hidden')">
                 <i class="fas fa-times"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-center gradient-text">Créer un compte</h2>
+            <h2 class="text-3xl font-bold mb-6 text-center gradient-text">Créer un compte</h2>
             <div id="signup-error" class="text-red-500 mb-4 hidden"></div>
             <form id="signup-form" class="space-y-4" action="{% url 'comptes:signup' %}" method="post">
                 {% csrf_token %}
-                <div>
-                    <label for="signup-name" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Nom complet</label>
-                    <input type="text" name="full_name" id="signup-name" placeholder="Nom complet" 
-                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
+                <div class="form-group">
+                    <label for="signup-name" class="block text-sm font-semibold mb-2 text-gray-700">Nom complet</label>
+                    <input type="text" name="full_name" id="signup-name" placeholder="Nom complet" class="form-input">
                 </div>
-                <div>
-                    <label for="signup-email" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Email</label>
-                    <input type="email" name="email" id="signup-email" placeholder="Email" 
-                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
+                <div class="form-group">
+                    <label for="signup-email" class="block text-sm font-semibold mb-2 text-gray-700">Email</label>
+                    <input type="email" name="email" id="signup-email" placeholder="Email" class="form-input">
                 </div>
-                <div>
-                    <label for="signup-password" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Mot de passe</label>
-                    <input type="password" name="password" id="signup-password" placeholder="Mot de passe" 
-                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
+                <div class="form-group">
+                    <label for="signup-password" class="block text-sm font-semibold mb-2 text-gray-700">Mot de passe</label>
+                    <div class="password-toggle-container">
+                        <input type="password" name="password" id="signup-password" placeholder="Mot de passe" class="form-input password-input">
+                        <button type="button" class="password-toggle" onclick="togglePassword('signup-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label for="signup-password2" class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Confirmer mot de passe</label>
-                    <input type="password" name="password2" id="signup-password2" placeholder="Confirmer mot de passe" 
-                           class="w-full border p-3 rounded-md transition focus:ring-2 focus:ring-primary-500"
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
+                <div class="form-group">
+                    <label for="signup-password2" class="block text-sm font-semibold mb-2 text-gray-700">Confirmer mot de passe</label>
+                    <div class="password-toggle-container">
+                        <input type="password" name="password2" id="signup-password2" placeholder="Confirmer mot de passe" class="form-input password-input">
+                        <button type="button" class="password-toggle" onclick="togglePassword('signup-password2')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-md font-semibold hover-lift">
-                    S'inscrire
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
+                    <i class="fas fa-user-plus mr-2"></i>S'inscrire
                 </button>
             </form>
-            <p class="mt-4 text-sm text-center" style="color: var(--text-secondary);">
+            
+            <p class="mt-4 text-sm text-center text-gray-600">
                 Déjà un compte ? 
                 <a href="#" data-modal-target="login-modal" onclick="switchModals('signup-modal', 'login-modal')" 
-                   class="text-primary-500 hover:underline focus-ring rounded">Connexion</a>
+                   class="text-purple-600 hover:underline focus:outline-none focus:ring-2 focus:ring-purple-500 rounded font-semibold">Connexion</a>
             </p>
         </div>
     </div>
@@ -446,6 +605,25 @@
     <script src="{% static 'js/toast_manager.js' %}"></script>
     <script>
         let mobileMenuOpen = false;
+
+        // Fonction pour basculer la visibilité du mot de passe
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleButton = passwordInput.parentNode.querySelector('.password-toggle');
+            const icon = toggleButton.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+                toggleButton.setAttribute('aria-label', 'Masquer le mot de passe');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+                toggleButton.setAttribute('aria-label', 'Afficher le mot de passe');
+            }
+        }
 
         // Mobile menu toggle
         function toggleMobileMenu() {
@@ -530,12 +708,36 @@
             btn.addEventListener('click', () => {
                 const target = btn.getAttribute('data-modal-target');
                 document.getElementById(target).classList.remove('hidden');
+                closeMobileMenu(); // Close mobile menu when opening modal
             });
         });
 
         function switchModals(closeId, openId) {
             document.getElementById(closeId).classList.add('hidden');
             document.getElementById(openId).classList.remove('hidden');
+        }
+
+        // Toast notification function
+        function showToast(message, type = 'info') {
+            // Check if toast_manager.js defines this function, otherwise create a simple one
+            if (typeof window.showToast === 'function') {
+                window.showToast(message, type);
+                return;
+            }
+            
+            // Simple fallback toast
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            } text-white`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         // Form submissions
@@ -551,23 +753,17 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    if (window.themeManager) {
-                        window.themeManager.showToast('Connexion réussie !', 'success');
-                    }
+                    showToast('Connexion réussie !', 'success');
                     setTimeout(() => {
                         window.location.href = data.redirect_url || '/dashboard/';
                     }, 1000);
                 } else {
-                    if (window.themeManager) {
-                        window.themeManager.showToast(data.error || 'Une erreur est survenue.', 'error');
-                    }
+                    showToast(data.error || 'Une erreur est survenue.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                if (window.themeManager) {
-                    window.themeManager.showToast('Erreur de connexion au serveur.', 'error');
-                }
+                showToast('Erreur de connexion au serveur.', 'error');
             });
         });
 
@@ -583,23 +779,25 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    if (window.themeManager) {
-                        window.themeManager.showToast('Inscription réussie ! Veuillez vous connecter.', 'success');
-                    }
+                    showToast('Inscription réussie ! Veuillez vous connecter.', 'success');
                     setTimeout(() => {
                         window.location.href = data.redirect_url || '/login/';
                     }, 1000);
                 } else {
-                    if (window.themeManager) {
-                        window.themeManager.showToast(data.error || 'Une erreur est survenue.', 'error');
-                    }
+                    showToast(data.error || 'Une erreur est survenue.', 'error');
                 }
             })
             .catch(error => {
                 console.error('Erreur:', error);
-                if (window.themeManager) {
-                    window.themeManager.showToast('Erreur de connexion au serveur.', 'error');
-                }
+                showToast('Erreur de connexion au serveur.', 'error');
+            });
+        });
+
+        // Initialiser les champs password au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter les attributs aria-label aux boutons password
+            document.querySelectorAll('.password-toggle').forEach(button => {
+                button.setAttribute('aria-label', 'Afficher le mot de passe');
             });
         });
     </script>

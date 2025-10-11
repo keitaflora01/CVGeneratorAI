@@ -1,274 +1,132 @@
-<footer class="footer">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <!-- Theme Toggle Section -->
-        <div class="flex justify-center mb-8">
-            <div class="theme-toggle">
-                <div class="theme-option" id="lightTheme">
-                    <i class="fas fa-sun"></i>
-                    <span>Clair</span>
-                </div>
-                <div class="theme-option active" id="darkTheme">
-                    <i class="fas fa-moon"></i>
-                    <span>Sombre</span>
-                </div>
-            </div>
+<footer class="bg-gradient-to-b from-gray-50 to-white border-t border-gray-200">
+  <div class="max-w-7xl mx-auto px-6 sm:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10">
+
+      <!-- Logo et Description -->
+      <div>
+        <div class="flex items-center space-x-2 mb-4">
+          <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <i class="fas fa-robot text-white text-xl"></i>
+          </div>
+          <span class="text-2xl font-bold gradient-text">CVBot</span>
         </div>
-
-        <div class="grid md:grid-cols-5 gap-8">
-            <!-- Logo et Description -->
-            <div class="md:col-span-2">
-                <div class="flex items-center space-x-2 mb-4">
-                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center">
-                        <i class="fas fa-robot text-white text-xl"></i>
-                    </div>
-                    <span class="text-2xl font-bold gradient-text">CVBot</span>
-                </div>
-                <p class="mb-6 max-w-md" style="color: var(--text-secondary);">
-                    Votre partenaire IA pour créer des CV et lettres de motivation professionnels qui vous démarquent sur le marché de l'emploi.
-                </p>
-                
-                <!-- Réseaux Sociaux -->
-                <div class="flex space-x-4">
-                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-all duration-300 hover:transform hover:scale-110 focus-ring" aria-label="WhatsApp">
-                        <i class="fab fa-whatsapp text-green-500"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-all duration-300 hover:transform hover:scale-110 focus-ring" aria-label="Facebook">
-                        <i class="fab fa-facebook text-blue-500"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-all duration-300 hover:transform hover:scale-110 focus-ring" aria-label="Instagram">
-                        <i class="fab fa-instagram text-pink-500"></i>
-                    </a>
-                    <a href="#" class="w-10 h-10 glass-card rounded-lg flex items-center justify-center transition-all duration-300 hover:transform hover:scale-110 focus-ring" aria-label="Twitter">
-                        <i class="fab fa-twitter text-blue-400"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Services -->
-            <div>
-                <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Services</h3>
-                <ul class="space-y-2">
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">Générateur CV</a></li>
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">Lettres de Motivation</a></li>
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">Optimisation ATS</a></li>
-                    <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">Conseils Carrière</a></li>
-                </ul>
-            </div>
-
-            <!-- Quick Links -->
-            <div>
-                <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Liens Rapides</h3>
-                <ul class="space-y-2">
-                    <li><a href="{% url "comptes:contact" %}" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">À Propos</a></li>
-                    <li><a href="{% url 'comptes:privacy_policy' %}" class="transition-colors hover:text-primary-400">Politique de Confidentialité</a></li>
-                    <li><a href="{% url 'comptes:terms_of_service' %}" class="transition-colors hover:text-primary-400">Conditions d'Utilisation</a></li>                <li><a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-secondary);">FAQ</a></li>
-                </ul>
-            </div>
-
-            <!-- Contact Us -->
-            <div>
-                <h3 class="font-semibold mb-4" style="color: var(--text-primary);">Contact</h3>
-                <ul class="space-y-3" style="color: var(--text-secondary);">
-                    <li class="flex items-start space-x-2">
-                        <i class="fas fa-map-marker-alt text-primary-400 mt-1 flex-shrink-0"></i>
-                        <span>Feu rouge<br>Bafoussam, Cameroun</span>
-                    </li>
-                    <li class="flex items-center space-x-2">
-                        <i class="fas fa-envelope text-primary-400 flex-shrink-0"></i>
-                        <a href="mailto:ktprincesse@gmail.com" class="hover:text-primary-400 transition-colors focus-ring rounded">ktprincesse@gmail.com</a>
-                    </li>
-                    <li class="flex items-center space-x-2">
-                        <i class="fas fa-phone text-primary-400 flex-shrink-0"></i>
-                        <a href="tel:+237690700963" class="hover:text-primary-400 transition-colors focus-ring rounded">+237 690700963</a>
-                    </li>
-                </ul>
-            </div>
+        <p class="text-gray-600 mb-6">
+          Votre partenaire IA pour créer des CV et lettres de motivation professionnels qui vous démarquent sur le marché de l'emploi.
+        </p>
+        <div class="flex space-x-3">
+          <a href="https://web.whatsapp.com/" target="_blank" class="social-icon text-green-500"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.linkedin.com/in/princesses-flora-keita-313432371/" target="_blank" class="social-icon text-blue-600"><i class="fab fa-linkedin"></i></a>
+          <a href="https://github.com/keitaflora01" target="_blank" class="social-icon text-gray-800"><i class="fab fa-github"></i></a>
+          <a href="https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=z2awvam" target="_blank" class="social-icon text-pink-500"><i class="fab fa-instagram"></i></a>
         </div>
+      </div>
 
-        <!-- Newsletter Subscription -->
-        <div class="mt-12 pt-8 border-t" style="border-color: var(--border-primary);">
-            <div class="text-center">
-                <h3 class="text-xl font-semibold mb-4" style="color: var(--text-primary);">Restez informé de nos nouveautés</h3>
-                <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                    <input type="email" placeholder="Votre email" id="newsletter-email"
-                           class="flex-1 px-4 py-3 rounded-lg border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all"
-                           style="background: var(--bg-tertiary); border-color: var(--border-primary); color: var(--text-primary);">
-                    <button id="newsletter-btn" class="btn-primary px-6 py-3 rounded-lg text-white font-semibold hover-lift focus-ring">
-                        <i class="fas fa-paper-plane mr-2"></i>S'abonner
-                    </button>
-                </div>
-            </div>
-        </div>
+      <!-- Services -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Services</h3>
+        <ul class="space-y-2">
+          <li><a href="#" class="footer-link">Générateur CV</a></li>
+          <li><a href="#" class="footer-link">Lettres de Motivation</a></li>
+          <li><a href="#" class="footer-link">Optimisation ATS</a></li>
+          <li><a href="#" class="footer-link">Conseils Carrière</a></li>
+        </ul>
+      </div>
 
-        <!-- Bottom Footer -->
-        <div class="mt-8 pt-8 border-t" style="border-color: var(--border-primary);">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="text-sm mb-4 md:mb-0" style="color: var(--text-tertiary);">
-                    © 2025 CVBot. Tous droits réservés. Fait avec ❤️ pour votre carrière.
-                </div>
-                <div class="flex space-x-6 text-sm">
-                    <a href="{% url 'comptes:privacy_policy' %}" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Confidentialité</a>
-                    <a href="{% url 'comptes:terms_of_service' %}" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Conditions</a>
-                    <a href="#" class="transition-colors hover:text-primary-400 focus-ring rounded" style="color: var(--text-tertiary);">Cookies</a>
-                </div>
-            </div>
-        </div>
+      <!-- Liens Rapides -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Liens Rapides</h3>
+        <ul class="space-y-2">
+          <li><a href="{% url 'comptes:contact' %}" class="footer-link">À Propos</a></li>
+          <li><a href="{% url 'comptes:privacy_policy' %}" class="footer-link">Politique de Confidentialité</a></li>
+          <li><a href="{% url 'comptes:terms_of_service' %}" class="footer-link">Conditions d’Utilisation</a></li>
+          <li><a href="#" class="footer-link">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact</h3>
+        <ul class="space-y-3 text-gray-600">
+          <li class="flex items-start space-x-2">
+            <i class="fas fa-map-marker-alt text-indigo-500 mt-1"></i>
+            <span>Feu rouge<br>Bafoussam, Cameroun</span>
+          </li>
+          <li class="flex items-center space-x-2">
+            <i class="fas fa-envelope text-indigo-500"></i>
+            <a href="mailto:ktprincesse@gmail.com" class="footer-link">ktprincesse@gmail.com</a>
+          </li>
+          <li class="flex items-center space-x-2">
+            <i class="fas fa-phone text-indigo-500"></i>
+            <a href="tel:+237690700963" class="footer-link">+237 690700963</a>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Back to Top Button -->
-    <button id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 text-white rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:scale-110 focus-ring z-40">
-        <i class="fas fa-arrow-up"></i>
-    </button>
+    <!-- Ligne de séparation -->
+    <div class="border-t border-gray-200 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+      <p class="mb-4 md:mb-0">
+        © 2025 <strong>CVBot</strong>. Tous droits réservés. Fait avec <span class="text-red-500">❤️</span> pour votre carrière.
+      </p>
+      <div class="flex space-x-6">
+        <a href="{% url 'comptes:privacy_policy' %}" class="footer-link">Confidentialité</a>
+        <a href="{% url 'comptes:terms_of_service' %}" class="footer-link">Conditions</a>
+        <a href="#" class="footer-link">Cookies</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bouton retour en haut -->
+  <button id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full shadow-lg opacity-0 invisible transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-indigo-500 z-40">
+    <i class="fas fa-arrow-up"></i>
+  </button>
 </footer>
 
-<!-- Toast Notification -->
-<div id="toast" class="fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-all duration-300 z-50">
-    <span id="toast-message"></span>
-</div>
+<style>
+  .social-icon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 18px;
+    transition: all 0.3s ease;
+  }
+  .social-icon:hover {
+    transform: scale(1.15);
+    border-color: #818cf8;
+    background: #eef2ff;
+  }
+  .footer-link {
+    color: #4b5563;
+    transition: color 0.3s;
+  }
+  .footer-link:hover {
+    color: #4f46e5;
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
 
 <script>
-    // Theme Management
-    class ThemeManager {
-        constructor() {
-            this.theme = localStorage.getItem('theme') || 'dark';
-            this.init();
-        }
-
-        init() {
-            this.applyTheme(this.theme);
-            this.bindEvents();
-            this.updateToggleUI();
-        }
-
-        bindEvents() {
-            document.getElementById('lightTheme').addEventListener('click', () => {
-                this.switchTheme('light');
-            });
-
-            document.getElementById('darkTheme').addEventListener('click', () => {
-                this.switchTheme('dark');
-            });
-        }
-
-        switchTheme(newTheme) {
-            if (this.theme === newTheme) return;
-            
-            document.body.classList.add('theme-switching');
-            
-            setTimeout(() => {
-                this.theme = newTheme;
-                this.applyTheme(newTheme);
-                this.updateToggleUI();
-                localStorage.setItem('theme', newTheme);
-                
-                this.showToast(`Thème ${newTheme === 'light' ? 'clair' : 'sombre'} activé`, 'success');
-                
-                document.body.classList.remove('theme-switching');
-            }, 100);
-        }
-
-        applyTheme(theme) {
-            document.body.setAttribute('data-theme', theme);
-        }
-
-        updateToggleUI() {
-            const lightOption = document.getElementById('lightTheme');
-            const darkOption = document.getElementById('darkTheme');
-
-            if (this.theme === 'light') {
-                lightOption.classList.add('active');
-                darkOption.classList.remove('active');
-            } else {
-                darkOption.classList.add('active');
-                lightOption.classList.remove('active');
-            }
-        }
-
-        showToast(message, type = 'info') {
-            const toast = document.getElementById('toast');
-            const messageEl = document.getElementById('toast-message');
-            
-            messageEl.textContent = message;
-            
-            if (type === 'success') {
-                toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-green-500 text-white transform translate-x-full transition-all duration-300 z-50';
-            } else if (type === 'error') {
-                toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-red-500 text-white transform translate-x-full transition-all duration-300 z-50';
-            } else {
-                toast.className = 'fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg bg-blue-500 text-white transform translate-x-full transition-all duration-300 z-50';
-            }
-            
-            setTimeout(() => {
-                toast.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(() => {
-                toast.style.transform = 'translateX(full)';
-            }, 3000);
-        }
+  // Bouton retour en haut
+  document.addEventListener('scroll', () => {
+    const btn = document.getElementById('backToTop');
+    if (window.scrollY > 300) {
+      btn.classList.remove('opacity-0', 'invisible');
+      btn.classList.add('opacity-100', 'visible');
+    } else {
+      btn.classList.add('opacity-0', 'invisible');
+      btn.classList.remove('opacity-100', 'visible');
     }
-
-    // Newsletter Subscription
-    function initNewsletter() {
-        const emailInput = document.getElementById('newsletter-email');
-        const subscribeBtn = document.getElementById('newsletter-btn');
-
-        subscribeBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const email = emailInput.value.trim();
-            
-            if (!email) {
-                window.themeManager.showToast('Veuillez entrer votre email', 'error');
-                return;
-            }
-            
-            if (!isValidEmail(email)) {
-                window.themeManager.showToast('Veuillez entrer un email valide', 'error');
-                return;
-            }
-
-            subscribeBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Inscription...';
-            subscribeBtn.disabled = true;
-            
-            setTimeout(() => {
-                window.themeManager.showToast('Merci pour votre inscription !', 'success');
-                emailInput.value = '';
-                subscribeBtn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>S\'abonner';
-                subscribeBtn.disabled = false;
-            }, 2000);
-        });
-    }
-
-    function isValidEmail(email) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    }
-
-    // Back to Top Button
-    function initBackToTop() {
-        const backToTopBtn = document.getElementById('backToTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                backToTopBtn.style.opacity = '1';
-                backToTopBtn.style.visibility = 'visible';
-            } else {
-                backToTopBtn.style.opacity = '0';
-                backToTopBtn.style.visibility = 'hidden';
-            }
-        });
-
-        backToTopBtn.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    }
-
-    // Initialize everything
-    document.addEventListener('DOMContentLoaded', function() {
-        window.themeManager = new ThemeManager();
-        initNewsletter();
-        initBackToTop();
-    });
+  });
+  document.getElementById('backToTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 </script>

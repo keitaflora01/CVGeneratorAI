@@ -6,21 +6,37 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>{% block title %}CV Generator{% endblock %}</title>
 
-  <!-- Tailwind CDN pour développement (rapide à démarrer).
-       Pour production, configure Tailwind via npm/PostCSS. -->
-  
-
-  <!-- CSS personnalisé (optionnel) -->
+  <!-- Tailwind CSS -->
   <link rel="stylesheet" href="{% static 'css/output.css' %}">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+    }
+  </style>
 </head>
-<body class="min-h-screen bg-gray-50">
+
+<body class="min-h-screen flex flex-col bg-gray-50">
+  
+  <!-- Navbar -->
   <header class="bg-white shadow-sm border-b border-gray-200">
     {% include "user/includes/navbar.html" %}
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Contenu principal -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     {% block content %}{% endblock %}
   </main>
+
+  <!-- Footer -->
+  {% include "accound/includes/footer.html" %}
 
   <!-- JS principal -->
   <script src="{% static 'js/dashboard.js' %}" defer></script>

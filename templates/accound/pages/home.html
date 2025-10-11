@@ -5,555 +5,1205 @@
 
 {% block extra_css %}
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
     :root {
-        --primary-500: #0ea5e9;
-        --primary-400: #38bdf8;
-        --primary-300: #7dd3fc;
-        --secondary-500: #7e22ce;
-        --secondary-400: #9333ea;
+        --primary-500: #7c3aed;
+        --primary-400: #8b5cf6;
+        --primary-300: #a78bfa;
+        --primary-600: #6d28d9;
+        --primary-700: #5b21b6;
+        --secondary-500: #a855f7;
+        --secondary-400: #c084fc;
+        --accent-500: #ec4899;
+        --bg-white: #ffffff;
+        --bg-light: #faf5ff;
+        --bg-lighter: #f5f3ff;
+        --text-dark: #1e1b4b;
+        --text-gray: #6b7280;
+        --text-light: #9ca3af;
+        --border-light: #e9d5ff;
+        --shadow-purple: rgba(124, 58, 237, 0.15);
     }
-    
-    [data-theme="light"] {
-        --bg-primary: #ffffff;
-        --bg-secondary: #f8fafc;
-        --bg-tertiary: #f1f5f9;
-        --text-primary: #1e293b;
-        --text-secondary: #475569;
-        --text-tertiary: #64748b;
-        --border-primary: #e2e8f0;
-        --border-secondary: #cbd5e1;
-        --glass-bg: rgba(255, 255, 255, 0.8);
-        --glass-border: rgba(0, 0, 0, 0.1);
-        --modal-bg: #ffffff;
-        --shadow-color: rgba(0, 0, 0, 0.1);
-    }
-    
-    [data-theme="dark"] {
-        --bg-primary: #0f172a;
-        --bg-secondary: #1e293b;
-        --bg-tertiary: #334155;
-        --text-primary: #e2e8f0;
-        --text-secondary: #94a3b8;
-        --text-tertiary: #64748b;
-        --border-primary: #334155;
-        --border-secondary: #475569;
-        --glass-bg: rgba(255, 255, 255, 0.05);
-        --glass-border: rgba(255, 255, 255, 0.1);
-        --modal-bg: #1e293b;
-        --shadow-color: rgba(0, 0, 0, 0.3);
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
     }
 
     body {
         font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
-        color: var(--text-primary);
-        transition: all 0.3s ease;
+        background: var(--bg-white);
+        color: var(--text-dark);
+        overflow-x: hidden;
     }
     
-    .glass-card {
-        background: var(--glass-bg);
-        backdrop-filter: blur(10px);
-        border: 1px solid var(--glass-border);
-        transition: all 0.3s ease;
-    }
-    
-    .gradient-text {
-        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .btn-primary {
-        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
-        transition: all 0.3s ease;
-        border: none;
-    }
-    
-    .btn-primary:hover {
-        background: linear-gradient(135deg, #0284c7 0%, #6b21a8 100%);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -5px rgba(14, 165, 233, 0.4), 0 10px 10px -5px rgba(126, 34, 206, 0.3);
-    }
-    
-    .btn-secondary {
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        transition: all 0.3s ease;
-        color: var(--text-primary);
-    }
-    
-    .btn-secondary:hover {
-        background: var(--glass-bg);
-        border: 1px solid var(--border-secondary);
-        transform: translateY(-1px);
-    }
-    
-    .navbar {
-        background: var(--glass-bg);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid var(--glass-border);
-        transition: all 0.3s ease;
-    }
-    
-    .nav-link {
-        color: var(--text-secondary);
-    }
-    
-    .nav-link:hover {
-        color: var(--text-primary);
-    }
-    
-    .modal {
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(5px);
-    }
-    
-    .modal-content {
-        background: var(--modal-bg);
-        color: var(--text-primary);
-        border: 1px solid var(--glass-border);
-    }
-    
-    .footer {
-        background: var(--bg-secondary);
-        border-top: 1px solid var(--border-primary);
-    }
-    
-    .theme-toggle {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: var(--glass-bg);
-        border: 1px solid var(--glass-border);
-        border-radius: 25px;
-        padding: 0.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .theme-toggle:hover {
-        background: var(--glass-bg);
-        transform: translateY(-1px);
-    }
-    
-    .theme-option {
-        display: flex;
-        align-items: center;
-        gap: 0.25rem;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        transition: all 0.3s ease;
-        color: var(--text-secondary);
-        font-size: 0.875rem;
-        font-weight: 500;
-    }
-    
-    .theme-option.active {
-        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(14, 165, 233, 0.3);
-    }
-    
-    .icon-box {
-        transition: all 0.3s ease;
-    }
-    
-    .icon-box:hover {
-        transform: translateY(-10px);
-    }
-    
-    .icon-box i {
-        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2rem;
-        margin-bottom: 1rem;
-    }
-    
-    .stats-item {
-        background: var(--glass-bg);
-        border-radius: 15px;
-        padding: 2rem;
-        text-align: center;
-        transition: all 0.3s ease;
-    }
-    
-    .stats-item:hover {
-        background: var(--glass-bg);
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px var(--shadow-color);
-    }
-    
-    .color-blue { color: #38bdf8; }
-    .color-orange { color: #fb923c; }
-    .color-green { color: #34d399; }
-    .color-pink { color: #f472b6; }
-    
-    .carousel {
+    /* ========== NOUVEAU: Hero Image Carousel ========== */
+    .hero-image-carousel {
         position: relative;
         width: 100%;
-        height: 100%;
+        height: 600px;
         overflow: hidden;
+        margin-bottom: 0;
     }
 
-    .carousel-image {
-        position: absolute;
-        top: 0;
-        left: 0;
+    .hero-carousel-track {
+        display: flex;
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+    }
+
+    .hero-carousel-slide {
+        min-width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .hero-carousel-slide img {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        opacity: 0;
-        animation: slide 15s infinite;
     }
 
-    .carousel-image:nth-child(1) { animation-delay: 0s; }
-    .carousel-image:nth-child(2) { animation-delay: 5s; }
-    .carousel-image:nth-child(3) { animation-delay: 10s; }
-
-    @keyframes slide {
-        0% { opacity: 0; }
-        6.67% { opacity: 1; }
-        33.33% { opacity: 1; }
-        40% { opacity: 0; }
-        100% { opacity: 0; }
-    }
-    
-    .section {
-        padding: 80px 0;
-    }
-    
-    .hero.section {
-        min-height: 100vh;
+    .hero-carousel-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.4) 100%);
         display: flex;
         align-items: center;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .section-title {
+        justify-content: center;
         text-align: center;
-        margin-bottom: 4rem;
-    }
-    
-    .section-title h2 {
-        font-size: 2.5rem;
-        font-weight: bold;
-        color: var(--text-primary);
-        margin-bottom: 1rem;
-    }
-    
-    .section-title p {
-        font-size: 1.125rem;
-        color: var(--text-secondary);
+        padding: 2rem;
     }
 
-    .faq-container .faq-item {
-        background: var(--glass-bg);
-        border-radius: 10px;
-        margin-bottom: 1rem;
-        overflow: hidden;
-        transition: all 0.3s ease;
+    .hero-carousel-content {
+        color: white;
+        max-width: 900px;
+        animation: slideUpFade 1s ease-out;
+        text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
     }
 
-    .faq-item h3 {
-        background: var(--glass-bg);
-        padding: 1.5rem;
-        margin: 0;
-        cursor: pointer;
-        position: relative;
-        color: var(--text-primary);
-        font-weight: 600;
+    .hero-carousel-content h1 {
+        font-size: 4rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        text-shadow: 2px 4px 8px rgba(0, 0, 0, 0.3);
+        line-height: 1.2;
     }
 
-    .faq-content {
-        padding: 0 1.5rem;
-        max-height: 0;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        color: var(--text-secondary);
+    .hero-carousel-content p {
+        font-size: 1.5rem;
+        margin-bottom: 2.5rem;
+        text-shadow: 1px 2px 4px rgba(0, 0, 0, 0.2);
+        line-height: 1.6;
     }
 
-    .faq-item.faq-active .faq-content {
-        max-height: 200px;
-        padding: 1.5rem;
-    }
-
-    .faq-toggle {
+    .carousel-nav-btn {
         position: absolute;
-        right: 1.5rem;
         top: 50%;
         transform: translateY(-50%);
-        transition: transform 0.3s ease;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: none;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
 
-    .faq-item.faq-active .faq-toggle {
-        transform: translateY(-50%) rotate(90deg);
+    .carousel-nav-btn:hover {
+        background: white;
+        transform: translateY(-50%) scale(1.15);
+        box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
     }
 
-    .testimonial-item {
-        background: var(--glass-bg);
-        border-radius: 15px;
-        padding: 2rem;
-        text-align: center;
+    .carousel-nav-btn.prev-hero { left: 2rem; }
+    .carousel-nav-btn.next-hero { right: 2rem; }
+
+    .carousel-nav-btn i {
+        color: var(--primary-500);
+        font-size: 1.5rem;
+    }
+
+    .hero-carousel-indicators {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 0.75rem;
+        z-index: 10;
+    }
+
+    .hero-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        border: 2px solid white;
+        cursor: pointer;
+        transition: all 0.4s ease;
+    }
+
+    .hero-indicator.active {
+        background: white;
+        width: 40px;
+        border-radius: 6px;
+    }
+
+    @keyframes slideUpFade {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    /* Gradient Backgrounds */
+    .gradient-bg-1 {
+        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #f5f3ff 100%);
+    }
+    
+    .gradient-bg-2 {
+        background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+    }
+    
+    /* Glass Effects */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(124, 58, 237, 0.1);
+        box-shadow: 0 8px 32px rgba(124, 58, 237, 0.1);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .glass-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(124, 58, 237, 0.2);
+        border-color: rgba(124, 58, 237, 0.3);
+    }
+    
+    /* Gradient Text */
+    .gradient-text {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradient-shift 3s ease infinite;
+        background-size: 200% 200%;
+    }
+    
+    @keyframes gradient-shift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
         height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .btn-primary:hover::before {
+        left: 100%;
+    }
+    
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(124, 58, 237, 0.4);
+    }
+    
+    .btn-secondary {
+        background: white;
+        color: var(--primary-500);
+        border: 2px solid var(--primary-300);
         transition: all 0.3s ease;
     }
-
-    .stars {
-        color: #fbbf24;
-        margin-bottom: 1rem;
-    }
-
-    .hover-lift:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px var(--shadow-color);
+    
+    .btn-secondary:hover {
+        background: var(--bg-lighter);
+        border-color: var(--primary-500);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(124, 58, 237, 0.2);
     }
     
-    .focus-ring:focus {
-        outline: 2px solid var(--primary-500);
-        outline-offset: 2px;
+    /* Navbar */
+    .navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--border-light);
+        box-shadow: 0 4px 20px rgba(124, 58, 237, 0.05);
     }
     
-    .theme-switching {
-        pointer-events: none;
-        opacity: 0.7;
+    .nav-link {
+        color: var(--text-gray);
+        font-weight: 500;
+        position: relative;
+        transition: color 0.3s ease;
     }
     
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
+        transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover {
+        color: var(--primary-500);
+    }
+    
+    .nav-link:hover::after {
+        width: 100%;
+    }
+    
+    /* Animations */
     @keyframes float {
-        0%, 100% { transform: translateY(0px) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(5deg); }
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-20px); }
+    }
+    
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(124, 58, 237, 0.3); }
+        50% { box-shadow: 0 0 40px rgba(124, 58, 237, 0.6); }
+    }
+    
+    @keyframes slide-up {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes scale-in {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
     }
     
     .animate-float {
         animation: float 6s ease-in-out infinite;
     }
-
-    html {
-        scroll-behavior: smooth;
+    
+    .animate-pulse-glow {
+        animation: pulse-glow 2s ease-in-out infinite;
     }
-     .carousel-slide {
+    
+    /* Hero Section */
+    .hero {
+        position: relative;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #f5f3ff 100%);
+        overflow: hidden;
+    }
+    
+    .hero::before {
+        content: '';
+        position: absolute;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        top: -200px;
+        right: -200px;
+        animation: float 8s ease-in-out infinite;
+    }
+    
+    .hero::after {
+        content: '';
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        bottom: -100px;
+        left: -100px;
+        animation: float 10s ease-in-out infinite reverse;
+    }
+    
+    /* Icon Boxes */
+    .icon-box {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    
+    .icon-box::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-radius: 16px;
+        padding: 2px;
+        background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .icon-box:hover::before {
+        opacity: 1;
+    }
+    
+    .icon-box:hover {
+        transform: translateY(-12px) scale(1.02);
+    }
+    
+    .icon-box i {
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        font-size: 3rem;
+        transition: all 0.3s ease;
+    }
+    
+    .icon-box:hover i {
+        transform: scale(1.1) rotate(5deg);
+    }
+    
+    /* Stats Section */
+    .stats-item {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        text-align: center;
+        transition: all 0.4s ease;
+        border: 1px solid var(--border-light);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stats-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-500), var(--secondary-500));
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .stats-item:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .stats-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(124, 58, 237, 0.2);
+        border-color: var(--primary-300);
+    }
+    
+    /* Carousel Styles */
+    .carousel-slide {
         flex-shrink: 0;
+        transition: all 0.5s ease;
     }
     
     .carousel-dot {
         cursor: pointer;
+        transition: all 0.3s ease;
     }
     
     .carousel-dot.active {
-        background: linear-gradient(135deg, #0ea5e9 0%, #7e22ce 100%) !important;
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%) !important;
         width: 2rem;
     }
     
+    /* ========== NOUVEAU: FAQ Améliorée ========== */
+    .faq-container .faq-item {
+        background: white;
+        border-radius: 20px;
+        margin-bottom: 1.5rem;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid var(--border-light);
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.08);
+    }
+    
+    .faq-item:hover {
+        box-shadow: 0 12px 40px rgba(124, 58, 237, 0.15);
+        border-color: var(--primary-300);
+        transform: translateY(-5px);
+    }
+    
+    .faq-item h3 {
+        background: white;
+        padding: 2rem 5rem 2rem 2rem;
+        margin: 0;
+        cursor: pointer;
+        position: relative;
+        color: var(--text-dark);
+        font-weight: 700;
+        font-size: 1.125rem;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+    
+    .faq-item.faq-active h3 {
+        color: var(--primary-500);
+        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 100%);
+    }
+    
+    .faq-content {
+        padding: 0 2rem;
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        color: var(--text-gray);
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+    
+    .faq-item.faq-active .faq-content {
+        max-height: 400px;
+        padding: 0 2rem 2rem 2rem;
+    }
+    
+    .faq-toggle {
+        position: absolute;
+        right: 2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+    }
+
+    .faq-toggle i {
+        color: white;
+        font-size: 1.125rem;
+        transition: all 0.4s ease;
+    }
+    
+    .faq-item.faq-active .faq-toggle {
+        transform: translateY(-50%) rotate(180deg);
+        background: linear-gradient(135deg, var(--secondary-500), var(--accent-500));
+        box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+    }
+    
+    /* ========== NOUVEAU: Section Contact ========== */
+    .contact-section {
+        background: linear-gradient(135deg, #faf5ff 0%, #ffffff 50%, #f5f3ff 100%);
+        padding: 100px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .contact-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 4rem;
+        align-items: start;
+    }
+
+    .contact-info h2 {
+        font-size: 3rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        line-height: 1.2;
+        color: var(--text-dark);
+    }
+
+    .contact-info p {
+        font-size: 1.125rem;
+        color: var(--text-gray);
+        margin-bottom: 2.5rem;
+        line-height: 1.8;
+    }
+
+    .contact-details {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .contact-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        padding: 1.5rem;
+        background: white;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        border: 1px solid var(--border-light);
+        box-shadow: 0 4px 15px rgba(124, 58, 237, 0.05);
+    }
+
+    .contact-detail-item:hover {
+        transform: translateX(10px);
+        box-shadow: 0 8px 30px rgba(124, 58, 237, 0.15);
+        border-color: var(--primary-300);
+    }
+
+    .contact-detail-item i {
+        width: 55px;
+        height: 55px;
+        background: linear-gradient(135deg, var(--primary-500), var(--secondary-500));
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .contact-detail-item strong {
+        display: block;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 0.25rem;
+    }
+
+    .contact-detail-item p {
+        margin: 0 !important;
+        color: var(--text-gray);
+        font-size: 1rem;
+    }
+
+    .contact-form {
+        background: white;
+        padding: 3rem;
+        border-radius: 24px;
+        box-shadow: 0 20px 60px rgba(124, 58, 237, 0.12);
+        border: 1px solid var(--border-light);
+    }
+
+    .contact-form h3 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
+        color: var(--text-dark);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.625rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 1rem 1.25rem;
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: var(--bg-lighter);
+        color: var(--text-dark);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--primary-500);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 150px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 1.25rem;
+        background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1.125rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(124, 58, 237, 0.4);
+        background: linear-gradient(135deg, #6d28d9 0%, #9333ea 100%);
+    }
+
+    .submit-btn i {
+        margin-right: 0.5rem;
+    }
+    
+    /* Testimonials */
+    .testimonial-item {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        height: 100%;
+        transition: all 0.4s ease;
+        border: 1px solid var(--border-light);
+    }
+    
+    .testimonial-item:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 50px rgba(124, 58, 237, 0.15);
+        border-color: var(--primary-300);
+    }
+    
+    .stars {
+        color: #fbbf24;
+        margin-bottom: 1rem;
+    }
+    
+    /* Section Styling */
+    .section {
+        padding: 100px 0;
+        position: relative;
+    }
+    
+    .section-title {
+        text-align: center;
+        margin-bottom: 4rem;
+        animation: slide-up 0.8s ease;
+    }
+    
+    .section-title h2 {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+    
+    .section-title p {
+        font-size: 1.25rem;
+        color: var(--text-gray);
+    }
+    
+    /* Decorative Elements */
+    .decorative-blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.3;
+        z-index: -1;
+    }
+    
+    .blob-1 {
+        width: 400px;
+        height: 400px;
+        background: var(--primary-300);
+        top: 10%;
+        right: 5%;
+        animation: float 15s ease-in-out infinite;
+    }
+    
+    .blob-2 {
+        width: 300px;
+        height: 300px;
+        background: var(--secondary-400);
+        bottom: 10%;
+        left: 5%;
+        animation: float 12s ease-in-out infinite reverse;
+    }
+    
+    /* Footer */
+    .footer {
+        background: linear-gradient(135deg, #faf5ff 0%, #f5f3ff 100%);
+        border-top: 1px solid var(--border-light);
+    }
+    
+    /* Scroll Animations */
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition: all 0.8s ease;
+    }
+    
+    .scroll-reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .scroll-reveal-left {
+        opacity: 0;
+        transform: translateX(-50px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-reveal-left.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scroll-reveal-right {
+        opacity: 0;
+        transform: translateX(50px);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-reveal-right.active {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .scroll-reveal-scale {
+        opacity: 0;
+        transform: scale(0.9);
+        transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .scroll-reveal-scale.active {
+        opacity: 1;
+        transform: scale(1);
+    }
+    
+    /* Responsive */
     @media (max-width: 768px) {
+        .hero-image-carousel {
+            height: 400px;
+        }
+
+        .hero-carousel-content h1 {
+            font-size: 2.25rem;
+        }
+
+        .hero-carousel-content p {
+            font-size: 1.125rem;
+        }
+
+        .carousel-nav-btn {
+            width: 45px;
+            height: 45px;
+        }
+
+        .carousel-nav-btn.prev-hero { left: 1rem; }
+        .carousel-nav-btn.next-hero { right: 1rem; }
+
+        .section-title h2 {
+            font-size: 2rem;
+        }
+        
         .carousel-slide {
             min-width: 100% !important;
         }
+        
+        .hero::before,
+        .hero::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .contact-grid {
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        .contact-info h2 {
+            font-size: 2rem;
+        }
+
+        .contact-form {
+            padding: 2rem;
+        }
     }
+    
+    /* Color Variations */
+    .color-blue { color: #3b82f6; }
+    .color-orange { color: #f59e0b; }
+    .color-green { color: #10b981; }
+    .color-pink { color: #ec4899; }
+    .color-purple { color: var(--primary-500); }
+
+     .lottie-animation-container {
+        position: relative;
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+
+    .lottie-robot {
+        width: 100%;
+        height: auto;
+        filter: drop-shadow(0 20px 40px rgba(124, 58, 237, 0.3));
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .lottie-robot:hover {
+        transform: scale(1.05) translateY(-10px);
+        filter: drop-shadow(0 30px 60px rgba(124, 58, 237, 0.4));
+    }
+
+    .ai-badge {
+        position: absolute;
+        top: 20%;
+        right: 10%;
+        background: linear-gradient(135deg, #7c3aed 0%, #ec4899 100%);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 0.875rem;
+        box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        animation: pulse-badge 2s ease-in-out infinite;
+        z-index: 10;
+    }
+
+    @keyframes pulse-badge {
+        0%, 100% {
+            transform: scale(1);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.4);
+        }
+        50% {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.6);
+        }
+    }
+
+    .ai-sparkles {
+        position: absolute;
+        bottom: 20%;
+        left: 10%;
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Responsive adjustments for Lottie */
+    @media (max-width: 768px) {
+        .lottie-animation-container {
+            max-width: 300px;
+        }
+        
+        .ai-badge {
+            top: 15%;
+            right: 5%;
+            padding: 8px 16px;
+            font-size: 0.75rem;
+        }
+        
+        .ai-sparkles {
+            width: 60px;
+            height: 60px;
+            bottom: 15%;
+            left: 5%;
+        }
+    }
+
 </style>
 {% endblock %}
 
 {% block content %}
-    <!-- Hero Section -->
-    <section id="hero" class="hero section">
-        <!-- Background Carousel -->
-        <div class="absolute inset-0 z-0">
-            <div class="carousel">
-                <img src="{% static 'images/img1.jpg' %}" class="carousel-image" alt="Background Image 1">
-                <img src="{% static 'images/img2.jpg' %}" class="carousel-image" alt="Background Image 2">
-                <img src="{% static 'images/img3.jpg' %}" class="carousel-image" alt="Background Image 3">
+    <!-- ========== NOUVEAU: Hero Image Carousel ========== -->
+    <section class="hero-image-carousel">
+        <div class="hero-carousel-track" id="heroCarouselTrack">
+            <div class="hero-carousel-slide">
+                <img src="{% static 'images/img1.jpg' %}" alt="CVBot Hero 1">
+                <div class="hero-carousel-overlay">
+                    <div class="hero-carousel-content">
+                        <h1>Créez des CV professionnels en 30 secondes</h1>
+                        <p>Notre IA révolutionne votre recherche d'emploi avec des CV optimisés</p>
+                        <button class="btn btn-primary px-10 py-4 rounded-xl font-bold text-lg">
+                            <i class="fas fa-rocket mr-2"></i> Commencer Maintenant
+                        </button>
+                    </div>
+                </div>
             </div>
-            <!-- Overlay for text readability -->
-            <div class="absolute inset-0 bg-black/60"></div>
+            <div class="hero-carousel-slide">
+                <img src="{% static 'images/img3.jpg' %}" alt="CVBot Hero 2">
+                <div class="hero-carousel-overlay">
+                    <div class="hero-carousel-content">
+                        <h1>99% Compatible ATS</h1>
+                        <p>Passez tous les filtres automatiques des recruteurs avec nos modèles optimisés</p>
+                        <button class="btn btn-primary px-10 py-4 rounded-xl font-bold text-lg">
+                            <i class="fas fa-check-circle mr-2"></i> Découvrir
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-carousel-slide">
+                <img src="{% static 'images/img5.jpg' %}" alt="CVBot Hero 3">
+                <div class="hero-carousel-overlay">
+                    <div class="hero-carousel-content">
+                        <h1>50,000+ CV créés avec succès</h1>
+                        <p>Rejoignez des milliers de professionnels qui ont transformé leur carrière</p>
+                        <button class="btn btn-primary px-10 py-4 rounded-xl font-bold text-lg">
+                            <i class="fas fa-users mr-2"></i> Voir les témoignages
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-carousel-slide">
+                <img src="{% static 'images/img6.jpg' %}" alt="CVBot Hero 4">
+                <div class="hero-carousel-overlay">
+                    <div class="hero-carousel-content">
+                        <h1>Lettres de motivation personnalisées</h1>
+                        <p>L'IA génère le contenu parfait pour chaque opportunité professionnelle</p>
+                        <button class="btn btn-primary px-10 py-4 rounded-xl font-bold text-lg">
+                            <i class="fas fa-file-alt mr-2"></i> Essayer Gratuitement
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
+        
+        <button class="carousel-nav-btn prev-hero" id="heroPrevBtn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="carousel-nav-btn next-hero" id="heroNextBtn">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+        
+        <div class="hero-carousel-indicators" id="heroIndicators">
+            <div class="hero-indicator active" data-slide="0"></div>
+            <div class="hero-indicator" data-slide="1"></div>
+            <div class="hero-indicator" data-slide="2"></div>
+            <div class="hero-indicator" data-slide="3"></div>
+        </div>
+    </section>
 
+    <!-- Hero Section -->
+     <section id="hero" class="hero section">
+        <div class="decorative-blob blob-1"></div>
+        <div class="decorative-blob blob-2"></div>
+        
         <div class="container mx-auto px-4 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="lg:order-1 order-2 flex flex-col justify-center" data-aos="fade-up">
+                <div class="lg:order-1 order-2 flex flex-col justify-center scroll-reveal">
                     <div class="mb-6">
-                        <span class="inline-flex items-center px-4 py-2 glass-card text-primary-200 rounded-full text-sm">
+                        <span class="inline-flex items-center px-4 py-2 glass-card rounded-full text-sm text-purple-600 font-medium animate-pulse-glow">
                             <i class="fas fa-sparkles mr-2"></i>
                             Nouveau : Génération par IA en 30 secondes
                         </span>
                     </div>
                     
-                    <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight" data-aos="fade-up" data-aos-delay="100">
+                    <h1 class="text-5xl md:text-7xl font-black mb-6 leading-tight">
                         <span class="gradient-text">Créez des CV</span>
-                        <span class="text-white block">qui font la</span>
+                        <span class="block text-gray-900">qui font la</span>
                         <span class="gradient-text">différence</span>
                     </h1>
                     
-                    <p class="text-lg text-slate-300 mb-8 leading-relaxed" data-aos="fade-up" data-aos-delay="200">
+                    <p class="text-xl text-gray-600 mb-8 leading-relaxed">
                         Boostez votre carrière avec notre IA de pointe. Créez des CV et lettres de motivation 
                         professionnels en quelques clics, optimisés pour passer tous les filtres ATS.
                     </p>
 
-                    <div class="flex flex-col sm:flex-row gap-4" data-aos="fade-up" data-aos-delay="300">
-                        <button class="btn btn-primary px-8 py-4 rounded-xl text-center text-white font-semibold hover-lift focus-ring">
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button class="btn btn-primary px-10 py-4 rounded-xl text-center font-bold text-lg">
                             <i class="fas fa-rocket mr-2"></i>Créer Mon CV Maintenant
                         </button>
-                        <a href="#previews" class="btn btn-secondary px-8 py-4 rounded-xl text-center font-semibold hover-lift focus-ring">
+                        <a href="#previews" class="btn btn-secondary px-10 py-4 rounded-xl text-center font-bold text-lg">
                             <i class="fas fa-play mr-2"></i>Voir un Exemple
                         </a>
                     </div>
                 </div>
                 
-                <div class="lg:order-2 order-1" data-aos="zoom-out">
-                    <div class="glass-card rounded-2xl p-8 shadow-xl hover-lift">
-                        <div class="bg-gradient-to-r from-primary-500 to-secondary-500 h-3 rounded-full mb-6"></div>
-                        
-                        <!-- Header section -->
-                        <div class="flex items-center mb-6">
-                            <div class="w-16 h-16 bg-gradient-to-r from-primary-400 to-secondary-400 rounded-full mr-4"></div>
-                            <div class="flex-1">
-                                <div class="bg-slate-600 h-4 rounded w-3/4 mb-2"></div>
-                                <div class="bg-slate-700 h-3 rounded w-1/2"></div>
-                            </div>
+                <div class="lg:order-2 order-1 scroll-reveal">
+                    <!-- ========== NOUVEAU: Animation Lottie Robot IA ========== -->
+                    <div class="lottie-animation-container">
+                        <div id="lottie-robot" class="lottie-robot"></div>
+                        <div class="ai-badge">
+                            🤖 IA en action
                         </div>
-                        
-                        <!-- Content sections -->
-                        <div class="space-y-4">
-                            <div class="bg-slate-700 h-3 rounded w-5/6"></div>
-                            <div class="bg-slate-700 h-3 rounded w-4/5"></div>
-                            <div class="bg-slate-700 h-3 rounded w-3/4"></div>
-                        </div>
-                        
-                        <!-- Skills section -->
-                        <div class="mt-6 pt-4 border-t border-slate-700">
-                            <div class="flex flex-wrap gap-2">
-                                <div class="bg-primary-500/20 px-3 py-1 rounded-full text-xs text-primary-300">HTML</div>
-                                <div class="bg-secondary-500/20 px-3 py-1 rounded-full text-xs text-secondary-300">CSS</div>
-                                <div class="bg-primary-500/20 px-3 py-1 rounded-full text-xs text-primary-300">JavaScript</div>
-                            </div>
-                        </div>
+                        <div id="lottie-sparkles" class="ai-sparkles"></div>
                     </div>
                 </div>
             </div>
         </div>
-    </section><!-- /Hero Section -->
-
+    </section>
     <!-- Alt Features Section -->
-    <section id="alt-features" class="section" style="background: var(--bg-secondary);">
+    <section id="alt-features" class="section gradient-bg-2">
         <div class="container mx-auto px-4">
-            <div class="section-title" data-aos="fade-up">
+            <div class="section-title scroll-reveal">
                 <h2>Pourquoi choisir <span class="gradient-text">CVBot</span> ?</h2>
                 <p>Notre IA révolutionne la création de CV professionnels</p>
             </div>
             
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="lg:order-2 order-1" data-aos="fade-up" data-aos-delay="100">
+                <div class="lg:order-2 order-1">
                     <div class="grid md:grid-cols-2 gap-8">
-                        <div class="icon-box text-center hover-lift">
+                        <div class="icon-box text-center scroll-reveal-scale glass-card p-6 rounded-2xl">
                             <i class="fas fa-brain"></i>
-                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">IA Intelligente GPT-4</h4>
-                            <p style="color: var(--text-secondary);">Notre IA analyse votre profil et génère des CV personnalisés qui correspondent parfaitement aux offres d'emploi.</p>
+                            <h4 class="text-xl font-bold mb-4 text-gray-900">IA Intelligente GPT-4</h4>
+                            <p class="text-gray-600">Notre IA analyse votre profil et génère des CV personnalisés qui correspondent parfaitement aux offres d'emploi.</p>
                         </div>
 
-                        <div class="icon-box text-center hover-lift">
+                        <div class="icon-box text-center scroll-reveal-scale glass-card p-6 rounded-2xl">
                             <i class="fas fa-search"></i>
-                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">99% ATS Compatible</h4>
-                            <p style="color: var(--text-secondary);">Tous nos CV sont testés et optimisés pour passer les filtres des systèmes de suivi des candidatures.</p>
+                            <h4 class="text-xl font-bold mb-4 text-gray-900">99% ATS Compatible</h4>
+                            <p class="text-gray-600">Tous nos CV sont testés et optimisés pour passer les filtres des systèmes de suivi des candidatures.</p>
                         </div>
 
-                        <div class="icon-box text-center hover-lift">
+                        <div class="icon-box text-center scroll-reveal-scale glass-card p-6 rounded-2xl">
                             <i class="fas fa-palette"></i>
-                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Modèles Premium</h4>
-                            <p style="color: var(--text-secondary);">Une bibliothèque complète de modèles élégants et modernes, adaptés à tous les secteurs d'activité.</p>
+                            <h4 class="text-xl font-bold mb-4 text-gray-900">Modèles Premium</h4>
+                            <p class="text-gray-600">Une bibliothèque complète de modèles élégants et modernes, adaptés à tous les secteurs d'activité.</p>
                         </div>
 
-                        <div class="icon-box text-center hover-lift">
+                        <div class="icon-box text-center scroll-reveal-scale glass-card p-6 rounded-2xl">
                             <i class="fas fa-rocket"></i>
-                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Génération Rapide</h4>
-                            <p style="color: var(--text-secondary);">Créez un CV professionnel complet en moins de 30 secondes. Plus besoin de passer des heures à formater.</p>
+                            <h4 class="text-xl font-bold mb-4 text-gray-900">Génération Rapide</h4>
+                            <p class="text-gray-600">Créez un CV professionnel complet en moins de 30 secondes. Plus besoin de passer des heures à formater.</p>
                         </div>
 
-                        <div class="icon-box text-center hover-lift">
+                        <div class="icon-box text-center scroll-reveal-scale glass-card p-6 rounded-2xl">
                             <i class="fas fa-file-alt"></i>
-                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Lettres de Motivation</h4>
-                            <p style="color: var(--text-secondary);">Générez automatiquement des lettres de motivation personnalisées qui complètent parfaitement votre CV.</p>
+                            <h4 class="text-xl font-bold mb-4 text-gray-900">Lettres de Motivation</h4>
+                            <p class="text-gray-600">Générez automatiquement des lettres de motivation personnalisées qui complètent parfaitement votre CV.</p>
                         </div>
 
-                        <div class="icon-box text-center hover-lift">
+                        <div class="icon-box text-center scroll-reveal-scale glass-card p-6 rounded-2xl">
                             <i class="fas fa-shield-alt"></i>
-                            <h4 class="text-xl font-bold mb-4" style="color: var(--text-primary);">Sécurité & Confidentialité</h4>
-                            <p style="color: var(--text-secondary);">Vos données personnelles sont protégées par un chiffrement de niveau bancaire. Confidentialité garantie.</p>
+                            <h4 class="text-xl font-bold mb-4 text-gray-900">Sécurité & Confidentialité</h4>
+                            <p class="text-gray-600">Vos données personnelles sont protégées par un chiffrement de niveau bancaire. Confidentialité garantie.</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="lg:order-1 order-2 flex items-center" data-aos="fade-up" data-aos-delay="200">
-                    <div class="glass-card p-8 rounded-2xl hover-lift">
-                        <img src="{% static 'images/hooyia1-features.webp' %}" class="w-full h-80 object-cover rounded-lg" alt="CVBot Features">
+                <div class="lg:order-1 order-2 flex items-center scroll-reveal-left">
+                    <div class="glass-card p-8 rounded-3xl">
+                        <img src="{% static 'images/hooyia1-features.webp' %}" class="w-full h-80 object-cover rounded-2xl" alt="CVBot Features">
                     </div>
                 </div>
             </div>
         </div>
-    </section><!-- /Alt Features Section -->
+    </section>
 
     <!-- Stats Section -->
-    <section id="stats" class="section" style="background: var(--bg-tertiary);">
-        <div class="container mx-auto px-4" data-aos="fade-up" data-aos-delay="100">
+    <section id="stats" class="section gradient-bg-1">
+        <div class="container mx-auto px-4">
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
-                <div class="stats-item hover-lift">
-                    <i class="fas fa-smile color-blue text-4xl mb-4"></i>
+                <div class="stats-item scroll-reveal-scale">
+                    <i class="fas fa-smile color-purple text-5xl mb-4"></i>
                     <div>
-                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="50000" data-purecounter-duration="1">0</span>
-                        <p style="color: var(--text-secondary);" class="mt-2">CV Créés</p>
+                        <span class="purecounter text-4xl font-black text-gray-900" data-purecounter-start="0" data-purecounter-end="50000" data-purecounter-duration="1">0</span>
+                        <p class="text-gray-600 mt-2 font-medium">CV Créés</p>
                     </div>
                 </div>
 
-                <div class="stats-item hover-lift">
-                    <i class="fas fa-file-alt color-orange text-4xl mb-4"></i>
+                <div class="stats-item scroll-reveal-scale">
+                    <i class="fas fa-file-alt color-orange text-5xl mb-4"></i>
                     <div>
-                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="2847" data-purecounter-duration="1">0</span>
-                        <p style="color: var(--text-secondary);" class="mt-2">Lettres Générées</p>
+                        <span class="purecounter text-4xl font-black text-gray-900" data-purecounter-start="0" data-purecounter-end="2847" data-purecounter-duration="1">0</span>
+                        <p class="text-gray-600 mt-2 font-medium">Lettres Générées</p>
                     </div>
                 </div>
 
-                <div class="stats-item hover-lift">
-                    <i class="fas fa-headset color-green text-4xl mb-4"></i>
+                <div class="stats-item scroll-reveal-scale">
+                    <i class="fas fa-headset color-green text-5xl mb-4"></i>
                     <div>
-                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="97" data-purecounter-duration="1">0</span>
-                        <p style="color: var(--text-secondary);" class="mt-2">% Taux de Réussite</p>
+                        <span class="purecounter text-4xl font-black text-gray-900" data-purecounter-start="0" data-purecounter-end="97" data-purecounter-duration="1">0</span>
+                        <p class="text-gray-600 mt-2 font-medium">% Taux de Réussite</p>
                     </div>
                 </div>
 
-                <div class="stats-item hover-lift">
-                    <i class="fas fa-users color-pink text-4xl mb-4"></i>
+                <div class="stats-item scroll-reveal-scale">
+                    <i class="fas fa-users color-pink text-5xl mb-4"></i>
                     <div>
-                        <span class="purecounter text-3xl font-bold" style="color: var(--text-primary);" data-purecounter-start="0" data-purecounter-end="24" data-purecounter-duration="1">0</span>
-                        <p style="color: var(--text-secondary);" class="mt-2">Support 24/7</p>
+                        <span class="purecounter text-4xl font-black text-gray-900" data-purecounter-start="0" data-purecounter-end="24" data-purecounter-duration="1">0</span>
+                        <p class="text-gray-600 mt-2 font-medium">Support 24/7</p>
                     </div>
                 </div>
             </div>
         </div>
-    </section><!-- /Stats Section -->
+    </section>
 
-    <!-- Portfolio Section - Aperçu des modèles -->
-     <section id="portfolio" class="section" style="background: var(--bg-secondary);">
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="section gradient-bg-2">
         <div class="container mx-auto px-4">
-            <div class="section-title" data-aos="fade-up">
+            <div class="section-title scroll-reveal">
                 <h2>Aperçu de nos <span class="gradient-text">modèles</span></h2>
                 <p>Découvrez la qualité professionnelle de nos CV générés par IA</p>
             </div>
 
-            <!-- Carousel Container -->
-            <div class="relative" data-aos="fade-up" data-aos-delay="100">
-                <!-- Carousel Wrapper -->
+            <div class="relative">
                 <div class="overflow-hidden relative">
                     <div id="templateCarousel" class="flex transition-transform duration-500 ease-in-out">
                         <!-- CV Template 1 -->
                         <div class="carousel-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] px-4">
-                            <div class="glass-card rounded-xl overflow-hidden hover-lift h-full">
-                                <div class="h-96 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
-                                    <img src="{% static 'images/tamplate_img/cv1.png' %}" class="w-full h-full object-contain rounded" alt="Modèle CV 1">
+                            <div class="glass-card rounded-2xl overflow-hidden h-full">
+                                <div class="h-96 bg-purple-50 p-6 relative">
+                                    <img src="{% static 'images/tamplate_img/cv1.png' %}" class="w-full h-full object-contain rounded-xl" alt="Modèle CV 1">
                                 </div>
                                 <div class="p-6 text-center">
-                                    <h4 class="font-semibold text-lg mb-2" style="color: var(--text-primary);">Modèle Professionnel</h4>
-                                    <p class="text-sm" style="color: var(--text-secondary);">CV moderne pour tous secteurs</p>
-                                    <button class="mt-4 btn btn-primary px-6 py-2 rounded-lg text-sm">
+                                    <h4 class="font-bold text-xl mb-2 text-gray-900">Modèle Professionnel</h4>
+                                    <p class="text-sm text-gray-600 mb-4">CV moderne pour tous secteurs</p>
+                                    <button class="btn btn-primary px-6 py-3 rounded-xl text-sm font-semibold">
                                         <i class="fas fa-eye mr-2"></i>Utiliser ce modèle
                                     </button>
                                 </div>
@@ -562,14 +1212,14 @@
 
                         <!-- CV Template 2 -->
                         <div class="carousel-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] px-4">
-                            <div class="glass-card rounded-xl overflow-hidden hover-lift h-full">
-                                <div class="h-96 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
-                                    <img src="{% static 'images/tamplate_img/cv2.png' %}" class="w-full h-full object-contain rounded" alt="Modèle CV 2">
+                            <div class="glass-card rounded-2xl overflow-hidden h-full">
+                                <div class="h-96 bg-purple-50 p-6 relative">
+                                    <img src="{% static 'images/tamplate_img/cv2.png' %}" class="w-full h-full object-contain rounded-xl" alt="Modèle CV 2">
                                 </div>
                                 <div class="p-6 text-center">
-                                    <h4 class="font-semibold text-lg mb-2" style="color: var(--text-primary);">Modèle Créatif</h4>
-                                    <p class="text-sm" style="color: var(--text-secondary);">Design innovant pour se démarquer</p>
-                                    <button class="mt-4 btn btn-primary px-6 py-2 rounded-lg text-sm">
+                                    <h4 class="font-bold text-xl mb-2 text-gray-900">Modèle Créatif</h4>
+                                    <p class="text-sm text-gray-600 mb-4">Design innovant pour se démarquer</p>
+                                    <button class="btn btn-primary px-6 py-3 rounded-xl text-sm font-semibold">
                                         <i class="fas fa-eye mr-2"></i>Utiliser ce modèle
                                     </button>
                                 </div>
@@ -578,14 +1228,14 @@
 
                         <!-- CV Template 3 -->
                         <div class="carousel-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] px-4">
-                            <div class="glass-card rounded-xl overflow-hidden hover-lift h-full">
-                                <div class="h-96 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
-                                    <img src="{% static 'images/tamplate_img/cv4.png' %}" class="w-full h-full object-contain rounded" alt="Modèle CV 4">
+                            <div class="glass-card rounded-2xl overflow-hidden h-full">
+                                <div class="h-96 bg-purple-50 p-6 relative">
+                                    <img src="{% static 'images/tamplate_img/cv4.png' %}" class="w-full h-full object-contain rounded-xl" alt="Modèle CV 4">
                                 </div>
                                 <div class="p-6 text-center">
-                                    <h4 class="font-semibold text-lg mb-2" style="color: var(--text-primary);">Modèle Minimaliste</h4>
-                                    <p class="text-sm" style="color: var(--text-secondary);">Élégance et simplicité</p>
-                                    <button class="mt-4 btn btn-primary px-6 py-2 rounded-lg text-sm">
+                                    <h4 class="font-bold text-xl mb-2 text-gray-900">Modèle Minimaliste</h4>
+                                    <p class="text-sm text-gray-600 mb-4">Élégance et simplicité</p>
+                                    <button class="btn btn-primary px-6 py-3 rounded-xl text-sm font-semibold">
                                         <i class="fas fa-eye mr-2"></i>Utiliser ce modèle
                                     </button>
                                 </div>
@@ -594,14 +1244,14 @@
 
                         <!-- LM Template 1 -->
                         <div class="carousel-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] px-4">
-                            <div class="glass-card rounded-xl overflow-hidden hover-lift h-full">
-                                <div class="h-96 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
-                                    <img src="{% static 'images/tamplate_img/LM3.png' %}" class="w-full h-full object-contain rounded" alt="Lettre de Motivation 3">
+                            <div class="glass-card rounded-2xl overflow-hidden h-full">
+                                <div class="h-96 bg-purple-50 p-6 relative">
+                                    <img src="{% static 'images/tamplate_img/LM3.png' %}" class="w-full h-full object-contain rounded-xl" alt="Lettre de Motivation 3">
                                 </div>
                                 <div class="p-6 text-center">
-                                    <h4 class="font-semibold text-lg mb-2" style="color: var(--text-primary);">Lettre Classique</h4>
-                                    <p class="text-sm" style="color: var(--text-secondary);">Format traditionnel efficace</p>
-                                    <button class="mt-4 btn btn-primary px-6 py-2 rounded-lg text-sm">
+                                    <h4 class="font-bold text-xl mb-2 text-gray-900">Lettre Classique</h4>
+                                    <p class="text-sm text-gray-600 mb-4">Format traditionnel efficace</p>
+                                    <button class="btn btn-primary px-6 py-3 rounded-xl text-sm font-semibold">
                                         <i class="fas fa-eye mr-2"></i>Utiliser ce modèle
                                     </button>
                                 </div>
@@ -610,14 +1260,14 @@
 
                         <!-- LM Template 2 -->
                         <div class="carousel-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] px-4">
-                            <div class="glass-card rounded-xl overflow-hidden hover-lift h-full">
-                                <div class="h-96 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
-                                    <img src="{% static 'images/tamplate_img/LM4.png' %}" class="w-full h-full object-contain rounded" alt="Lettre de Motivation 4">
+                            <div class="glass-card rounded-2xl overflow-hidden h-full">
+                                <div class="h-96 bg-purple-50 p-6 relative">
+                                    <img src="{% static 'images/tamplate_img/LM4.png' %}" class="w-full h-full object-contain rounded-xl" alt="Lettre de Motivation 4">
                                 </div>
                                 <div class="p-6 text-center">
-                                    <h4 class="font-semibold text-lg mb-2" style="color: var(--text-primary);">Lettre Moderne</h4>
-                                    <p class="text-sm" style="color: var(--text-secondary);">Design contemporain percutant</p>
-                                    <button class="mt-4 btn btn-primary px-6 py-2 rounded-lg text-sm">
+                                    <h4 class="font-bold text-xl mb-2 text-gray-900">Lettre Moderne</h4>
+                                    <p class="text-sm text-gray-600 mb-4">Design contemporain percutant</p>
+                                    <button class="btn btn-primary px-6 py-3 rounded-xl text-sm font-semibold">
                                         <i class="fas fa-eye mr-2"></i>Utiliser ce modèle
                                     </button>
                                 </div>
@@ -626,14 +1276,14 @@
 
                         <!-- LM Template 3 -->
                         <div class="carousel-slide min-w-full md:min-w-[50%] lg:min-w-[33.333%] px-4">
-                            <div class="glass-card rounded-xl overflow-hidden hover-lift h-full">
-                                <div class="h-96 bg-gradient-to-br p-6 relative" style="background: var(--bg-tertiary);">
-                                    <img src="{% static 'images/tamplate_img/LM5.png' %}" class="w-full h-full object-contain rounded" alt="Lettre de Motivation 5">
+                            <div class="glass-card rounded-2xl overflow-hidden h-full">
+                                <div class="h-96 bg-purple-50 p-6 relative">
+                                    <img src="{% static 'images/tamplate_img/LM5.png' %}" class="w-full h-full object-contain rounded-xl" alt="Lettre de Motivation 5">
                                 </div>
                                 <div class="p-6 text-center">
-                                    <h4 class="font-semibold text-lg mb-2" style="color: var(--text-primary);">Lettre Premium</h4>
-                                    <p class="text-sm" style="color: var(--text-secondary);">Excellence et personnalisation</p>
-                                    <button class="mt-4 btn btn-primary px-6 py-2 rounded-lg text-sm">
+                                    <h4 class="font-bold text-xl mb-2 text-gray-900">Lettre Premium</h4>
+                                    <p class="text-sm text-gray-600 mb-4">Excellence et personnalisation</p>
+                                    <button class="btn btn-primary px-6 py-3 rounded-xl text-sm font-semibold">
                                         <i class="fas fa-eye mr-2"></i>Utiliser ce modèle
                                     </button>
                                 </div>
@@ -642,255 +1292,269 @@
                     </div>
                 </div>
 
-                <!-- Navigation Arrows -->
-                <button id="prevBtn" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 glass-card w-12 h-12 rounded-full flex items-center justify-center hover-lift focus-ring z-10">
-                    <i class="fas fa-chevron-left" style="color: var(--text-primary);"></i>
+                <button id="prevBtn" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 glass-card w-14 h-14 rounded-full flex items-center justify-center z-10 hover:bg-purple-50 transition-all">
+                    <i class="fas fa-chevron-left text-purple-600"></i>
                 </button>
-                <button id="nextBtn" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 glass-card w-12 h-12 rounded-full flex items-center justify-center hover-lift focus-ring z-10">
-                    <i class="fas fa-chevron-right" style="color: var(--text-primary);"></i>
+                <button id="nextBtn" class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 glass-card w-14 h-14 rounded-full flex items-center justify-center z-10 hover:bg-purple-50 transition-all">
+                    <i class="fas fa-chevron-right text-purple-600"></i>
                 </button>
 
-                <!-- Dots Indicator -->
                 <div class="flex justify-center gap-2 mt-8" id="carouselDots">
-                    <button class="carousel-dot w-3 h-3 rounded-full bg-primary-500 transition-all"></button>
-                    <button class="carousel-dot w-3 h-3 rounded-full transition-all" style="background: var(--border-primary);"></button>
-                    <button class="carousel-dot w-3 h-3 rounded-full transition-all" style="background: var(--border-primary);"></button>
-                    <button class="carousel-dot w-3 h-3 rounded-full transition-all" style="background: var(--border-primary);"></button>
-                    <button class="carousel-dot w-3 h-3 rounded-full transition-all" style="background: var(--border-primary);"></button>
-                    <button class="carousel-dot w-3 h-3 rounded-full transition-all" style="background: var(--border-primary);"></button>
+                    <button class="carousel-dot w-3 h-3 rounded-full bg-purple-600 transition-all"></button>
+                    <button class="carousel-dot w-3 h-3 rounded-full bg-purple-200 transition-all"></button>
+                    <button class="carousel-dot w-3 h-3 rounded-full bg-purple-200 transition-all"></button>
+                    <button class="carousel-dot w-3 h-3 rounded-full bg-purple-200 transition-all"></button>
+                    <button class="carousel-dot w-3 h-3 rounded-full bg-purple-200 transition-all"></button>
+                    <button class="carousel-dot w-3 h-3 rounded-full bg-purple-200 transition-all"></button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="section" style="background: var(--bg-tertiary);">
+    <!-- ========== NOUVEAU: FAQ Section Améliorée ========== -->
+    <section id="faq" class="section gradient-bg-1">
         <div class="container mx-auto px-4">
-            <div class="section-title" data-aos="fade-up">
-                <h2>Questions Fréquentes</h2>
+            <div class="section-title scroll-reveal">
+                <h2>Questions <span class="gradient-text">Fréquentes</span></h2>
                 <p>Tout ce que vous devez savoir sur CVBot</p>
             </div>
 
             <div class="grid lg:grid-cols-2 gap-8">
-                <div class="faq-container" data-aos="fade-up" data-aos-delay="100">
+                <div class="faq-container scroll-reveal-left">
                     <div class="faq-item faq-active">
-                        <h3>Comment fonctionne la génération de CV par IA ?</h3>
+                        <h3>
+                            Comment fonctionne la génération de CV par IA ?
+                            <div class="faq-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </h3>
                         <div class="faq-content">
-                            <p>Notre IA analyse vos informations personnelles et professionnelles, puis génère automatiquement un CV optimisé en sélectionnant le meilleur format et en organisant vos données de manière percutante.</p>
+                            <p>Notre IA analyse vos informations personnelles et professionnelles, puis génère automatiquement un CV optimisé en sélectionnant le meilleur format et en organisant vos données de manière percutante. Elle adapte le contenu selon votre secteur d'activité.</p>
                         </div>
-                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                     </div>
 
                     <div class="faq-item">
-                        <h3>Les CV sont-ils vraiment compatibles ATS ?</h3>
+                        <h3>
+                            Les CV sont-ils vraiment compatibles ATS ?
+                            <div class="faq-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </h3>
                         <div class="faq-content">
-                            <p>Oui, absolument ! Tous nos modèles sont testés et validés pour passer les filtres des systèmes ATS les plus populaires avec un taux de réussite de 99%.</p>
+                            <p>Oui, absolument ! Tous nos modèles sont testés et validés pour passer les filtres des systèmes ATS les plus populaires avec un taux de réussite de 99%. Nous utilisons des formats reconnus par tous les logiciels de recrutement.</p>
                         </div>
-                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                     </div>
 
                     <div class="faq-item">
-                        <h3>Puis-je personnaliser les modèles générés ?</h3>
+                        <h3>
+                            Puis-je personnaliser les modèles générés ?
+                            <div class="faq-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </h3>
                         <div class="faq-content">
-                            <p>Bien sûr ! Une fois votre CV généré, vous pouvez le modifier, ajouter ou supprimer des sections, changer les couleurs et adapter le contenu selon vos besoins.</p>
+                            <p>Bien sûr ! Une fois votre CV généré, vous pouvez le modifier, ajouter ou supprimer des sections, changer les couleurs et adapter le contenu selon vos besoins. Notre éditeur intuitif vous donne un contrôle total.</p>
                         </div>
-                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                     </div>
                 </div>
 
-                <div class="faq-container" data-aos="fade-up" data-aos-delay="200">
+                <div class="faq-container scroll-reveal-right">
                     <div class="faq-item">
-                        <h3>Combien de temps faut-il pour créer un CV ?</h3>
+                        <h3>
+                            Combien de temps faut-il pour créer un CV ?
+                            <div class="faq-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </h3>
                         <div class="faq-content">
-                            <p>En moyenne, il faut moins de 30 secondes pour générer un CV complet et professionnel. Le temps de saisie de vos informations peut varier selon leur complexité.</p>
+                            <p>En moyenne, il faut moins de 30 secondes pour générer un CV complet et professionnel. Le temps de saisie de vos informations peut varier selon leur complexité, mais notre interface intuitive rend le processus extrêmement rapide.</p>
                         </div>
-                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                     </div>
 
                     <div class="faq-item">
-                        <h3>Mes données personnelles sont-elles sécurisées ?</h3>
+                        <h3>
+                            Mes données personnelles sont-elles sécurisées ?
+                            <div class="faq-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </h3>
                         <div class="faq-content">
-                            <p>Absolument ! Nous utilisons un chiffrement de niveau bancaire pour protéger toutes vos données. Vos informations ne sont jamais partagées avec des tiers.</p>
+                            <p>Absolument ! Nous utilisons un chiffrement de niveau bancaire (SSL 256 bits) pour protéger toutes vos données. Vos informations ne sont jamais partagées avec des tiers et vous pouvez les supprimer à tout moment.</p>
                         </div>
-                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                     </div>
 
                     <div class="faq-item">
-                        <h3>Y a-t-il une limite au nombre de CV créés ?</h3>
+                        <h3>
+                            Y a-t-il une limite au nombre de CV créés ?
+                            <div class="faq-toggle">
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </h3>
                         <div class="faq-content">
-                            <p>Pendant notre période de lancement, vous pouvez créer autant de CV et lettres de motivation que vous le souhaitez, gratuitement et sans limitation.</p>
+                            <p>Pendant notre période de lancement, vous pouvez créer autant de CV et lettres de motivation que vous le souhaitez, gratuitement et sans limitation. Profitez-en pour tester différents styles !</p>
                         </div>
-                        <i class="faq-toggle fas fa-chevron-right" style="color: var(--text-secondary);"></i>
                     </div>
                 </div>
             </div>
         </div>
-    </section><!-- /FAQ Section -->
+    </section>
 
     <!-- Testimonials Section -->
-    <section id="testimonials" class="section" style="background: var(--bg-secondary);">
+    <section id="testimonials" class="section gradient-bg-2">
         <div class="container mx-auto px-4">
-            <div class="section-title" data-aos="fade-up">
-                <h2>Témoignages</h2>
+            <div class="section-title scroll-reveal">
+                <h2><span class="gradient-text">Témoignages</span></h2>
                 <p>Ce que disent nos utilisateurs de CVBot</p>
             </div>
 
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" data-aos="fade-up" data-aos-delay="100">
-                <div class="testimonial-item hover-lift">
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="testimonial-item scroll-reveal-scale">
                     <div class="stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="mb-4" style="color: var(--text-secondary);">
+                    <p class="mb-4 text-gray-600">
                         "Incroyable ! J'ai généré mon CV en 30 secondes et décroché 3 entretiens la première semaine. L'IA a su mettre en valeur mes compétences parfaitement."
                     </p>
-                    <h4 class="font-semibold" style="color: var(--text-primary);">Sarah Martin</h4>
-                    <p class="text-primary-400 text-sm">Développeuse Frontend</p>
+                    <h4 class="font-bold text-gray-900">Sarah Martin</h4>
+                    <p class="text-purple-500 text-sm font-medium">Développeuse Frontend</p>
                 </div>
 
-                <div class="testimonial-item hover-lift">
+                <div class="testimonial-item scroll-reveal-scale">
                     <div class="stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="mb-4" style="color: var(--text-secondary);">
+                    <p class="mb-4 text-gray-600">
                         "Après 6 mois de recherche infructueuse, CVBot m'a aidé à créer un CV qui sort du lot. J'ai trouvé un emploi en 3 semaines !"
                     </p>
-                    <h4 class="font-semibold" style="color: var(--text-primary);">Thomas Dubois</h4>
-                    <p class="text-primary-400 text-sm">Chef de Projet Digital</p>
+                    <h4 class="font-bold text-gray-900">Thomas Dubois</h4>
+                    <p class="text-purple-500 text-sm font-medium">Chef de Projet Digital</p>
                 </div>
 
-                <div class="testimonial-item hover-lift">
+                <div class="testimonial-item scroll-reveal-scale">
                     <div class="stars">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
-                    <p class="mb-4" style="color: var(--text-secondary);">
+                    <p class="mb-4 text-gray-600">
                         "L'IA de CVBot a su mettre en valeur mes compétences de façon que je n'aurais jamais imaginée. Un outil révolutionnaire !"
                     </p>
-                    <h4 class="font-semibold" style="color: var(--text-primary);">Marie Leroy</h4>
-                    <p class="text-primary-400 text-sm">Responsable Marketing</p>
+                    <h4 class="font-bold text-gray-900">Marie Leroy</h4>
+                    <p class="text-purple-500 text-sm font-medium">Responsable Marketing</p>
                 </div>
             </div>
         </div>
-    </section><!-- /Testimonials Section -->
+    </section>
 
-        <!-- Resume Checker Section -->
-    <section id="resume-checker" class="section" style="background: var(--bg-tertiary);">
+    <!-- Resume Checker Section -->
+    <section id="resume-checker" class="section gradient-bg-1">
         <div class="container mx-auto px-4">
-            <div class="section-title" data-aos="fade-up">
+            <div class="section-title scroll-reveal">
                 <h2>CVBot <span class="gradient-text">Resume Checker</span></h2>
                 <p>Optimisez votre CV pour les systèmes ATS avec notre notation intelligente</p>
             </div>
 
             <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <!-- Left Side - Visual -->
-                <div class="lg:order-1 order-2" data-aos="fade-right">
+                <div class="lg:order-1 order-2 scroll-reveal-left">
                     <div class="relative">
-                        <!-- Resume Grader Card -->
-                        <div class="glass-card rounded-2xl p-8 max-w-sm mx-auto hover-lift">
+                        <div class="glass-card rounded-3xl p-8 max-w-sm mx-auto">
                             <div class="text-center mb-6">
-                                <h3 class="text-xl font-bold mb-2" style="color: var(--text-primary);">RESUME GRADER</h3>
-                                <div class="w-16 h-1 bg-gradient-to-r from-primary-500 to-secondary-500 mx-auto rounded-full"></div>
+                                <h3 class="text-2xl font-black mb-2 text-gray-900">RESUME GRADER</h3>
+                                <div class="w-20 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
                             </div>
 
-                            <!-- Score Gauge -->
                             <div class="relative w-48 h-48 mx-auto mb-6">
                                 <svg class="transform -rotate-90 w-48 h-48">
-                                    <circle cx="96" cy="96" r="80" stroke="var(--border-primary)" stroke-width="12" fill="none"/>
+                                    <circle cx="96" cy="96" r="80" stroke="#e9d5ff" stroke-width="12" fill="none"/>
                                     <circle cx="96" cy="96" r="80" stroke="url(#gradient)" stroke-width="12" fill="none"
                                             stroke-dasharray="502" stroke-dashoffset="125" class="transition-all duration-1000"/>
                                     <defs>
                                         <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                            <stop offset="0%" style="stop-color:#0ea5e9;stop-opacity:1" />
-                                            <stop offset="100%" style="stop-color:#7e22ce;stop-opacity:1" />
+                                            <stop offset="0%" style="stop-color:#7c3aed;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
                                         </linearGradient>
                                     </defs>
                                 </svg>
                                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <span class="text-5xl font-bold gradient-text">85</span>
-                                    <span class="text-sm" style="color: var(--text-secondary);">/ 100</span>
+                                    <span class="text-6xl font-black gradient-text">85</span>
+                                    <span class="text-sm text-gray-500 font-medium">/ 100</span>
                                 </div>
                             </div>
 
-                            <!-- ATS Score Graph -->
                             <div class="mb-6">
                                 <div class="flex justify-between items-center mb-2">
-                                    <span class="text-sm font-medium" style="color: var(--text-secondary);">ATS Score</span>
-                                    <span class="text-sm font-bold" style="color: var(--text-primary);">Excellent</span>
+                                    <span class="text-sm font-semibold text-gray-600">ATS Score</span>
+                                    <span class="text-sm font-bold text-purple-600">Excellent</span>
                                 </div>
                                 <div class="relative h-20 flex items-end gap-1">
-                                    <div class="flex-1 bg-gradient-to-t from-primary-500 to-primary-400 rounded-t" style="height: 60%;"></div>
-                                    <div class="flex-1 bg-gradient-to-t from-primary-500 to-primary-400 rounded-t" style="height: 75%;"></div>
-                                    <div class="flex-1 bg-gradient-to-t from-primary-500 to-secondary-500 rounded-t" style="height: 90%;"></div>
-                                    <div class="flex-1 bg-gradient-to-t from-secondary-500 to-secondary-400 rounded-t" style="height: 85%;"></div>
-                                    <div class="flex-1 bg-gradient-to-t from-secondary-500 to-secondary-400 rounded-t" style="height: 70%;"></div>
+                                    <div class="flex-1 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t" style="height: 60%;"></div>
+                                    <div class="flex-1 bg-gradient-to-t from-purple-500 to-purple-400 rounded-t" style="height: 75%;"></div>
+                                    <div class="flex-1 bg-gradient-to-t from-purple-500 to-pink-500 rounded-t" style="height: 90%;"></div>
+                                    <div class="flex-1 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t" style="height: 85%;"></div>
+                                    <div class="flex-1 bg-gradient-to-t from-pink-500 to-pink-400 rounded-t" style="height: 70%;"></div>
                                 </div>
                             </div>
 
-                            <!-- Status Dots -->
                             <div class="flex justify-center gap-3">
-                                <div class="w-3 h-3 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500"></div>
-                                <div class="w-3 h-3 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500"></div>
-                                <div class="w-3 h-3 rounded-full bg-gradient-to-r from-primary-500 to-secondary-500"></div>
-                                <div class="w-3 h-3 rounded-full" style="background: var(--border-primary);"></div>
+                                <div class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-purple-200"></div>
                             </div>
                         </div>
 
-                        <!-- CV Preview (Background) -->
-                        <div class="absolute -right-8 top-12 w-64 glass-card rounded-xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-3 transition-transform duration-300 hidden lg:block">
+                        <div class="absolute -right-8 top-12 w-64 glass-card rounded-2xl overflow-hidden shadow-2xl transform rotate-6 hover:rotate-3 transition-transform duration-300 hidden lg:block">
                             <img src="{% static 'images/tamplate_img/cv1.png' %}" class="w-full h-auto" alt="CV Preview">
                         </div>
                     </div>
                 </div>
 
-                <!-- Right Side - Content -->
-                <div class="lg:order-2 order-1" data-aos="fade-left">
+                <div class="lg:order-2 order-1 scroll-reveal-right">
                     <div class="mb-8">
                         <div class="inline-flex items-center px-4 py-2 glass-card rounded-full mb-4">
                             <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span>
-                            <span class="text-sm font-medium" style="color: var(--text-primary);">Système de notation à deux niveaux</span>
+                            <span class="text-sm font-semibold text-gray-900">Système de notation à deux niveaux</span>
                         </div>
                         
-                        <h3 class="text-3xl font-bold mb-4" style="color: var(--text-primary);">
+                        <h3 class="text-4xl font-black mb-4 text-gray-900">
                             Notre système CVBot vous garantit un <span class="gradient-text">score optimal</span>
                         </h3>
                         
-                        <p class="text-lg mb-6" style="color: var(--text-secondary);">
+                        <p class="text-lg mb-6 text-gray-600 leading-relaxed">
                             Lorsque vous postulez à un emploi, il y a de fortes chances que votre CV soit examiné par un système de suivi des candidatures (ATS) avant d'arriver sur l'écran d'un recruteur.
                         </p>
                     </div>
 
-                    <!-- Features List -->
                     <div class="space-y-4">
-                        <div class="flex items-start gap-4 glass-card p-4 rounded-xl hover-lift">
-                            <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">1</span>
+                        <div class="flex items-start gap-4 glass-card p-5 rounded-2xl">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-black text-lg">1</span>
                             </div>
                             <div>
-                                <h4 class="font-bold mb-1" style="color: var(--text-primary);">Analyse du contenu</h4>
-                                <p class="text-sm" style="color: var(--text-secondary);">
+                                <h4 class="font-bold mb-1 text-gray-900">Analyse du contenu</h4>
+                                <p class="text-sm text-gray-600">
                                     Nous analysons la proportion de contenu pertinent que les systèmes ATS peuvent interpréter dans votre CV.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="flex items-start gap-4 glass-card p-4 rounded-xl hover-lift">
-                            <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">2</span>
+                        <div class="flex items-start gap-4 glass-card p-5 rounded-2xl">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-black text-lg">2</span>
                             </div>
                             <div>
-                                <h4 class="font-bold mb-1" style="color: var(--text-primary);">Optimisation des mots-clés</h4>
-                                <p class="text-sm" style="color: var(--text-secondary);">
+                                <h4 class="font-bold mb-1 text-gray-900">Optimisation des mots-clés</h4>
+                                <p class="text-sm text-gray-600">
                                     Notre IA optimise votre CV pour les postes ciblés en intégrant les compétences et mots-clés essentiels.
                                 </p>
                             </div>
                         </div>
 
-                        <div class="flex items-start gap-4 glass-card p-4 rounded-xl hover-lift">
-                            <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                                <span class="text-white font-bold">3</span>
+                        <div class="flex items-start gap-4 glass-card p-5 rounded-2xl">
+                            <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <span class="text-white font-black text-lg">3</span>
                             </div>
                             <div>
-                                <h4 class="font-bold mb-1" style="color: var(--text-primary);">Format compatible ATS</h4>
-                                <p class="text-sm" style="color: var(--text-secondary);">
+                                <h4 class="font-bold mb-1 text-gray-900">Format compatible ATS</h4>
+                                <p class="text-sm text-gray-600">
                                     Tous nos modèles sont testés et validés pour garantir une compatibilité maximale avec les systèmes de recrutement.
                                 </p>
                             </div>
@@ -898,7 +1562,7 @@
                     </div>
 
                     <div class="mt-8">
-                        <button class="btn btn-primary px-8 py-3 rounded-xl font-semibold hover-lift focus-ring">
+                        <button class="btn btn-primary px-10 py-4 rounded-xl font-bold text-lg">
                             <i class="fas fa-check-circle mr-2"></i>
                             Tester mon CV maintenant
                         </button>
@@ -907,61 +1571,146 @@
             </div>
         </div>
     </section>
+
+    <!-- ========== NOUVEAU: Section Contact ========== -->
+    <section id="contact" class="contact-section">
+        <div class="container mx-auto px-4">
+            <div class="section-title scroll-reveal mb-12">
+                <h2>Contactez-nous <span class="gradient-text">aujourd'hui</span></h2>
+                <p>Une question ? Notre équipe est là pour vous aider</p>
+            </div>
+
+            <div class="contact-grid">
+                <div class="contact-info scroll-reveal-left">
+                    <h2>
+                        Besoin d'aide ?
+                    </h2>
+                    <p>
+                        Une question ? Un problème ? Notre équipe est là pour vous aider. 
+                        Envoyez-nous un message et nous vous répondrons dans les plus brefs délais.
+                    </p>
+                    
+                    <div class="contact-details">
+                        <div class="contact-detail-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email</strong>
+                                <p>ktprincesse@gmail.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-detail-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <strong>Téléphone</strong>
+                                <p>+237 690 700 963</p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-detail-item">
+                            <i class="fas fa-clock"></i>
+                            <div>
+                                <strong>Horaires</strong>
+                                <p>Lun - dim : 8h - 18h</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-detail-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Localisation</strong>
+                                <p>Douala, Cameroun</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contact-form scroll-reveal-right">
+                    <h3>Envoyez-nous un message</h3>
+                    
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Nom complet *</label>
+                            <input type="text" id="name" name="name" required placeholder="Votre nom">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email *</label>
+                            <input type="email" id="email" name="email" required placeholder="votre.email@exemple.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Sujet *</label>
+                            <input type="text" id="subject" name="subject" required placeholder="L'objet de votre message">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" required placeholder="Décrivez votre demande en détail..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-paper-plane"></i> Envoyer le message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Final CTA Section -->
-    <section id="final-cta" class="section bg-gradient-to-br relative overflow-hidden" style="background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);">
+    <section id="final-cta" class="section bg-gradient-to-br from-purple-50 via-white to-purple-50 relative overflow-hidden">
         <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-20 left-10 w-40 h-40 bg-primary-500/10 rounded-full animate-float"></div>
-            <div class="absolute bottom-20 right-10 w-60 h-60 bg-secondary-500/10 rounded-full animate-float" style="animation-delay: 2s;"></div>
+            <div class="absolute top-20 left-10 w-40 h-40 bg-purple-300/20 rounded-full animate-float"></div>
+            <div class="absolute bottom-20 right-10 w-60 h-60 bg-pink-300/20 rounded-full animate-float" style="animation-delay: 2s;"></div>
         </div>
 
-        <div class="relative container mx-auto px-4 text-center">
+        <div class="relative container mx-auto px-4 text-center scroll-reveal-scale">
             <div class="mb-8">
-                <span class="inline-flex items-center px-6 py-3 glass-card text-primary-200 rounded-full text-sm">
+                <span class="inline-flex items-center px-8 py-3 glass-card rounded-full text-sm font-semibold text-purple-600 animate-pulse-glow">
                     <i class="fas fa-gift mr-3"></i>
                     Offre Limitée : 100% Gratuit pendant le lancement
                 </span>
             </div>
 
-            <h2 class="text-4xl md:text-5xl font-bold mb-6 leading-tight" style="color: var(--text-primary);">
+            <h2 class="text-5xl md:text-6xl font-black mb-6 leading-tight text-gray-900">
                 Prêt à décrocher votre
-                <span class="gradient-text">emploi de rêve</span> ?
+                <span class="gradient-text block">emploi de rêve</span> ?
             </h2>
 
-            <p class="text-lg mb-8 leading-relaxed max-w-2xl mx-auto" style="color: var(--text-secondary);">
+            <p class="text-xl mb-10 leading-relaxed max-w-2xl mx-auto text-gray-600">
                 Rejoignez les 50,000+ professionnels qui ont transformé leur carrière avec CVBot. 
                 Votre futur vous attend, il ne vous manque qu'un CV exceptionnel.
             </p>
 
-            <!-- Main CTA Button -->
-            <div class="mb-8">
-                <button class="btn btn-primary px-12 py-4 text-white text-lg font-bold rounded-xl hover-lift focus-ring">
+            <div class="mb-12">
+                <button class="btn btn-primary px-16 py-5 text-white text-xl font-black rounded-2xl">
                     <i class="fas fa-magic mr-3"></i>
                     Créer Mon CV Gratuitement
                 </button>
             </div>
 
-            <!-- Guarantees -->
-            <div class="grid md:grid-cols-3 gap-6 text-center">
+            <div class="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
                 <div class="flex flex-col items-center">
-                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-star text-white"></i>
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow">
+                        <i class="fas fa-star text-white text-2xl"></i>
                     </div>
-                    <div class="font-semibold mb-1" style="color: var(--text-primary);">Qualité Garantie</div>
-                    <div class="text-sm" style="color: var(--text-secondary);">Design professionnel</div>
+                    <div class="font-bold mb-1 text-gray-900 text-lg">Qualité Garantie</div>
+                    <div class="text-sm text-gray-600">Design professionnel</div>
                 </div>
                 <div class="flex flex-col items-center">
-                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-lock text-white"></i>
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow" style="animation-delay: 0.2s;">
+                        <i class="fas fa-lock text-white text-2xl"></i>
                     </div>
-                    <div class="font-semibold mb-1" style="color: var(--text-primary);">Sécurisé</div>
-                    <div class="text-sm" style="color: var(--text-secondary);">Données protégées</div>
+                    <div class="font-bold mb-1 text-gray-900 text-lg">Sécurisé</div>
+                    <div class="text-sm text-gray-600">Données protégées</div>
                 </div>
                 <div class="flex flex-col items-center">
-                    <div class="w-12 h-12 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full flex items-center justify-center mb-3">
-                        <i class="fas fa-clock text-white"></i>
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 animate-pulse-glow" style="animation-delay: 0.4s;">
+                        <i class="fas fa-clock text-white text-2xl"></i>
                     </div>
-                    <div class="font-semibold mb-1" style="color: var(--text-primary);">Rapide</div>
-                    <div class="text-sm" style="color: var(--text-secondary);">30 secondes</div>
+                    <div class="font-bold mb-1 text-gray-900 text-lg">Rapide</div>
+                    <div class="text-sm text-gray-600">30 secondes</div>
                 </div>
             </div>
         </div>
@@ -970,10 +1719,74 @@
 {% endblock %}
 
 {% block extra_js %}
-
 <script src="{% static 'js/home.js' %}"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-interactivity@latest/dist/lottie-interactivity.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // ========== NOUVEAU: Hero Image Carousel JavaScript ==========
+    const heroTrack = document.getElementById('heroCarouselTrack');
+    const heroPrevBtn = document.getElementById('heroPrevBtn');
+    const heroNextBtn = document.getElementById('heroNextBtn');
+    const heroIndicators = document.querySelectorAll('.hero-indicator');
+    const heroSlides = document.querySelectorAll('.hero-carousel-slide');
+    
+    let heroCurrentSlide = 0;
+    const heroTotalSlides = heroSlides.length;
+    
+    function updateHeroCarousel() {
+        heroTrack.style.transform = `translateX(-${heroCurrentSlide * 100}%)`;
+        
+        heroIndicators.forEach((indicator, index) => {
+            if (index === heroCurrentSlide) {
+                indicator.classList.add('active');
+            } else {
+                indicator.classList.remove('active');
+            }
+        });
+    }
+    
+    function nextHeroSlide() {
+        heroCurrentSlide = (heroCurrentSlide + 1) % heroTotalSlides;
+        updateHeroCarousel();
+    }
+    
+    function prevHeroSlide() {
+        heroCurrentSlide = (heroCurrentSlide - 1 + heroTotalSlides) % heroTotalSlides;
+        updateHeroCarousel();
+    }
+    
+    heroNextBtn.addEventListener('click', nextHeroSlide);
+    heroPrevBtn.addEventListener('click', prevHeroSlide);
+    
+    heroIndicators.forEach((indicator, index) => {
+        indicator.addEventListener('click', () => {
+            heroCurrentSlide = index;
+            updateHeroCarousel();
+        });
+    });
+    
+    // Auto-play hero carousel
+    setInterval(nextHeroSlide, 5000);
+    
+    // Scroll Reveal Animation
+    const scrollRevealElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-reveal-scale');
+    
+    const revealOnScroll = () => {
+        scrollRevealElements.forEach(el => {
+            const elementTop = el.getBoundingClientRect().top;
+            const elementVisible = 150;
+            
+            if (elementTop < window.innerHeight - elementVisible) {
+                el.classList.add('active');
+            }
+        });
+    };
+    
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Initial check
+    
+    // Template Carousel Logic
     const carousel = document.getElementById('templateCarousel');
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
@@ -983,7 +1796,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentIndex = 0;
     let slidesToShow = 3;
     
-    // Update slides to show based on screen size
     function updateSlidesToShow() {
         if (window.innerWidth < 768) {
             slidesToShow = 1;
@@ -1001,12 +1813,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const slideWidth = 100 / slidesToShow;
         carousel.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
         
-        // Update dots
         dots.forEach((dot, index) => {
             if (index === currentIndex) {
                 dot.classList.add('active');
+                dot.style.background = 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)';
             } else {
                 dot.classList.remove('active');
+                dot.style.background = '#e9d5ff';
             }
         });
     }
@@ -1032,7 +1845,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Auto-play (optional)
+    // Auto-play template carousel
     setInterval(() => {
         if (currentIndex < slides.length - slidesToShow) {
             currentIndex++;
@@ -1041,7 +1854,129 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         updateCarousel();
     }, 5000);
+    
+    // ========== NOUVEAU: FAQ Toggle Améliorée ==========
+    document.querySelectorAll('.faq-item').forEach(item => {
+        const header = item.querySelector('h3');
+        header.addEventListener('click', () => {
+            const isActive = item.classList.contains('faq-active');
+            
+            // Close all FAQs
+            document.querySelectorAll('.faq-item').forEach(i => {
+                i.classList.remove('faq-active');
+            });
+            
+            // Open clicked FAQ if it wasn't active
+            if (!isActive) {
+                item.classList.add('faq-active');
+            }
+        });
+    });
+    
+    // ========== NOUVEAU: Contact Form Handler ==========
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Animation de succès
+            const submitBtn = this.querySelector('.submit-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Message envoyé avec succès !';
+            submitBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            submitBtn.disabled = true;
+            
+            // Réinitialiser le formulaire après 3 secondes
+            setTimeout(() => {
+                this.reset();
+                submitBtn.innerHTML = originalText;
+                submitBtn.style.background = 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)';
+                submitBtn.disabled = false;
+            }, 3000);
+            
+            console.log('Form submitted:', formData);
+            // Ici, vous pouvez ajouter votre logique d'envoi AJAX vers le backend Django
+        });
+    }
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // ... (le JavaScript existant reste inchangé) ...
 
+    // ========== NOUVEAU: Animation Lottie IA ==========
+    function loadLottieAnimations() {
+        // Animation principale du robot IA
+        const robotAnimation = lottie.loadAnimation({
+            container: document.getElementById('lottie-robot'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets1.lottiefiles.com/packages/lf20_gns0r1rc.json' // Robot travaillant sur ordinateur
+        });
+
+        // Animation des étincelles/effets IA
+        const sparklesAnimation = lottie.loadAnimation({
+            container: document.getElementById('lottie-sparkles'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: 'https://assets1.lottiefiles.com/packages/lf20_5mpc6zxa.json' // Effets sparkles
+        });
+
+        // Configuration de l'interactivité pour l'animation robot
+        LottieInteractivity.create({
+            player: '#lottie-robot',
+            mode: "scroll",
+            actions: [
+                {
+                    visibility: [0, 1],
+                    type: "seek",
+                    frames: [0, 180]
+                }
+            ]
+        });
+
+        // Ajustement responsive des animations
+        function adjustLottieSize() {
+            const robotContainer = document.getElementById('lottie-robot');
+            if (window.innerWidth < 768) {
+                robotContainer.style.width = '300px';
+                robotContainer.style.height = '300px';
+            } else {
+                robotContainer.style.width = '500px';
+                robotContainer.style.height = '500px';
+            }
+        }
+
+        window.addEventListener('resize', adjustLottieSize);
+        adjustLottieSize();
+    }
+
+    // Charger les animations Lottie après le chargement de la page
+    if (typeof lottie !== 'undefined') {
+        loadLottieAnimations();
+    } else {
+        // Fallback si Lottie n'est pas chargé
+        console.log('Lottie non chargé, utilisation du fallback');
+        const lottieContainer = document.querySelector('.lottie-animation-container');
+        if (lottieContainer) {
+            lottieContainer.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">🤖</div>
+                    <h3 style="color: #7c3aed; font-weight: bold; margin-bottom: 0.5rem;">IA en action</h3>
+                    <p style="color: #6b7280;">Notre IA crée votre CV sur mesure en quelques secondes</p>
+                </div>
+            `;
+        }
+    }
+});
+</script>
 {% endblock %}

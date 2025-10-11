@@ -2,97 +2,108 @@
 {% load i18n %}
 
 {% block content %}
-<div class="container mx-auto px-4 mt-10 py-12 max-w-8xl">
-    <!-- Terms of Service Section -->
-    <div class="bg-white rounded-lg shadow-md p-8 mb-12">
-        <h1 class="text-3xl font-bold mb-6 text-primary-600">{% trans "Conditions d'Utilisation" %}</h1>
+<div class="min-h-screen bg-gray-50 flex justify-center px-6 py-16">
+    <div class="max-w-5xl w-full bg-white rounded-2xl shadow-lg p-10 border border-gray-100">
         
+        <!-- Titre principal -->
+        <h1 class="text-4xl font-extrabold text-center mb-8 text-primary-700 tracking-tight">
+            {% trans "Conditions Générales d’Utilisation" %}
+        </h1>
+
+        <!-- Introduction -->
+        <p class="text-center text-gray-500 mb-12 text-lg leading-relaxed">
+            {% trans "Dernière mise à jour :" %} <strong>{{ parametre.date_mise_a_jour|default:"Octobre 2025" }}</strong><br>
+            {% trans "Bienvenue sur CVBot, votre assistant intelligent pour la création de CV et de lettres de motivation." %}
+        </p>
+
         {% if parametre.terms_of_service %}
-            <div class="prose max-w-none text-gray-700">
+            <div class="prose max-w-none text-gray-700 leading-relaxed">
                 {{ parametre.terms_of_service|safe }}
             </div>
         {% else %}
-            <div class="prose max-w-none text-gray-700">
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "1. Introduction" %}</h2>
-                <p>
-                    {% trans "Bienvenue sur la plateforme de gestion de cimetières de" %} {{ parametre.nom_mairie|default:_("la mairie") }} 
-                    "ci-après dénommée 'la Plateforme'". Ces conditions d'utilisation régissent votre accès et 
-                    votre utilisation des services proposés par la Plateforme, y compris la gestion des demandes de sépulture, 
-                    la coordination avec les entreprises partenaires, et les paiements associés. En accédant ou en utilisant la 
-                    Plateforme, vous acceptez d'être lié par ces conditions. Si vous n'acceptez pas ces conditions, veuillez ne 
-                    pas utiliser la Plateforme.
-                </p>
+        
+        <!-- Contenu par défaut -->
+        <div class="space-y-10 text-gray-700 leading-relaxed">
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "2. Utilisation de la Plateforme" %}</h2>
+            <!-- Section 1 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "1. Objet" %}</h2>
                 <p>
-                    La Plateforme est conçue pour faciliter la gestion des services funéraires et des sépultures. Vous 
-                    vous engagez à utiliser la Plateforme uniquement à des fins légales et conformément à toutes les lois et 
-                    réglementations applicables. Vous ne devez pas :
+                    {% trans "Les présentes conditions d’utilisation régissent l’accès et l’utilisation de la plateforme CVBot, destinée à aider les utilisateurs à concevoir des CV et lettres de motivation professionnels." %}
                 </p>
+            </section>
+
+            <!-- Section 2 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "2. Acceptation des Conditions" %}</h2>
+                <p>
+                    {% trans "En accédant à CVBot, vous acceptez sans réserve les présentes conditions. Si vous n’acceptez pas ces termes, veuillez ne pas utiliser la plateforme." %}
+                </p>
+            </section>
+
+            <!-- Section 3 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "3. Création de Compte" %}</h2>
                 <ul class="list-disc pl-6 space-y-2">
-                    <li>{% trans "Utiliser la Plateforme pour transmettre des informations fausses, trompeuses ou frauduleuses." %}</li>
-                    <li>{% trans "Tenter d'accéder sans autorisation aux systèmes ou données de la Plateforme." %}</li>
-                    <li>{% trans "Utiliser la Plateforme pour enfreindre les droits de propriété intellectuelle ou la vie privée d'autrui." %}</li>
+                    <li>{% trans "Vous devez fournir des informations exactes lors de l’inscription." %}</li>
+                    <li>{% trans "Vous êtes responsable du maintien de la confidentialité de vos identifiants." %}</li>
+                    <li>{% trans "Toute utilisation non autorisée de votre compte doit être signalée immédiatement à CVBot." %}</li>
                 </ul>
+            </section>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "3. Inscription et Compte" %}</h2>
+            <!-- Section 4 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "4. Utilisation du Service" %}</h2>
                 <p>
-                    Pour accéder à certaines fonctionnalités de la Plateforme, vous devez créer un compte. Vous êtes 
-                    responsable de fournir des informations exactes et à jour lors de l'inscription. Vous devez également 
-                    maintenir la confidentialité de vos identifiants de connexion et signaler immédiatement tout usage non 
-                    autorisé de votre compte à" {{ parametre.nom_mairie|default:_("la mairie") }}.
+                    {% trans "CVBot fournit des outils pour générer, enregistrer et exporter des CV et lettres de motivation. Vous vous engagez à utiliser ces outils uniquement à des fins personnelles et légales." %}
                 </p>
+            </section>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "4. Services et Paiements" %}</h2>
+            <!-- Section 5 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "5. Propriété Intellectuelle" %}</h2>
                 <p>
-                    La Plateforme permet de gérer les demandes de services funéraires, y compris la réservation de 
-                    sépultures et la coordination avec des entreprises partenaires. Tous les paiements effectués via la 
-                    Plateforme sont soumis aux conditions suivantes :"
+                    {% trans "Tous les éléments du site (textes, design, algorithmes, logos) sont protégés par les lois sur la propriété intellectuelle. Vous n’êtes pas autorisé à copier ou reproduire ces éléments sans autorisation écrite préalable." %}
                 </p>
-                <ul class="list-disc pl-6 space-y-2">
-                    <li>{% trans "Les montants totaux et payés sont affichés en XAF et doivent être réglés selon les modes de paiement disponibles (Orange Money, MTN Mobile Money, ou paiement physique au guichet)." %}</li>
-                    <li>{% trans "Les remboursements, le cas échéant, seront traités conformément à notre politique de remboursement, disponible sur demande." %}</li>
-                    <li>{% trans "Vous êtes responsable de vérifier l'exactitude des informations de paiement avant de soumettre une demande." %}</li>
-                </ul>
+            </section>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "5. Responsabilité" %}</h2>
+            <!-- Section 6 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "6. Responsabilité" %}</h2>
                 <p>
-                    La Plateforme agit en tant que facilitateur entre vous et les entreprises partenaires. Nous ne 
-                    sommes pas responsables des services fournis par ces entreprises, y compris la qualité, la disponibilité ou 
-                    les délais. Toute réclamation concernant les services doit être adressée directement à l'entreprise partenaire 
-                    concernée.
+                    {% trans "CVBot met tout en œuvre pour assurer un service fiable et sécurisé. Cependant, la plateforme ne saurait être tenue responsable d’éventuelles erreurs, interruptions ou pertes de données indépendantes de sa volonté." %}
                 </p>
+            </section>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "6. Propriété Intellectuelle" %}</h2>
+            <!-- Section 7 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "7. Résiliation de Compte" %}</h2>
                 <p>
-                    Tout le contenu de la Plateforme, y compris les textes, graphiques, logos et logiciels, est la 
-                    propriété de" {{ parametre.nom_mairie|default:_("la mairie") }} "ou de ses partenaires et est protégé par les 
-                    lois sur la propriété intellectuelle. Vous ne pouvez pas reproduire, distribuer ou modifier ce contenu sans 
-                    autorisation écrite préalable." 
+                    {% trans "Vous pouvez supprimer votre compte à tout moment depuis votre espace utilisateur. CVBot se réserve le droit de suspendre ou de résilier un compte en cas d’utilisation abusive ou frauduleuse du service." %}
                 </p>
+            </section>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "7. Modification des Conditions" %}</h2>
+            <!-- Section 8 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "8. Modifications des Conditions" %}</h2>
                 <p>
-                    Nous nous réservons le droit de modifier ces conditions à tout moment. Les modifications seront 
-                    publiées sur cette page et entreront en vigueur immédiatement. Il est de votre responsabilité de consulter 
-                    régulièrement ces conditions pour rester informé des mises à jour."
+                    {% trans "CVBot se réserve le droit de modifier les présentes conditions à tout moment. Les nouvelles versions seront publiées sur cette page et prendront effet dès leur mise en ligne." %}
                 </p>
+            </section>
 
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "8. Résiliation" %}</h2>
+            <!-- Section 9 -->
+            <section>
+                <h2 class="text-2xl font-bold text-primary-600 mb-3">{% trans "9. Contact" %}</h2>
                 <p>
-                    Nous pouvons suspendre ou résilier votre accès à la Plateforme à tout moment, sans préavis, si vous 
-                    violez ces conditions ou pour toute autre raison jugée appropriée par {{ parametre.nom_mairie|default:_("la mairie") }}.
+                    {% trans "Pour toute question relative à ces conditions, veuillez nous contacter à :" %}
+                    <a href="mailto:{{ parametre.email_contact|default:'contact@cvbot.com' }}" 
+                       class="text-primary-600 font-semibold hover:underline">
+                        {{ parametre.email_contact|default:"ktprincesse@gmail.com" }}
+                    </a>
                 </p>
-
-                <h2 class="text-xl font-semibold mb-4 text-gray-800">{% trans "9. Loi Applicable" %}</h2>
-                <p>
-                    {% trans "Ces conditions sont régies par les lois en vigueur dans le pays de" %} {{ parametre.country|default:_("votre pays") }}. 
-                    {% trans "Tout litige découlant de l'utilisation de la Plateforme sera soumis à la juridiction compétente de" %} 
-                    {{ parametre.city|default:_("votre ville") }}.
-                </p>
-            </div>
+            </section>
+        </div>
         {% endif %}
     </div>
-
 </div>
 {% endblock %}
