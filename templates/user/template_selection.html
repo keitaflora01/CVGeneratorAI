@@ -15,12 +15,39 @@
       <div class="max-w-4xl mx-auto space-y-6">
       <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Sélectionnez un modèle pour {{ document_type }}</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {% for template in templates %}
-            <a href="{% url 'Agent:generate_document' %}?template_id={{ template.id }}&document_type={{ document_type }}" class="block p-4 border border-gray-300 rounded-lg hover:bg-gray-50">
-              <h3 class="text-lg font-semibold text-gray-900">{{ template.name }}</h3>
-              <p class="text-gray-600">Type: {{ template.type }}</p>
-            </a>
+            <div class="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+              <!-- Template Preview -->
+              <div class="h-48 bg-gray-100 flex items-center justify-center">
+                <div id="preview-{{ template.id }}" class="w-full h-full overflow-hidden">
+                  <div class="flex items-center justify-center h-full text-gray-500">
+                    <div class="text-center">
+                      <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
+                      <p class="text-sm">Chargement de l'aperçu...</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Template Info -->
+              <div class="p-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ template.name }}</h3>
+                <p class="text-gray-600 text-sm mb-3">Type: {{ template.type }}</p>
+                
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                  <button onclick="previewTemplate('{{ template.id }}')" 
+                          class="flex-1 px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors">
+                    Aperçu
+                  </button>
+                  <a href="{% url 'Agent:generate_document' %}?template_id={{ template.id }}&document_type={{ document_type }}" 
+                     class="flex-1 px-3 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 transition-colors text-center">
+                    Utiliser
+                  </a>
+                </div>
+              </div>
+            </div>
           {% endfor %}
         </div>
       </div>
@@ -35,5 +62,126 @@
 document.getElementById('documentTypeFilter').addEventListener('change', function() {
   window.location.href = "{% url 'Agent:template_selection' %}?document_type=" + this.value;
 });
+
+// Load previews automatically
+document.addEventListener('DOMContentLoaded', function() {
+  const templates = [
+    {% for template in templates %}
+      '{{ template.id }}',
+    {% endfor %}
+  ];
+  
+  templates.forEach(templateId => {
+    loadTemplatePreview(templateId);
+  });
+});
+
+function loadTemplatePreview(templateId) {
+  fetch(`/agent/template/preview/${templateId}/`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        const previewContainer = document.getElementById(`preview-${templateId}`);
+        if (previewContainer) {
+          // Create a scaled-down preview
+          const previewFrame = document.createElement('div');
+          previewFrame.innerHTML = data.preview_html;
+          previewFrame.style.transform = 'scale(0.3)';
+          previewFrame.style.transformOrigin = 'top left';
+          previewFrame.style.width = '333%';
+          previewFrame.style.height = '333%';
+          previewFrame.style.overflow = 'hidden';
+          previewFrame.style.border = '1px solid #e5e7eb';
+          previewFrame.style.borderRadius = '8px';
+          
+          previewContainer.innerHTML = '';
+          previewContainer.appendChild(previewFrame);
+        }
+      } else {
+        console.error('Preview failed:', data.error);
+        const previewContainer = document.getElementById(`preview-${templateId}`);
+        if (previewContainer) {
+          previewContainer.innerHTML = '<div class="flex items-center justify-center h-full text-red-500"><p class="text-sm">Erreur de chargement</p></div>';
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Preview error:', error);
+      const previewContainer = document.getElementById(`preview-${templateId}`);
+      if (previewContainer) {
+        previewContainer.innerHTML = '<div class="flex items-center justify-center h-full text-red-500"><p class="text-sm">Erreur de chargement</p></div>';
+      }
+    });
+}
+
+function previewTemplate(templateId) {
+  // Open preview in a new window
+  const previewWindow = window.open('', '_blank', 'width=800,height=600,scrollbars=yes');
+  
+  fetch(`/agent/template/preview/${templateId}/`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        previewWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Aperçu - ${data.template_name}</title>
+            <style>
+              body { margin: 0; padding: 20px; background: #f5f5f5; }
+              .preview-container { 
+                max-width: 800px; 
+                margin: 0 auto; 
+                background: white; 
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
+              }
+              .preview-header {
+                background: #3b82f6;
+                color: white;
+                padding: 15px 20px;
+                font-weight: bold;
+              }
+              .preview-content {
+                padding: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="preview-container">
+              <div class="preview-header">Aperçu - ${data.template_name}</div>
+              <div class="preview-content">
+                ${data.preview_html}
+              </div>
+            </div>
+          </body>
+          </html>
+        `);
+        previewWindow.document.close();
+      } else {
+        previewWindow.document.write(`
+          <html>
+          <body style="padding: 20px; font-family: Arial, sans-serif;">
+            <h2>Erreur de chargement</h2>
+            <p>Impossible de charger l'aperçu du modèle.</p>
+            <p>Erreur: ${data.error}</p>
+          </body>
+          </html>
+        `);
+      }
+    })
+    .catch(error => {
+      previewWindow.document.write(`
+        <html>
+        <body style="padding: 20px; font-family: Arial, sans-serif;">
+          <h2>Erreur de chargement</h2>
+          <p>Une erreur s'est produite lors du chargement de l'aperçu.</p>
+          <p>Erreur: ${error.message}</p>
+        </body>
+        </html>
+      `);
+    });
+}
 </script>
 {% endblock %}

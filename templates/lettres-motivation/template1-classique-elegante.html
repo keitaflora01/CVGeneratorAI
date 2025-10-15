@@ -1,63 +1,195 @@
-{% extends "lettres-motivation/base.html" %}
-{% block title %}Lettre Classique Élégante{% endblock %}
-{% block content %}
-<div class="max-w-4xl mx-auto mb-10 bg-white rounded-lg shadow-lg overflow-hidden">
-  <div class="bg-gray-800 text-white p-4 text-center font-sans">
-    <h2 class="text-xl font-bold">Template 1 - Lettre Classique Élégante</h2>
-  </div>
-  <div class="p-8 bg-white">
-        <div class="max-w-4xl mx-auto mb-10 bg-white rounded-lg shadow-lg overflow-hidden">
-        <div class="p-8 bg-white">
-            <div class="border-b-2 border-primaryBlue pb-5 mb-8">
-                <div class="text-right mb-8 text-primaryDark">
-                    <h2 class="text-2xl text-primaryBlue font-bold">MARIE DUBOIS</h2>
-                    <p>Développeuse Full-Stack Senior<br>
-                    📧 marie.dubois@email.com<br>
-                    📱 +237 690 123 456<br>
-                    🔗 linkedin.com/in/mariedubois<br>
-                    📍 Douala, Cameroun</p>
-                </div>
+<!DOCTYPE html>
+<html lang="{{ document.langue|default:'fr' }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Lettre de Motivation - {{ document.titre }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 40px;
+            background: #f8f9fa;
+            font-size: 12pt;
+        }
+        .letter-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        .header {
+            text-align: right;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+        }
+        .header h1 {
+            font-size: 24pt;
+            color: #667eea;
+            margin: 0 0 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .header p {
+            font-size: 11pt;
+            margin: 5px 0;
+            color: #666;
+        }
+        .header a {
+            color: #667eea;
+            text-decoration: none;
+        }
+        .header a:hover {
+            text-decoration: underline;
+        }
+        .recipient {
+            margin-bottom: 30px;
+            font-size: 12pt;
+        }
+        .recipient strong {
+            color: #333;
+            font-weight: 600;
+        }
+        .date-location {
+            text-align: right;
+            margin-bottom: 30px;
+            font-style: italic;
+            color: #666;
+            font-size: 11pt;
+        }
+        .subject {
+            font-weight: 600;
+            margin-bottom: 30px;
+            font-size: 13pt;
+            color: #333;
+        }
+        .greeting {
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 12pt;
+        }
+        .content {
+            text-align: justify;
+            margin-bottom: 30px;
+        }
+        .content p {
+            margin: 15px 0;
+            font-size: 12pt;
+            line-height: 1.7;
+        }
+        .content p:first-child {
+            margin-top: 0;
+        }
+        .content p:last-child {
+            margin-bottom: 0;
+        }
+        .closing {
+            margin-top: 40px;
+            text-align: right;
+        }
+        .closing p {
+            margin: 10px 0;
+            font-size: 12pt;
+        }
+        .signature {
+            margin-top: 30px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 13pt;
+            color: #333;
+        }
+        .attachment {
+            margin-top: 20px;
+            text-align: right;
+            font-style: italic;
+            color: #666;
+            font-size: 11pt;
+        }
+        .highlight {
+            background: linear-gradient(120deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .contact-info {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .contact-icon {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="letter-container">
+        <div class="header">
+            <h1>{{ name }}</h1>
+            <div class="contact-info">
+                <span class="contact-icon">📧</span>
+                <p>{{ email }}</p>
+            </div>
+            <div class="contact-info">
+                <span class="contact-icon">📱</span>
+                <p>{{ telephone }}</p>
+            </div>
+            {% if linkedin_url %}
+            <div class="contact-info">
+                <span class="contact-icon">💼</span>
+                <p><a href="{{ linkedin_url }}" target="_blank">LinkedIn Profile</a></p>
+            </div>
+            {% endif %}
+            {% if github_url %}
+            <div class="contact-info">
+                <span class="contact-icon">💻</span>
+                <p><a href="{{ github_url }}" target="_blank">GitHub Profile</a></p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="recipient">
+            <strong>Monsieur/Madame le Directeur des Ressources Humaines</strong><br>
+            {{ company }}<br>
+            Département des Ressources Humaines<br>
+            {{ company_address|default:"Adresse de l'entreprise" }}
+        </div>
+        
+        <div class="date-location">
+            {{ today }}
+        </div>
+        
+        <div class="subject">
+            <strong>Objet :</strong> Candidature pour le poste de {{ target_role }}
+        </div>
+        
+        <div class="content">
+            <div class="greeting">
+                <strong>Madame, Monsieur,</strong>
             </div>
             
-            <div class="mb-8 text-primaryDark">
-                <strong>Monsieur/Madame le Directeur des Ressources Humaines</strong><br>
-                ORANGE CAMEROUN<br>
-                Département IT & Digital<br>
-                BP 4034<br>
-                Douala, Cameroun
-            </div>
-            
-            <div class="text-right mb-8 italic text-primaryGray">
-                Douala, le 15 Mars 2024
-            </div>
-            
-            <div class="font-bold mb-5 text-primaryDark">
-                <strong>Objet :</strong> Candidature pour le poste de Lead Developer Full-Stack
-            </div>
-            
-            <div class="text-justify text-gray-700">
-                <p class="mb-4"><strong>Madame, Monsieur,</strong></p>
-                
-                <p class="mb-4">C'est avec un vif intérêt que je vous adresse ma candidature pour le poste de Lead Developer Full-Stack au sein de votre équipe IT & Digital. Votre annonce publiée sur LinkedIn a particulièrement retenu mon attention car elle correspond parfaitement à mon profil et à mes aspirations professionnelles.</p>
-                
-                <p class="mb-4">Forte de mes 6 années d'expérience dans le développement web, j'ai acquis une expertise solide en technologies frontend (React, Vue.js, Angular) et backend (Node.js, Python, PHP). Mon parcours chez TechCorp Solutions m'a permis de piloter des projets d'envergure, notamment le développement d'une plateforme e-commerce qui a généré une augmentation de 40% du chiffre d'affaires de nos clients.</p>
-                
-                <p class="mb-4">Ce qui me motive particulièrement dans votre offre, c'est l'opportunité de contribuer à la transformation digitale d'Orange Cameroun, un acteur majeur des télécommunications en Afrique Centrale. Ma capacité à travailler en équipe multiculturelle, mon leadership naturel et ma passion pour l'innovation technologique me permettront de m'intégrer rapidement dans vos équipes et de contribuer efficacement à vos objectifs.</p>
-                
-                <p class="mb-4">Au-delà de mes compétences techniques, je possède une forte capacité d'adaptation et un esprit analytique qui me permettent de résoudre des problèmes complexes et d'optimiser les performances des applications. Mon expérience en méthodologies agiles (Scrum, Kanban) sera un atout pour la gestion de vos projets.</p>
-                
-                <p class="mb-4">Je serais ravie de vous rencontrer pour discuter plus en détail de ma candidature et vous exposer concrètement ce que je peux apporter à Orange Cameroun. Je reste à votre disposition pour tout entretien à votre convenance.</p>
-                
-                <p class="mb-4">Dans l'attente de votre retour, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
-            </div>
-            
-            <div class="mt-10 text-right">
-                <p><strong>Marie DUBOIS</strong><br>
-                <em class="text-primaryGray">Pièce jointe : CV</em></p>
-            </div>
+            {{ letter_content|safe }}
+        </div>
+        
+        <div class="closing">
+            <p>Je reste à votre disposition pour un entretien afin de discuter plus en détail de ma candidature et vous exposer concrètement ce que je peux apporter à {{ company }}.</p>
+            <p>Dans l'attente de votre retour, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
+        </div>
+        
+        <div class="signature">
+            <p><strong>{{ name }}</strong></p>
+        </div>
+        
+        <div class="attachment">
+            <p>Pièce jointe : CV</p>
         </div>
     </div>
-
-  </div>
-</div>
-{% endblock %}
+</body>
+</html>

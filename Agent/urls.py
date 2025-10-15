@@ -7,9 +7,11 @@ app_name = 'Agent'
 
 urlpatterns = [
     path('document/<int:document_id>/', views.document_detail, name='document_detail'),
+    path('document/<int:document_id>/download/', views.download_document, name='download_document'),
     path('agent/generate/', views.generate_document, name='generate_document'),
     path('api/document/<int:document_id>/status/', views.update_document_status, name='update_status'),
-    path('document/<int:document_id>/download/', views.downlaod_document, name='download_document'),
+    path('template/preview/<str:template_id>/', views.template_preview, name='template_preview'),
+    path('template/selection/', views.template_selection, name='template_selection'),
     path('api/document/<int:document_id>/upload-image/', views.upload_cv_image, name='upload_cv_image'),
     path('document/<int:document_id>/delete/', views.delete_document, name='delete_document'),
     path('agent/test-post/', views.test_post_endpoint, name='test_post_endpoint'),

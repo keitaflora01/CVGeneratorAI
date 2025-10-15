@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="{{ document.langue|default:'fr' }}">
 <head>
@@ -5,95 +6,296 @@
     <title>{{ document.titre }}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            margin: 20px;
-            font-size: 12pt;
+            margin: 0;
+            padding: 0;
             background: #fff;
+            font-size: 12pt;
         }
         .container {
             display: flex;
+            min-height: 100vh;
         }
         .sidebar {
-            width: 200px;
-            background: linear-gradient(to bottom, #556ee6, #776adb);
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 20px;
-            font-size: 10pt;
+            padding: 30px 20px;
+            font-size: 11pt;
+            position: relative;
+        }
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+            z-index: 1;
+        }
+        .sidebar-content {
+            position: relative;
+            z-index: 2;
         }
         .sidebar h3 {
-            font-size: 14pt;
-            margin: 0 0 10px;
+            font-size: 16pt;
+            margin: 0 0 15px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .sidebar h4 {
+            font-size: 13pt;
+            margin: 20px 0 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(255,255,255,0.3);
+            padding-bottom: 5px;
         }
         .sidebar p, .sidebar a {
-            margin: 5px 0;
+            margin: 8px 0;
             color: white;
             text-decoration: none;
+            font-size: 11pt;
+        }
+        .sidebar a:hover {
+            text-decoration: underline;
+        }
+        .cv-image {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .cv-image img {
+            width: 120px;
+            height: 120px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
         .main-content {
             flex: 1;
-            padding: 20px;
+            padding: 40px;
+            background: #fff;
         }
         .main-content h1 {
-            font-size: 24pt;
-            color: #556ee6;
-            margin: 0 0 10px;
+            font-size: 28pt;
+            color: #667eea;
+            margin: 0 0 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         .main-content h2 {
-            font-size: 16pt;
-            color: #556ee6;
-            margin: 20px 0 10px;
+            font-size: 18pt;
+            color: #667eea;
+            margin: 30px 0 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 8px;
         }
-        .main-content p, .main-content li {
+        .main-content h3 {
+            font-size: 14pt;
+            color: #555;
+            margin: 20px 0 8px;
+            font-weight: 600;
+        }
+        .main-content p {
+            font-size: 12pt;
+            margin: 10px 0;
+            text-align: justify;
+        }
+        .main-content ul {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .main-content li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
             font-size: 11pt;
         }
-        .cv-image img {
-            max-width: 100px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .main-content li::before {
+            content: '•';
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
         }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-            padding-left: 10px;
+        .experience-item {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9ff;
+            border-left: 4px solid #667eea;
+            border-radius: 0 8px 8px 0;
         }
-        li {
-            margin-bottom: 5px;
+        .experience-title {
+            font-size: 14pt;
+            font-weight: 600;
+            color: #667eea;
+            margin: 0 0 5px;
+        }
+        .experience-company {
+            font-size: 12pt;
+            color: #666;
+            font-style: italic;
+            margin: 0 0 5px;
+        }
+        .experience-duration {
+            font-size: 11pt;
+            color: #888;
+            margin: 0 0 10px;
+        }
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .skill-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 10pt;
+            font-weight: 500;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .contact-icon {
+            width: 20px;
+            margin-right: 10px;
+            text-align: center;
         }
         a {
-            color: #556ee6;
+            color: #667eea;
             text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .section-divider {
+            height: 2px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            margin: 20px 0;
+            border-radius: 1px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            <h3>{{ name }}</h3>
-            <p>Email: {{ email }}</p>
-            <p>Téléphone: {{ telephone }}</p>
-            <p><a href="{{ github_url }}">GitHub: {{ github_username }}</a></p>
-            <p><a href="{{ linkedin_url }}">LinkedIn: {{ linkedin_username }}</a></p>
-            {% if cv_image %}
-            <div class="cv-image">
-                <img src="{{ cv_image }}" alt="Professional Photo">
+            <div class="sidebar-content">
+                {% if cv_image %}
+                <div class="cv-image">
+                    <img src="{{ cv_image }}" alt="Professional Photo">
+                </div>
+                {% endif %}
+                
+                <h3>{{ name }}</h3>
+                
+                <h4>Contact</h4>
+                <div class="contact-item">
+                    <span class="contact-icon">📧</span>
+                    <p>{{ email }}</p>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📱</span>
+                    <p>{{ telephone }}</p>
+                </div>
+                {% if linkedin_url %}
+                <div class="contact-item">
+                    <span class="contact-icon">💼</span>
+                    <p><a href="{{ linkedin_url }}" target="_blank">LinkedIn Profile</a></p>
+                </div>
+                {% endif %}
+                {% if github_url %}
+                <div class="contact-item">
+                    <span class="contact-icon">💻</span>
+                    <p><a href="{{ github_url }}" target="_blank">GitHub Profile</a></p>
+                </div>
+                {% endif %}
+                
+                <div class="section-divider"></div>
+                
+                <h4>Compétences Techniques</h4>
+                <div class="skills-grid">
+                    {% for skill in skills|split:',' %}
+                        {% if skill.strip %}
+                        <div class="skill-tag">{{ skill.strip }}</div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                
+                <div class="section-divider"></div>
+                
+                <h4>Langues</h4>
+                <p>Français - Natif</p>
+                <p>Anglais - Courant</p>
+                
+                <div class="section-divider"></div>
+                
+                <h4>Certifications</h4>
+                <p>Certifications professionnelles</p>
+                <p>Formations continues</p>
             </div>
-            {% endif %}
-            <h3>Compétences</h3>
-            <ul>{{ skills|safe }}</ul>
         </div>
+        
         <div class="main-content">
-            <h1>{{ document.titre }}</h1>
-            <h2>Profil</h2>
+            <h1>{{ target_role }}</h1>
+            
+            <h2>Profil Professionnel</h2>
             <p>{{ profile }}</p>
+            
             <h2>Expérience Professionnelle</h2>
-            <ul>{{ experience|safe }}</ul>
+            {% for exp in experience|split:'\n' %}
+                {% if exp.strip %}
+                    {% if "-" not in exp.strip|slice:":1" and "*" not in exp.strip|slice:":1" %}
+                    <div class="experience-item">
+                        <div class="experience-title">{{ exp.strip }}</div>
+                    </div>
+                    {% else %}
+                    <ul>
+                        <li>{{ exp.strip|slice:"2:" }}</li>
+                    </ul>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+            
             <h2>Formation</h2>
-            <ul>{{ education|safe }}</ul>
-            <h2>Projets</h2>
-            <ul>{{ projects|safe }}</ul>
+            <ul>
+                {% for edu in education|split:'\n' %}
+                    {% if edu.strip %}
+                    <li>{{ edu.strip }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            
+            <h2>Projets Notables</h2>
+            <ul>
+                {% for project in projects|split:'\n' %}
+                    {% if project.strip %}
+                    <li>{{ project.strip }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+            
+            <h2>Langues et Certifications</h2>
+            <ul>
+                <li>Français - Langue maternelle</li>
+                <li>Anglais - Niveau avancé (TOEIC 850+)</li>
+                <li>Certifications professionnelles en cours</li>
+            </ul>
         </div>
     </div>
 </body>

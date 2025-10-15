@@ -102,15 +102,25 @@ def generate_document(request):
                 education = json.loads(request.POST.get('education', '[]'))
             except json.JSONDecodeError as e:
                 logger.error(f"JSON decode error for experiences/education: {str(e)}")
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Format invalide pour les expériences ou l\'éducation'
+                    })
                 return render(request, 'user/generate.html', {
-                    'error': 'Invalid format for experiences or education',
+                    'error': 'Format invalide pour les expériences ou l\'éducation',
                     'templates': get_available_templates()
                 })
 
             if not target_role or not job_description:
                 logger.warning("Missing required fields: targetRole or jobDescription")
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Le poste ciblé et la description sont obligatoires'
+                    })
                 return render(request, 'user/generate.html', {
-                    'error': 'Target role and job description are required',
+                    'error': 'Le poste ciblé et la description sont obligatoires',
                     'templates': get_available_templates()
                 })
 
@@ -168,23 +178,69 @@ def generate_document(request):
                 )
             logger.info(f"Document {'updated' if doc_id else 'created'} with ID: {document.id}")
 
-            # Handle CV image
+            # Handle CV image with enhanced processing
             if 'cv_image' in request.FILES and document_type == 'CV':
                 cv_image = request.FILES['cv_image']
-                logger.debug(f"CV image received: {cv_image.name}, size: {cv_image.size}")
-                if cv_image.size > 2 * 1024 * 1024:
+                logger.info(f"Processing CV image: {cv_image.name}, size: {cv_image.size} bytes")
+                
+                # Enhanced image validation
+                if cv_image.size > 2 * 1024 * 1024:  # 2MB limit
                     logger.warning(f"Image size exceeds 2MB: {cv_image.size}")
                     document.delete()
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': False,
+                            'error': 'L\'image ne doit pas dépasser 2MB. Veuillez compresser votre image.'
+                        })
                     return render(request, 'user/generate.html', {
-                        'error': 'Image must not exceed 2MB',
+                        'error': 'L\'image ne doit pas dépasser 2MB. Veuillez compresser votre image.',
                         'templates': get_available_templates()
                     })
-                CVImage.objects.create(
-                    document=document,
-                    image=cv_image,
-                    description=f"Professional photo for {target_role}"
-                )
-                logger.info("CV image saved successfully")
+                
+                # Check file extension
+                allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+                file_extension = os.path.splitext(cv_image.name)[1].lower()
+                if file_extension not in allowed_extensions:
+                    logger.warning(f"Invalid image format: {file_extension}")
+                    document.delete()
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': False,
+                            'error': 'Format d\'image non supporté. Utilisez JPG, PNG ou GIF.'
+                        })
+                    return render(request, 'user/generate.html', {
+                        'error': 'Format d\'image non supporté. Utilisez JPG, PNG ou GIF.',
+                        'templates': get_available_templates()
+                    })
+                
+                try:
+                    # Create or update CV image
+                    cv_image_obj, created = CVImage.objects.get_or_create(
+                        document=document,
+                        defaults={
+                            'image': cv_image,
+                            'description': f"Photo professionnelle pour le poste de {target_role}"
+                        }
+                    )
+                    if not created:
+                        # Update existing image
+                        cv_image_obj.image = cv_image
+                        cv_image_obj.description = f"Photo professionnelle pour le poste de {target_role}"
+                        cv_image_obj.save()
+                    
+                    logger.info(f"CV image {'created' if created else 'updated'} successfully for document {document.id}")
+                except Exception as e:
+                    logger.error(f"Error saving CV image: {str(e)}")
+                    document.delete()
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': False,
+                            'error': f'Erreur lors de l\'enregistrement de l\'image: {str(e)}'
+                        })
+                    return render(request, 'user/generate.html', {
+                        'error': f'Erreur lors de l\'enregistrement de l\'image: {str(e)}',
+                        'templates': get_available_templates()
+                    })
 
             # Create processing steps
             EtapeTraitement.objects.filter(document=document).delete()
@@ -228,24 +284,133 @@ def generate_document(request):
             prompt = _get_prompt(document_type, target_role, company, keywords, tone, job_description, user_data, context, langue, template_id)
             logger.debug(f"Generated prompt: {prompt[:200]}...")
 
-            # Generate content using Gemini API
+            # Generate content using Gemini API with enhanced settings
             try:
-                logger.info("Calling Gemini API for content generation")
-                model = genai.GenerativeModel('gemini-1.5-flash')
-                response = model.generate_content(prompt)
-                generated_content = response.text
-                logger.info("Content generated successfully")
+                logger.info("Calling Gemini API for professional content generation")
+                
+                # Configure Gemini model with professional settings
+                generation_config = {
+                    "temperature": 0.8,  # More creative and natural
+                    "top_p": 0.9,        # More diverse vocabulary
+                    "top_k": 50,         # Wider vocabulary range
+                    "max_output_tokens": 3000,  # Sufficient length for professional content
+                }
+                
+                safety_settings = [
+                    {
+                        "category": "HARM_CATEGORY_HARASSMENT",
+                        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_HATE_SPEECH",
+                        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+                        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    },
+                    {
+                        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+                        "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+                    }
+                ]
+                
+                # Try different Gemini models in order of preference
+                models_to_try = ['gemini-pro', 'gemini-1.0-pro', 'gemini-2.0-flash']
+                generated_content = None
+                
+                for model_name in models_to_try:
+                    try:
+                        logger.info(f"Trying Gemini model: {model_name}")
+                        model = genai.GenerativeModel(
+                            model_name,
+                            generation_config=generation_config,
+                            safety_settings=safety_settings
+                        )
+                        
+                        logger.debug(f"Sending prompt to Gemini API (length: {len(prompt)} characters)")
+                        response = model.generate_content(prompt)
+                        
+                        if response and response.text:
+                            generated_content = response.text.strip()
+                            
+                            # Clean up the content to remove unwanted formatting
+                            if document_type == 'LM':
+                                # Remove any remaining bracket structures for motivation letters
+                                generated_content = re.sub(r'\[.*?\]', '', generated_content)
+                                generated_content = re.sub(r'##.*?\n', '', generated_content)
+                                generated_content = re.sub(r'\n\s*\n\s*\n', '\n\n', generated_content)  # Remove excessive line breaks
+                                generated_content = generated_content.strip()
+                            elif document_type == 'CV':
+                                # Remove markdown formatting and clean up CV content
+                                generated_content = re.sub(r'\*+', '', generated_content)  # Remove asterisks
+                                generated_content = re.sub(r'#+\s*', '', generated_content)  # Remove markdown headers
+                                generated_content = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', generated_content)  # Remove markdown links
+                                generated_content = re.sub(r'`([^`]+)`', r'\1', generated_content)  # Remove code formatting
+                                generated_content = re.sub(r'\*\*([^*]+)\*\*', r'\1', generated_content)  # Remove bold formatting
+                                generated_content = re.sub(r'\*([^*]+)\*', r'\1', generated_content)  # Remove italic formatting
+                                generated_content = re.sub(r'```text\s*', '', generated_content)  # Remove code block markers
+                                generated_content = re.sub(r'```\s*', '', generated_content)  # Remove remaining code block markers
+                                generated_content = re.sub(r'Summary\s*', '', generated_content, flags=re.IGNORECASE)  # Remove summary labels
+                                generated_content = re.sub(r'Skills\s*', '', generated_content, flags=re.IGNORECASE)  # Remove skills labels
+                                generated_content = re.sub(r'Experience\s*', '', generated_content, flags=re.IGNORECASE)  # Remove experience labels
+                                generated_content = re.sub(r'Education\s*', '', generated_content, flags=re.IGNORECASE)  # Remove education labels
+                                generated_content = re.sub(r'Projects\s*', '', generated_content, flags=re.IGNORECASE)  # Remove projects labels
+                                generated_content = re.sub(r'Languages\s*', '', generated_content, flags=re.IGNORECASE)  # Remove languages labels
+                                generated_content = re.sub(r'Certifications\s*', '', generated_content, flags=re.IGNORECASE)  # Remove certifications labels
+                                generated_content = re.sub(r'\n\s*\n\s*\n', '\n\n', generated_content)  # Remove excessive line breaks
+                                generated_content = generated_content.strip()
+                            
+                            logger.info(f"Content generated successfully with {model_name} (length: {len(generated_content)} characters)")
+                            break
+                        else:
+                            logger.warning(f"Model {model_name} returned empty response")
+                            
+                    except Exception as model_error:
+                        logger.warning(f"Model {model_name} failed: {str(model_error)}")
+                        continue
+                
+                if not generated_content:
+                    logger.error("All Gemini models failed to generate content")
+                    document.delete()
+                    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                        return JsonResponse({
+                            'success': False,
+                            'error': 'Erreur lors de la génération du contenu. Veuillez vérifier votre clé API Gemini et réessayer.'
+                        })
+                    return render(request, 'user/generate.html', {
+                        'error': 'Erreur lors de la génération du contenu. Veuillez vérifier votre clé API Gemini et réessayer.',
+                        'templates': get_available_templates()
+                    })
+                    
             except Exception as e:
                 logger.error(f"Gemini API error: {str(e)}")
                 document.delete()
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    return JsonResponse({
+                        'success': False,
+                        'error': f'Erreur lors de la génération du document: {str(e)}. Veuillez vérifier votre connexion et réessayer.'
+                    })
                 return render(request, 'user/generate.html', {
-                    'error': f'Failed to generate document: {str(e)}',
+                    'error': f'Erreur lors de la génération du document: {str(e)}. Veuillez vérifier votre connexion et réessayer.',
                     'templates': get_available_templates()
                 })
 
-            # Update document
+            # Update document with enhanced scoring
             document.statut = 'completed'
-            document.score = 85  # Placeholder score
+            
+            # Calculate dynamic score based on content quality
+            score = 85  # Base score
+            if len(generated_content) > 1000:
+                score += 5  # Bonus for comprehensive content
+            if keywords and any(keyword.lower() in generated_content.lower() for keyword in keywords.split(',')):
+                score += 5  # Bonus for keyword integration
+            if user_data.get('experiences') and len(user_data.get('experiences', [])) > 0:
+                score += 3  # Bonus for experience data
+            if user_data.get('education') and len(user_data.get('education', [])) > 0:
+                score += 2  # Bonus for education data
+            
+            document.score = min(score, 100)  # Cap at 100
             document.contenu = generated_content
             document.save()
             logger.info(f"Document {document.id} updated to completed, score: {document.score}")
@@ -261,8 +426,13 @@ def generate_document(request):
 
         except Exception as e:
             logger.error(f"Error in generate_document: {str(e)}", exc_info=True)
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Une erreur s\'est produite: {str(e)}'
+                })
             return render(request, 'user/generate.html', {
-                'error': f'An error occurred: {str(e)}',
+                'error': f'Une erreur s\'est produite: {str(e)}',
                 'templates': get_available_templates()
             })
 
@@ -332,8 +502,8 @@ def test_post_endpoint(request):
         return HttpResponse(status=405, content="Method Not Allowed")
 
 def _get_prompt(document_type, target_role, company, keywords, tone, job_description, user_data, context, langue, template_id):
-    """Generate prompt for CV or LM with template-specific styling"""
-    logger.debug(f"Generating prompt for {document_type} with template {template_id}")
+    """Generate highly professional prompt for CV or LM with advanced AI instructions"""
+    logger.info(f"Generating professional prompt for {document_type} with template {template_id}")
     
     # Compute skills string outside f-string
     skills_list = user_data.get('skills', [])
@@ -341,47 +511,47 @@ def _get_prompt(document_type, target_role, company, keywords, tone, job_descrip
     if keywords:
         skills_string = f"{skills_string}, {keywords}" if skills_string else keywords
 
-    # Define template-specific styling instructions
+    # Enhanced template-specific styling instructions
     template_styles = {
         'template1-moderne-bleu': {
-            'description': 'Modern design with a blue and purple gradient sidebar, white text on dark background, clean typography, and structured sections for Contact, Skills, Languages, Profile, Experience, and Education.',
-            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
+            'description': 'Modern professional design with blue gradient sidebar, clean typography, structured layout',
+            'formatting': 'Professional CV format with clear sections and bullet points'
         },
         'template2-elegant-vert': {
-            'description': 'Elegant design with green accents, grid layout, rounded skill tags, and a centered header with green gradient.',
-            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
+            'description': 'Elegant design with green accents, sophisticated layout, professional appearance',
+            'formatting': 'Elegant CV format with refined sections and professional styling'
         },
         'template3-minimaliste': {
-            'description': 'Minimalist design with red accents, clean lines, and a focus on simplicity with a grid layout.',
-            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
+            'description': 'Minimalist design with clean lines, focused content, modern aesthetic',
+            'formatting': 'Minimalist CV format with essential information and clean structure'
         },
         'template4-corporate': {
-            'description': 'Corporate design with navy blue accents, formal layout, and clear section separation with background highlights.',
-            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
+            'description': 'Corporate design with formal layout, business-focused styling',
+            'formatting': 'Corporate CV format with formal sections and professional presentation'
         },
         'template5-creatif': {
-            'description': 'Creative design with pink and yellow gradients, bold typography, and a focus on innovative projects.',
-            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
+            'description': 'Creative design with innovative layout, artistic elements, modern approach',
+            'formatting': 'Creative CV format with innovative sections and artistic presentation'
         },
         'template5-tech-startup': {
-            'description': 'Dynamic tech startup style with light blue and purple gradients, bold callouts, and a focus on metrics and vision.',
-            'formatting': 'For CV: Use plain text with sections marked by ## Profil, ## Compétences, ## Expérience Professionnelle, ## Formation, ## Projets. Use - for bullet points. For LM: Use a single narrative block with formal greeting and closing.'
+            'description': 'Tech startup style with dynamic layout, modern tech focus, innovative design',
+            'formatting': 'Tech startup CV format with modern sections and tech-focused presentation'
         },
-        'template1-lettre-classique-elegante': {
-            'description': 'Classic and elegant letter with blue borders, formal tone, and right-aligned contact details.',
-            'formatting': 'For LM: Use a single narrative block with a formal greeting (e.g., Madame, Monsieur), 3-4 paragraphs, and a formal closing (e.g., salutations distinguées).'
+        'template1-classique-elegante': {
+            'description': 'Classic elegant letter with formal structure, professional tone',
+            'formatting': 'Classic formal letter format with proper business structure'
         },
         'template2-moderne-pro': {
-            'description': 'Modern professional letter with light blue and purple gradients, concise structure, and highlighted achievements.',
-            'formatting': 'For LM: Use a single narrative block with a formal greeting, 3-4 paragraphs with bullet points for achievements, and a formal closing.'
+            'description': 'Modern professional letter with contemporary styling, business-focused',
+            'formatting': 'Modern professional letter format with contemporary business structure'
         },
         'template3-corporate-minimaliste': {
-            'description': 'Corporate minimalist letter with navy blue accents, clean layout, and focus on key achievements.',
-            'formatting': 'For LM: Use a single narrative block with a formal greeting, 3-4 paragraphs with bullet points for achievements, and a formal closing.'
+            'description': 'Corporate minimalist letter with clean design, formal business tone',
+            'formatting': 'Corporate minimalist letter format with clean business structure'
         },
         'template4-creatif-colore': {
-            'description': 'Creative and colorful letter with pink and teal gradients, bold typography, and a conversational tone.',
-            'formatting': 'For LM: Use a single narrative block with a conversational greeting, 3-4 paragraphs, and a friendly closing.'
+            'description': 'Creative colorful letter with innovative design, engaging presentation',
+            'formatting': 'Creative letter format with innovative structure and engaging presentation'
         }
     }
 
@@ -389,47 +559,123 @@ def _get_prompt(document_type, target_role, company, keywords, tone, job_descrip
 
     if document_type == 'CV':
         prompt = f"""
-        Generate a professional CV in {langue} for a {target_role} position at {company}. 
-        Use a {tone} tone and the '{template_style['description']}' template style. Incorporate:
-        - Name: {user_data.get('name', 'Anonymous')}
-        - Email: {user_data.get('email', 'N/A')}
-        - LinkedIn: {user_data.get('linkedin_url', 'N/A')}
-        - GitHub: {user_data.get('github_url', 'N/A')}
-        - Telephone: {user_data.get('telephone', 'N/A')}
-        - Skills: {skills_string}
-        - Experiences: {json.dumps(user_data.get('experiences', []))}
-        - Education: {json.dumps(user_data.get('education', []))}
-        - Job Description: {job_description}
-        - Additional Context: {context}
-        Format the CV as plain text with the following sections marked by headers:
-        - ## Profil: A concise summary (150-200 words) tailored to {company} and {target_role}.
-        - ## Compétences: A bulleted list of relevant skills using - for bullets.
-        - ## Expérience Professionnelle: Detailed experiences with quantifiable achievements (e.g., 'Reduced deployment time by 20%').
-        - ## Formation: Academic qualifications.
-        - ## Projets: Relevant projects with GitHub links.
-        Follow the '{template_style['formatting']}' style. Ensure content is tailored to {company}, emphasizing relevant skills and achievements.
+You are an expert CV writer and career consultant with 15+ years of experience in recruitment and HR. Create a highly professional, ATS-optimized CV that will stand out to recruiters and hiring managers.
+
+TASK: Generate a world-class CV in {langue} for a {target_role} position at {company}.
+
+CANDIDATE INFORMATION:
+- Name: {user_data.get('name', 'Anonymous')}
+- Email: {user_data.get('email', 'N/A')}
+- LinkedIn: {user_data.get('linkedin_url', 'N/A')}
+- GitHub: {user_data.get('github_url', 'N/A')}
+- Telephone: {user_data.get('telephone', 'N/A')}
+- Skills: {skills_string}
+- Experiences: {json.dumps(user_data.get('experiences', []))}
+- Education: {json.dumps(user_data.get('education', []))}
+
+TARGET POSITION:
+- Role: {target_role}
+- Company: {company}
+- Job Description: {job_description}
+- Additional Context: {context}
+
+REQUIREMENTS:
+1. Use a {tone} professional tone
+2. Apply '{template_style['description']}' styling
+3. Ensure ATS compatibility and keyword optimization
+4. Include quantifiable achievements and metrics
+5. Tailor content specifically to {company} and {target_role}
+6. Use action verbs and power words
+7. Maintain professional formatting
+
+OUTPUT FORMAT (clean structured content for template integration):
+Generate a professional CV content that will be seamlessly integrated into the selected template design. The content should be clean, well-structured, and ready for template rendering without any markdown formatting.
+
+PROFESSIONAL SUMMARY:
+Write a compelling 150-200 word professional summary that highlights years of experience, key achievements with metrics, unique value proposition for {company}, and career objectives aligned with {target_role}. Make it natural and engaging.
+
+TECHNICAL SKILLS:
+Create a well-organized list of technical skills relevant to {target_role}. Include programming languages, frameworks, tools, technologies, methodologies, and industry-specific skills. Format as clean bullet points without asterisks, special characters, or markdown formatting.
+
+PROFESSIONAL EXPERIENCE:
+For each role, include:
+- Job title, company, location, dates
+- 3-4 bullet points with quantifiable achievements
+- Use action verbs (Led, Developed, Implemented, Optimized)
+- Include metrics and results (increased by X%, reduced by Y%, managed Z team)
+- Mention technologies and tools used
+- Format each experience as a clear block
+
+EDUCATION:
+Include academic qualifications: degree, institution, graduation year, relevant coursework or specializations, academic achievements or honors, and certifications and professional development.
+
+PROJECTS:
+Highlight key projects with:
+- Project name and brief description
+- Technologies and tools used
+- Challenges solved and results achieved
+- GitHub links if available
+- Impact and metrics
+
+LANGUAGES AND CERTIFICATIONS:
+Include language proficiency levels, professional certifications, industry memberships, and awards and recognitions.
+
+IMPORTANT: Do not include any markdown formatting, asterisks, backticks, or section headers. Generate clean, professional content that will be perfectly integrated into the template design.
+
+QUALITY STANDARDS:
+- Use professional terminology and industry jargon
+- Include specific metrics and quantifiable results
+- Ensure content is tailored to {company}'s needs
+- Maintain consistency in formatting and tone
+- Optimize for ATS systems with relevant keywords
+- Create compelling, achievement-focused content
+
+Generate a CV that will impress recruiters and hiring managers at {company} for the {target_role} position.
         """
-    else:  # LM
+    else:  # LM (Motivation Letter)
         prompt = f"""
-        Generate a professional Letter of Motivation in {langue} for a {target_role} position at {company}. 
-        Use a {tone} tone and the '{template_style['description']}' template style. Incorporate:
-        - Name: {user_data.get('name', 'Anonymous')}
-        - Email: {user_data.get('email', 'N/A')}
-        - LinkedIn: {user_data.get('linkedin_url', 'N/A')}
-        - GitHub: {user_data.get('github_url', 'N/A')}
-        - Telephone: {user_data.get('telephone', 'N/A')}
-        - Skills: {skills_string}
-        - Experiences: {json.dumps(user_data.get('experiences', []))}
-        - Education: {json.dumps(user_data.get('education', []))}
-        - Job Description: {job_description}
-        - Additional Context: {context}
-        Format as a single narrative block with:
-        - A formal greeting (e.g., Madame, Monsieur).
-        - 3-4 paragraphs explaining why the candidate is a good fit for {company} and {target_role}, highlighting relevant skills and quantifiable achievements.
-        - A formal closing (e.g., salutations distinguées) with contact information.
-        Follow the '{template_style['formatting']}' style.
+You are an expert career consultant and professional writer specializing in motivation letters. Create a compelling, personalized motivation letter that will capture the attention of hiring managers and recruiters.
+
+TASK: Generate a professional motivation letter in {langue} for a {target_role} position at {company}.
+
+CANDIDATE INFORMATION:
+- Name: {user_data.get('name', 'Anonymous')}
+- Email: {user_data.get('email', 'N/A')}
+- LinkedIn: {user_data.get('linkedin_url', 'N/A')}
+- GitHub: {user_data.get('github_url', 'N/A')}
+- Telephone: {user_data.get('telephone', 'N/A')}
+- Skills: {skills_string}
+- Experiences: {json.dumps(user_data.get('experiences', []))}
+- Education: {json.dumps(user_data.get('education', []))}
+
+TARGET POSITION:
+- Role: {target_role}
+- Company: {company}
+- Job Description: {job_description}
+- Additional Context: {context}
+
+INSTRUCTIONS:
+1. Write a natural, flowing motivation letter in {langue}
+2. Use a {tone} professional tone
+3. Create compelling content that connects the candidate to {company}
+4. Include specific examples and achievements
+5. Demonstrate knowledge of {company} and industry
+6. Show enthusiasm and cultural fit
+7. Write as a single, natural narrative - DO NOT include section headers or brackets
+
+REQUIREMENTS:
+- Start with a formal greeting (Madame, Monsieur,)
+- Write 3-4 natural paragraphs explaining why the candidate is perfect for this role
+- Include specific achievements and metrics where possible
+- Show genuine interest in {company} and the {target_role} position
+- End with a professional closing and contact information
+- Write naturally - do not use brackets, headers, or structured format
+- Make it sound like a real person wrote it, not an AI
+
+Generate a compelling motivation letter that will make the candidate stand out and secure an interview at {company} for the {target_role} position.
         """
-    logger.debug(f"Prompt generated: {prompt[:200]}...")
+    
+    logger.info(f"Professional prompt generated successfully for {document_type}")
     return prompt
 
 
@@ -447,11 +693,27 @@ def document_detail(request, document_id):
     # Parse content for CVs
     if document.type == 'CV':
         content = document.contenu
-        profile_match = re.search(r'## Profil\s*(.*?)(##|$)', content, re.DOTALL)
-        skills_match = re.search(r'## Compétences\s*(.*?)(##|$)', content, re.DOTALL)
-        experience_match = re.search(r'## Expérience Professionnelle\s*(.*?)(##|$)', content, re.DOTALL)
-        education_match = re.search(r'## Formation\s*(.*?)(##|$)', content, re.DOTALL)
-        projects_match = re.search(r'## Projets\s*(.*?)(##|$)', content, re.DOTALL)
+        # Split content into sections based on natural flow
+        lines = content.split('\n')
+        sections = {'profile': [], 'skills': [], 'experience': [], 'education': [], 'projects': []}
+        current_section = 'profile'
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            
+            # Detect section transitions based on content patterns
+            if any(word in line.lower() for word in ['compétences', 'skills', 'technologies', 'langages']):
+                current_section = 'skills'
+            elif any(word in line.lower() for word in ['expérience', 'experience', 'développeur', 'developer', 'ingénieur', 'engineer']):
+                current_section = 'experience'
+            elif any(word in line.lower() for word in ['formation', 'education', 'université', 'university', 'master', 'licence', 'diplôme']):
+                current_section = 'education'
+            elif any(word in line.lower() for word in ['projets', 'projects', 'portfolio', 'réalisations']):
+                current_section = 'projects'
+            
+            sections[current_section].append(line)
         
         # Process each section's lines to identify bullet points
         def process_lines(lines):
@@ -460,23 +722,23 @@ def document_detail(request, document_id):
         context['content_sections'] = {
             'profile': {
                 'title': 'Profil',
-                'content': process_lines(profile_match.group(1).strip().splitlines() if profile_match else ['No profile provided.'])
+                'content': process_lines(sections['profile'] if sections['profile'] else ['No profile provided.'])
             },
             'skills': {
                 'title': 'Compétences',
-                'content': process_lines(skills_match.group(1).strip().splitlines() if skills_match else [])
+                'content': process_lines(sections['skills'] if sections['skills'] else [])
             },
             'experience': {
                 'title': 'Expérience Professionnelle',
-                'content': process_lines(experience_match.group(1).strip().splitlines() if experience_match else [])
+                'content': process_lines(sections['experience'] if sections['experience'] else [])
             },
             'education': {
                 'title': 'Formation',
-                'content': process_lines(education_match.group(1).strip().splitlines() if education_match else [])
+                'content': process_lines(sections['education'] if sections['education'] else [])
             },
             'projects': {
                 'title': 'Projets',
-                'content': process_lines(projects_match.group(1).strip().splitlines() if projects_match else [])
+                'content': process_lines(sections['projects'] if sections['projects'] else [])
             }
         }
     else:
@@ -496,7 +758,7 @@ def document_detail(request, document_id):
     return render(request, 'user/generate_document.html', context)
     
 @login_required
-def downlaod_document(request, document_id):
+def download_document(request, document_id):
     """Download generated document in selected format"""
     logger.info(f"Downloading document {document_id} for user {request.user.email}")
     document = get_object_or_404(Document, id=document_id, user=request.user)
@@ -526,32 +788,54 @@ def downlaod_document(request, document_id):
         'document': document,
     }
 
-    # Parse AI-generated content (plain text with ## headers for CVs)
+    # Parse AI-generated content (clean text without titles for CVs)
     content = document.contenu
     if document.type == 'CV':
-        profile_match = re.search(r'## Profil\s*(.*?)(##|$)', content, re.DOTALL)
-        skills_match = re.search(r'## Compétences\s*(.*?)(##|$)', content, re.DOTALL)
-        experience_match = re.search(r'## Expérience Professionnelle\s*(.*?)(##|$)', content, re.DOTALL)
-        education_match = re.search(r'## Formation\s*(.*?)(##|$)', content, re.DOTALL)
-        projects_match = re.search(r'## Projets\s*(.*?)(##|$)', content, re.DOTALL)
-
-        context['profile'] = profile_match.group(1).strip() if profile_match else 'No profile provided.'
-        context['skills'] = skills_match.group(1).strip() if skills_match else ''
-        context['experience'] = experience_match.group(1).strip() if experience_match else ''
-        context['education'] = education_match.group(1).strip() if education_match else ''
-        context['projects'] = projects_match.group(1).strip() if projects_match else ''
+        # Split content into sections based on natural flow
+        lines = content.split('\n')
+        sections = {'profile': [], 'skills': [], 'experience': [], 'education': [], 'projects': []}
+        current_section = 'profile'
+        
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+            
+            # Detect section transitions based on content patterns
+            if any(word in line.lower() for word in ['compétences', 'skills', 'technologies', 'langages']):
+                current_section = 'skills'
+            elif any(word in line.lower() for word in ['expérience', 'experience', 'développeur', 'developer', 'ingénieur', 'engineer']):
+                current_section = 'experience'
+            elif any(word in line.lower() for word in ['formation', 'education', 'université', 'university', 'master', 'licence', 'diplôme']):
+                current_section = 'education'
+            elif any(word in line.lower() for word in ['projets', 'projects', 'portfolio', 'réalisations']):
+                current_section = 'projects'
+            
+            sections[current_section].append(line)
+        
+        context['profile'] = '\n'.join(sections['profile']) if sections['profile'] else 'No profile provided.'
+        context['skills'] = '\n'.join(sections['skills']) if sections['skills'] else ''
+        context['experience'] = '\n'.join(sections['experience']) if sections['experience'] else ''
+        context['education'] = '\n'.join(sections['education']) if sections['education'] else ''
+        context['projects'] = '\n'.join(sections['projects']) if sections['projects'] else ''
     else:
         context['letter_content'] = content
 
     # Handle CV image
-    if document.type == 'CV' and hasattr(document, 'cv_image'):
-        context['cv_image'] = document.cv_image.image.url
+    if document.type == 'CV':
+        try:
+            cv_image_obj = CVImage.objects.get(document=document)
+            context['cv_image'] = cv_image_obj.image.url
+            logger.info(f"CV image found for document {document_id}: {cv_image_obj.image.url}")
+        except CVImage.DoesNotExist:
+            context['cv_image'] = ''
+            logger.info(f"No CV image found for document {document_id}")
     else:
         context['cv_image'] = ''
 
     # Get template path
     templates = get_available_templates()
-    template_id = document.metadata.get('template_id', 'template1-moderne-bleu' if document.type == 'CV' else 'template1-lettre-classique-elegante')
+    template_id = document.metadata.get('template_id', 'template1-moderne-bleu' if document.type == 'CV' else 'template1-classique-elegante')
     template = next((t for t in templates if t['id'] == template_id and t['type'] == ('CV' if document.type == 'CV' else 'LM')), None)
     if not template:
         logger.error(f"Template {template_id} not found for document {document_id}")
@@ -678,6 +962,95 @@ def upload_cv_image(request, document_id):
     
     logger.warning(f"Method {request.method} not allowed for image upload")
     return JsonResponse({'success': False, 'error': 'Method not allowed'})
+
+@login_required
+def template_preview(request, template_id):
+    """Preview template with sample data"""
+    logger.info(f"Generating preview for template {template_id}")
+    
+    # Get template info
+    templates = get_available_templates()
+    template = next((t for t in templates if t['id'] == template_id), None)
+    
+    if not template:
+        logger.error(f"Template {template_id} not found")
+        return JsonResponse({'error': 'Template not found'})
+    
+    # Sample data for preview
+    sample_data = {
+        'name': 'Fotso Eddy Steve',
+        'email': 'eddysteve@gmail.com',
+        'telephone': '+1 (254) 325-2308',
+        'linkedin_url': 'https://linkedin.com/in/fotsoeddysteve',
+        'github_url': 'https://github.com/fotsoeddy',
+        'target_role': 'Développeur Full Stack Python / JavaScript',
+        'company': 'TechCorp Solutions',
+        'profile': 'Développeur Full Stack passionné et orienté résultats avec plus de 7 ans d\'expérience dans la conception, le développement et le déploiement d\'applications web performantes et évolutives. Expert en Python (Django/Django REST Framework) et JavaScript (React), je maîtrise les environnements cloud et les méthodologies Agile/Scrum.',
+        'skills': 'Python, JavaScript, React, Django, PostgreSQL, AWS, Docker, Git',
+        'experience': '''Développeur Backend Django | HooYia Technologies | 2022-Present
+- Développé des API REST sécurisées avec Django REST Framework
+- Amélioré les performances de 40% et réduit les coûts d'infrastructure de 25%
+- Dirigé une équipe de 3 développeurs dans la mise en œuvre de nouvelles fonctionnalités
+
+Développeur Full Stack | ABC Company | 2020-2022
+- Développé des applications web interactives avec React et Node.js
+- Optimisé les performances des bases de données PostgreSQL
+- Collaboré avec les équipes design et produit pour améliorer l'expérience utilisateur''',
+        'education': '''Master en Informatique | Université de Technologie | 2021
+- Spécialisation: Ingénierie Logicielle et Systèmes Distribués
+- Mention: Bien
+
+Licence en Informatique | Université de Sciences | 2019''',
+        'projects': '''Plateforme e-commerce | React, Django, PostgreSQL
+- Conception et développement d'une plateforme e-commerce complète
+- Optimisation des performances pour gérer un grand nombre de produits
+- Résultats: Lancement réussi avec une augmentation de 20% des ventes en ligne
+
+Application de gestion de projet | React, Node.js, MongoDB
+- Développement d'une application web pour la gestion de projets
+- Implémentation d'une collaboration en temps réel
+- Résultats: Amélioration de la productivité des équipes de 15%'''
+    }
+    
+    # Add CV image if it's a CV template
+    if template['type'] == 'CV':
+        # Use a placeholder image data URI
+        sample_data['cv_image'] = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEyMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMjAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRjNGNEY2Ii8+CjxjaXJjbGUgY3g9IjYwIiBjeT0iNDAiIHI9IjIwIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0yMCA5MEMyMCA4MC4zNTg5IDI3LjM1ODkgNzMgMzcgNzNIMTAzQzExMi42NDEgNzMgMTIwIDgwLjM1ODkgMTIwIDkwVjExMEMxMjAgMTE5LjY0MSAxMTIuNjQxIDEyNyAxMDMgMTI3SDM3QzI3LjM1ODkgMTI3IDIwIDExOS42NDEgMjAgMTEwVjkwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K'
+    
+    # Render template with sample data
+    try:
+        template_path = template['path']
+        html_content = render_to_string(template_path, sample_data)
+        
+        return JsonResponse({
+            'success': True,
+            'template_id': template_id,
+            'template_name': template['name'],
+            'template_type': template['type'],
+            'preview_html': html_content
+        })
+    except Exception as e:
+        logger.error(f"Error generating template preview: {str(e)}")
+        return JsonResponse({'error': f'Preview generation failed: {str(e)}'})
+
+@login_required
+def template_selection(request):
+    """Template selection page with previews"""
+    logger.info(f"Template selection page accessed by user {request.user.email}")
+    
+    document_type = request.GET.get('document_type', 'CV')
+    templates = get_available_templates()
+    
+    # Filter templates by document type
+    filtered_templates = [t for t in templates if t['type'] == document_type]
+    
+    context = {
+        'templates': filtered_templates,
+        'document_type': document_type,
+        'all_templates': templates
+    }
+    
+    return render(request, 'user/template_selection.html', context)
 
 @csrf_exempt
 @login_required

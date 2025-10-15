@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const docId = this.getAttribute('data-doc-id');
       const format = this.value;
       const downloadLink = document.querySelector(`.download-link[data-doc-id="${docId}"]`);
-      downloadLink.href = `/api/document/${docId}/download/?format=${format}`;
+      downloadLink.href = `/agent/document/${docId}/download/?format=${format}`;
     });
   });
 });
