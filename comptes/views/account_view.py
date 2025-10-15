@@ -18,34 +18,56 @@ class SignUpView(View):
         return render(request, self.template_name)
 
     def post(self, request):
+        logger.info("=== SIGNUP ATTEMPT STARTED ===")
         logger.debug("Données POST reçues : %s", request.POST)
+        
         email = request.POST.get("email")
         full_name = request.POST.get("full_name")
         password = request.POST.get("password")
         password2 = request.POST.get("password2")
 
+        logger.info(f"Email: {email}, Full name: {full_name}")
+        logger.debug(f"Password length: {len(password) if password else 0}")
+        logger.debug(f"Password2 length: {len(password2) if password2 else 0}")
+
+        error = None
+
         # Validation
         if not email or not full_name or not password or not password2:
             error = "Tous les champs sont requis."
+            logger.warning("Signup failed: Missing required fields")
         elif password != password2:
             error = "Les mots de passe ne correspondent pas."
+            logger.warning(f"Signup failed: Password mismatch - '{password}' vs '{password2}'")
         elif len(password) < 8:
-            error = "Le mot de passe doit contenir au moins 8 caractères."    
+            error = "Le mot de passe doit contenir au moins 8 caractères."
+            logger.warning(f"Signup failed: Password too short ({len(password)} chars)")
         elif User.objects.filter(email=email).exists():
             error = "Cet email est déjà utilisé."
+            logger.warning(f"Signup failed: Email already exists - {email}")
         else:
-            # Crée l'utilisateur
-            user = User.objects.create_user(
-                email=email,
-                password=password,
-                full_name=full_name
-            )
-            # Redirection après inscription
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                return JsonResponse({"success": True, "redirect_url": "/"})
-            return redirect("home")
+            try:
+                # Crée l'utilisateur
+                logger.info(f"Creating user with email: {email}")
+                user = User.objects.create_user(
+                    email=email,
+                    password=password,
+                    full_name=full_name
+                )
+                logger.info(f"User created successfully: {user.email} (ID: {user.id})")
+                
+                # Redirection après inscription
+                if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                    logger.info("Signup successful - returning JSON response")
+                    return JsonResponse({"success": True, "redirect_url": "/login/"})
+                logger.info("Signup successful - redirecting to login")
+                return redirect("comptes:login")
+            except Exception as e:
+                error = f"Erreur lors de la création du compte: {str(e)}"
+                logger.error(f"Signup failed with exception: {str(e)}")
 
         # Si erreur
+        logger.warning(f"Signup failed: {error}")
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return JsonResponse({"success": False, "error": error})
         return render(request, self.template_name, {"error": error})
@@ -60,20 +82,28 @@ class CustomLoginView(View):
         return render(request, self.template_name, {"success_message": success_message})
 
     def post(self, request):
+        logger.info("=== LOGIN ATTEMPT STARTED ===")
         logger.debug("Données POST reçues : %s", request.POST)
+        
         email = request.POST.get("email")
         password = request.POST.get("password")
+
+        logger.info(f"Login attempt for email: {email}")
 
         # Authentification avec email
         user = authenticate(request, email=email, password=password)
 
         if user is not None:
+            logger.info(f"Login successful for user: {user.email} (ID: {user.id})")
             login(request, user)
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                logger.info("Login successful - returning JSON response")
                 return JsonResponse({"success": True, "redirect_url": "/dashboard/"})
-            return redirect("dashboard")
+            logger.info("Login successful - redirecting to dashboard")
+            return redirect("comptes:dashboard")
         else:
-            error = "Email ou mot de passe incodashboardrrect."
+            error = "Email ou mot de passe incorrect."
+            logger.warning(f"Login failed for email: {email} - Invalid credentials")
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return JsonResponse({"success": False, "error": error})
             return render(request, self.template_name, {"error": error})

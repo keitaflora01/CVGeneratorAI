@@ -541,8 +541,13 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
-                    <i class="fas fa-sign-in-alt mr-2"></i>Se connecter
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold" id="login-submit-btn">
+                    <span class="btn-text">
+                        <i class="fas fa-sign-in-alt mr-2"></i>Se connecter
+                    </span>
+                    <span class="btn-loading hidden">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>Connexion...
+                    </span>
                 </button>
             </form>
             <p class="mt-4 text-sm text-center text-gray-600">
@@ -589,8 +594,13 @@
                         </button>
                     </div>
                 </div>
-                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold">
-                    <i class="fas fa-user-plus mr-2"></i>S'inscrire
+                <button type="submit" class="w-full btn-primary text-white py-3 rounded-lg font-semibold" id="signup-submit-btn">
+                    <span class="btn-text">
+                        <i class="fas fa-user-plus mr-2"></i>S'inscrire
+                    </span>
+                    <span class="btn-loading hidden">
+                        <i class="fas fa-spinner fa-spin mr-2"></i>Inscription...
+                    </span>
                 </button>
             </form>
             
@@ -744,6 +754,14 @@
         document.getElementById('login-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const submitBtn = document.getElementById('login-submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            // Show loading state
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            submitBtn.disabled = true;
             
             fetch(this.action, {
                 method: 'POST',
@@ -764,12 +782,26 @@
             .catch(error => {
                 console.error('Erreur:', error);
                 showToast('Erreur de connexion au serveur.', 'error');
+            })
+            .finally(() => {
+                // Hide loading state
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+                submitBtn.disabled = false;
             });
         });
 
         document.getElementById('signup-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const formData = new FormData(this);
+            const submitBtn = document.getElementById('signup-submit-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoading = submitBtn.querySelector('.btn-loading');
+            
+            // Show loading state
+            btnText.classList.add('hidden');
+            btnLoading.classList.remove('hidden');
+            submitBtn.disabled = true;
             
             fetch(this.action, {
                 method: 'POST',
@@ -790,6 +822,12 @@
             .catch(error => {
                 console.error('Erreur:', error);
                 showToast('Erreur de connexion au serveur.', 'error');
+            })
+            .finally(() => {
+                // Hide loading state
+                btnText.classList.remove('hidden');
+                btnLoading.classList.add('hidden');
+                submitBtn.disabled = false;
             });
         });
 
