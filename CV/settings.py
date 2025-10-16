@@ -37,7 +37,13 @@ SECRET_KEY = 'django-insecure-$e5sxl5e#=h3v$plnwr++_*f*sa30ocfc60%0zh2hp53)gqebn
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+ALLOWED_HOSTS = [
+    'cvgeneratorai-7.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
+
 
 
 # Application definition
