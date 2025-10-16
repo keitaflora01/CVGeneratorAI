@@ -39,7 +39,7 @@ DEBUG = True
 
 
 ALLOWED_HOSTS = [
-    'cvgeneratorai-7.onrender.com',
+    'cvgeneratorai-8.onrender.com',
     'localhost',
     '127.0.0.1',
 ]
