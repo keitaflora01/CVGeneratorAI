@@ -834,7 +834,12 @@
             if (data.success) {
                 showToast('Inscription réussie ! Veuillez vous connecter.', 'success');
                 setTimeout(() => {
-                    window.location.href = data.redirect_url || '/login/';
+                    // Vérifier si open_login_modal est true
+                    if (data.open_login_modal) {
+                        switchModals('signup-modal', 'login-modal');
+                    } else {
+                        window.location.href = data.redirect_url || '/login/';
+                    }
                 }, 1000);
             } else {
                 showToast(data.error || 'Une erreur est survenue.', 'error');
@@ -849,14 +854,6 @@
             btnText.classList.remove('hidden');
             btnLoading.classList.add('hidden');
             submitBtn.disabled = false;
-        });
-    });
-
-    // Initialiser les champs password au chargement
-    document.addEventListener('DOMContentLoaded', function() {
-        // Ajouter les attributs aria-label aux boutons password
-        document.querySelectorAll('.password-toggle').forEach(button => {
-            button.setAttribute('aria-label', 'Afficher le mot de passe');
         });
     });
 </script>

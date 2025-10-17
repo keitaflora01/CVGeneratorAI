@@ -12,8 +12,10 @@ from django.contrib import messages
 logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_protect, name='dispatch')
+# comptes/views/account_view.py
+@method_decorator(csrf_protect, name='dispatch')
 class SignUpView(View):
-    template_name = "accound/pages/signup.html"
+    # template_name = "accound/pages/signup.html"
 
     def get(self, request):
         return render(request, self.template_name)
@@ -57,12 +59,12 @@ class SignUpView(View):
                 )
                 logger.info(f"User created successfully: {user.email} (ID: {user.id})")
                 
-                # Redirection après inscription
+                # Si requête AJAX, renvoyer JSON avec indicateur pour ouvrir le modal de connexion
                 if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                    logger.info("Signup successful - returning JSON response")
-                    return JsonResponse({"success": True, "redirect_url": "/login/"})
-                logger.info("Signup successful - redirecting to login")
-                return redirect("comptes:login")
+                    logger.info("Signup successful - returning JSON response with open_login_modal")
+                    return JsonResponse({"success": True, "open_login_modal": True})
+                logger.info("Signup successful - rendering signup page with success message")
+                return render(request, self.template_name, {"success_message": "Inscription réussie ! Veuillez vous connecter."})
             except Exception as e:
                 error = f"Erreur lors de la création du compte: {str(e)}"
                 logger.error(f"Signup failed with exception: {str(e)}")
@@ -76,7 +78,7 @@ class SignUpView(View):
 # Connexion
 # ---------------------------
 class CustomLoginView(View):
-    template_name = "accound/pages/login.html"
+    # template_name = "accound/pages/login.html"
 
     def get(self, request):
         success_message = request.GET.get("success", "")
