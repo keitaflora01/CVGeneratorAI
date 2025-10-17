@@ -614,229 +614,251 @@
 
     <script src="{% static 'js/toast_manager.js' %}"></script>
     <script>
-        let mobileMenuOpen = false;
+    let mobileMenuOpen = false;
 
-        // Fonction pour basculer la visibilité du mot de passe
-        function togglePassword(inputId) {
-            const passwordInput = document.getElementById(inputId);
-            const toggleButton = passwordInput.parentNode.querySelector('.password-toggle');
-            const icon = toggleButton.querySelector('i');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-                toggleButton.setAttribute('aria-label', 'Masquer le mot de passe');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-                toggleButton.setAttribute('aria-label', 'Afficher le mot de passe');
-            }
+    // Fonction pour basculer la visibilité du mot de passe
+    function togglePassword(inputId) {
+        const passwordInput = document.getElementById(inputId);
+        const toggleButton = passwordInput.parentNode.querySelector('.password-toggle');
+        const icon = toggleButton.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+            toggleButton.setAttribute('aria-label', 'Masquer le mot de passe');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+            toggleButton.setAttribute('aria-label', 'Afficher le mot de passe');
         }
+    }
 
-        // Mobile menu toggle
-        function toggleMobileMenu() {
-            mobileMenuOpen = !mobileMenuOpen;
-            const menu = document.getElementById('mobileMenu');
-            const overlay = document.getElementById('mobileMenuOverlay');
-            const hamburger = document.getElementById('hamburger');
-            
-            if (mobileMenuOpen) {
-                menu.classList.add('show');
-                overlay.classList.add('show');
-                hamburger.classList.add('open');
-                document.body.style.overflow = 'hidden'; // Prevent scrolling
-            } else {
-                closeMobileMenu();
-            }
+    // Mobile menu toggle
+    function toggleMobileMenu() {
+        mobileMenuOpen = !mobileMenuOpen;
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const hamburger = document.getElementById('hamburger');
+        
+        if (mobileMenuOpen) {
+            menu.classList.add('show');
+            overlay.classList.add('show');
+            hamburger.classList.add('open');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        } else {
+            closeMobileMenu();
         }
+    }
 
-        function closeMobileMenu() {
-            mobileMenuOpen = false;
-            const menu = document.getElementById('mobileMenu');
-            const overlay = document.getElementById('mobileMenuOverlay');
-            const hamburger = document.getElementById('hamburger');
-            
-            menu.classList.remove('show');
-            overlay.classList.remove('show');
-            hamburger.classList.remove('open');
-            document.body.style.overflow = ''; // Restore scrolling
-        }
+    function closeMobileMenu() {
+        mobileMenuOpen = false;
+        const menu = document.getElementById('mobileMenu');
+        const overlay = document.getElementById('mobileMenuOverlay');
+        const hamburger = document.getElementById('hamburger');
+        
+        menu.classList.remove('show');
+        overlay.classList.remove('show');
+        hamburger.classList.remove('open');
+        document.body.style.overflow = ''; // Restore scrolling
+    }
 
-        // User dropdown toggle
-        function toggleDropdown() {
-            const dropdown = document.getElementById('userDropdown');
-            const chevron = document.getElementById('dropdownChevron');
-            
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                setTimeout(() => {
-                    dropdown.classList.remove('opacity-0', 'translate-y-2');
-                    dropdown.classList.add('opacity-100', 'translate-y-0');
-                }, 10);
-                chevron.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.add('opacity-0', 'translate-y-2');
-                dropdown.classList.remove('opacity-100', 'translate-y-0');
-                setTimeout(() => {
-                    dropdown.classList.add('hidden');
-                }, 300);
-                chevron.style.transform = 'rotate(0deg)';
-            }
-        }
-
-        // Close dropdowns when clicking outside
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('userDropdown');
-            const button = event.target.closest('button');
-            
-            if (dropdown && !dropdown.contains(event.target) && 
-                !button?.onclick?.toString().includes('toggleDropdown')) {
-                if (!dropdown.classList.contains('hidden')) {
-                    toggleDropdown();
-                }
-            }
-        });
-
-        // Close mobile menu on escape key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && mobileMenuOpen) {
-                closeMobileMenu();
-            }
-        });
-
-        // Close mobile menu on window resize to desktop
-        window.addEventListener('resize', function() {
-            if (window.innerWidth >= 768 && mobileMenuOpen) {
-                closeMobileMenu();
-            }
-        });
-
-        // Modal functions
-        document.querySelectorAll('[data-modal-target]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const target = btn.getAttribute('data-modal-target');
-                document.getElementById(target).classList.remove('hidden');
-                closeMobileMenu(); // Close mobile menu when opening modal
-            });
-        });
-
-        function switchModals(closeId, openId) {
-            document.getElementById(closeId).classList.add('hidden');
-            document.getElementById(openId).classList.remove('hidden');
-        }
-
-        // Toast notification function
-        function showToast(message, type = 'info') {
-            // Check if toast_manager.js defines this function, otherwise create a simple one
-            if (typeof window.showToast === 'function') {
-                window.showToast(message, type);
-                return;
-            }
-            
-            // Simple fallback toast
-            const toast = document.createElement('div');
-            toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
-                type === 'success' ? 'bg-green-500' : 
-                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-            } text-white`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
+    // User dropdown toggle
+    function toggleDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const chevron = document.getElementById('dropdownChevron');
+        
+        if (dropdown.classList.contains('hidden')) {
+            dropdown.classList.remove('hidden');
             setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                dropdown.classList.remove('opacity-0', 'translate-y-2');
+                dropdown.classList.add('opacity-100', 'translate-y-0');
+            }, 10);
+            chevron.style.transform = 'rotate(180deg)';
+        } else {
+            dropdown.classList.add('opacity-0', 'translate-y-2');
+            dropdown.classList.remove('opacity-100', 'translate-y-0');
+            setTimeout(() => {
+                dropdown.classList.add('hidden');
+            }, 300);
+            chevron.style.transform = 'rotate(0deg)';
+        }
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        const dropdown = document.getElementById('userDropdown');
+        const button = event.target.closest('button');
+        
+        if (dropdown && !dropdown.contains(event.target) && 
+            !button?.onclick?.toString().includes('toggleDropdown')) {
+            if (!dropdown.classList.contains('hidden')) {
+                toggleDropdown();
+            }
+        }
+    });
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && mobileMenuOpen) {
+            closeMobileMenu();
+        }
+    });
+
+    // Close mobile menu on window resize to desktop
+    window.addEventListener('resize', function() {
+        if (window.innerWidth >= 768 && mobileMenuOpen) {
+            closeMobileMenu();
+        }
+    });
+
+    // Modal functions
+    document.querySelectorAll('[data-modal-target]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const target = btn.getAttribute('data-modal-target');
+            document.getElementById(target).classList.remove('hidden');
+            closeMobileMenu(); // Close mobile menu when opening modal
+        });
+    });
+
+    function switchModals(closeId, openId) {
+        document.getElementById(closeId).classList.add('hidden');
+        document.getElementById(openId).classList.remove('hidden');
+    }
+
+    // Toast notification function
+    function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        toast.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 ${
+            type === 'success' ? 'bg-green-500' : 
+            type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+        } text-white`;
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+
+    // Form submissions
+    document.getElementById('login-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = document.getElementById('login-submit-btn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+        
+        // Validation côté client
+        const email = formData.get('email');
+        const password = formData.get('password');
+
+        if (!email || !password) {
+            showToast('Email et mot de passe sont requis.', 'error');
+            return;
         }
 
-        // Form submissions
-        document.getElementById('login-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const submitBtn = document.getElementById('login-submit-btn');
-            const btnText = submitBtn.querySelector('.btn-text');
-            const btnLoading = submitBtn.querySelector('.btn-loading');
-            
-            // Show loading state
-            btnText.classList.add('hidden');
-            btnLoading.classList.remove('hidden');
-            submitBtn.disabled = true;
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Connexion réussie !', 'success');
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || '/dashboard/';
-                    }, 1000);
-                } else {
-                    showToast(data.error || 'Une erreur est survenue.', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur de connexion au serveur.', 'error');
-            })
-            .finally(() => {
-                // Hide loading state
-                btnText.classList.remove('hidden');
-                btnLoading.classList.add('hidden');
-                submitBtn.disabled = false;
-            });
+        // Show loading state
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        submitBtn.disabled = true;
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Connexion réussie !', 'success');
+                setTimeout(() => {
+                    window.location.href = data.redirect_url || '/dashboard/';
+                }, 1000);
+            } else {
+                showToast(data.error || 'Une erreur est survenue.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur de connexion au serveur.', 'error');
+        })
+        .finally(() => {
+            // Hide loading state
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            submitBtn.disabled = false;
         });
+    });
 
-        document.getElementById('signup-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const submitBtn = document.getElementById('signup-submit-btn');
-            const btnText = submitBtn.querySelector('.btn-text');
-            const btnLoading = submitBtn.querySelector('.btn-loading');
-            
-            // Show loading state
-            btnText.classList.add('hidden');
-            btnLoading.classList.remove('hidden');
-            submitBtn.disabled = true;
-            
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showToast('Inscription réussie ! Veuillez vous connecter.', 'success');
-                    setTimeout(() => {
-                        window.location.href = data.redirect_url || '/login/';
-                    }, 1000);
-                } else {
-                    showToast(data.error || 'Une erreur est survenue.', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Erreur:', error);
-                showToast('Erreur de connexion au serveur.', 'error');
-            })
-            .finally(() => {
-                // Hide loading state
-                btnText.classList.remove('hidden');
-                btnLoading.classList.add('hidden');
-                submitBtn.disabled = false;
-            });
-        });
+    document.getElementById('signup-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const submitBtn = document.getElementById('signup-submit-btn');
+        const btnText = submitBtn.querySelector('.btn-text');
+        const btnLoading = submitBtn.querySelector('.btn-loading');
+        
+        // Validation côté client
+        const password = formData.get('password');
+        const password2 = formData.get('password2');
+        const email = formData.get('email');
+        const full_name = formData.get('full_name');
 
-        // Initialiser les champs password au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            // Ajouter les attributs aria-label aux boutons password
-            document.querySelectorAll('.password-toggle').forEach(button => {
-                button.setAttribute('aria-label', 'Afficher le mot de passe');
-            });
+        if (!email || !full_name || !password || !password2) {
+            showToast('Tous les champs sont requis.', 'error');
+            return;
+        }
+        if (password !== password2) {
+            showToast('Les mots de passe ne correspondent pas.', 'error');
+            return;
+        }
+        if (password.length < 8) {
+            showToast('Le mot de passe doit contenir au moins 8 caractères.', 'error');
+            return;
+        }
+
+        // Show loading state
+        btnText.classList.add('hidden');
+        btnLoading.classList.remove('hidden');
+        submitBtn.disabled = true;
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast('Inscription réussie ! Veuillez vous connecter.', 'success');
+                setTimeout(() => {
+                    window.location.href = data.redirect_url || '/login/';
+                }, 1000);
+            } else {
+                showToast(data.error || 'Une erreur est survenue.', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erreur:', error);
+            showToast('Erreur de connexion au serveur.', 'error');
+        })
+        .finally(() => {
+            // Hide loading state
+            btnText.classList.remove('hidden');
+            btnLoading.classList.add('hidden');
+            submitBtn.disabled = false;
         });
-    </script>
+    });
+
+    // Initialiser les champs password au chargement
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ajouter les attributs aria-label aux boutons password
+        document.querySelectorAll('.password-toggle').forEach(button => {
+            button.setAttribute('aria-label', 'Afficher le mot de passe');
+        });
+    });
+</script>
+
 </nav>

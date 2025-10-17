@@ -6,11 +6,12 @@ from comptes.models import User
 import logging
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
 
-
+@method_decorator(csrf_protect, name='dispatch')
 class SignUpView(View):
     template_name = "accound/pages/signup.html"
 
